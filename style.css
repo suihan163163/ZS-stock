@@ -35,7 +35,13 @@ body{
 
 img{ max-width: 100%; display: block; }
 a{ color: inherit; text-decoration: none; }
-.container{ max-width: 1160px; }
+/* Fluid content width: cap at 1600px, use ~90% viewport on ultra-wide */
+.container{
+  width: 100%;
+  max-width: min(1600px, 92vw);
+  margin-left: auto;
+  margin-right: auto;
+}
 
 .skip-link{
   position:absolute;
@@ -70,21 +76,31 @@ a{ color: inherit; text-decoration: none; }
   border-bottom: 1px solid var(--line);
 }
 .header-inner{
-  height: 72px;
+  min-height: 72px;
+  padding: 10px 0;
   display:flex;
   align-items:center;
   justify-content: space-between;
   gap: 12px;
 }
+@media (min-width: 1024px){
+  .header-inner{ min-height: 76px; }
+}
 .brand{
   display:flex;
   align-items:center;
   gap: 12px;
-  min-width: 220px;
+  min-width: 0;
+  flex: 0 1 auto;
+  max-width: 100%;
+}
+.brand-text{
+  min-width: 0;
 }
 .brand-logo{
   width: 44px;
   height: 44px;
+  flex: 0 0 auto;
   object-fit: contain;
   border-radius: 12px;
   background: #fff;
@@ -92,10 +108,22 @@ a{ color: inherit; text-decoration: none; }
   box-shadow: 0 10px 24px rgba(11,60,106,.12);
   padding: 4px;
 }
+.footer-logo{
+  width: 48px;
+  height: 48px;
+  flex: 0 0 auto;
+  object-fit: contain;
+  border-radius: 12px;
+  background: #fff;
+  border: 1px solid var(--line);
+  box-shadow: 0 10px 24px rgba(11,60,106,.10);
+  padding: 4px;
+}
 .brand-name{
   font-weight: 780;
   letter-spacing: .2px;
   color: var(--brand-blue);
+  line-height: 1.2;
 }
 .brand-sub{
   font-size: 12px;
@@ -107,6 +135,7 @@ a{ color: inherit; text-decoration: none; }
   display:none;
   align-items:center;
   gap: 6px;
+  flex-shrink: 0;
 }
 .nav-link{
   padding: 10px 12px;
@@ -129,6 +158,7 @@ a{ color: inherit; text-decoration: none; }
   display:flex;
   align-items:center;
   gap: 10px;
+  flex-shrink: 0;
 }
 .icon-btn{
   display:inline-flex;
@@ -275,7 +305,13 @@ a{ color: inherit; text-decoration: none; }
 
 /* Sections */
 .section{
-  padding: 72px 0;
+  padding: 80px 0;
+}
+@media (min-width: 1024px){
+  .section{ padding: 96px 0; }
+}
+@media (min-width: 1536px){
+  .section{ padding: 112px 0; }
 }
 .section-muted{
   background: var(--bg-muted);
@@ -315,9 +351,30 @@ a{ color: inherit; text-decoration: none; }
 }
 .note i{ color: var(--brand-blue); margin-top: 2px; }
 
-/* Hero */
+/* Hero — full-bleed band so layout feels edge-to-edge while copy stays in .container */
 .hero{
-  padding: 76px 0 60px;
+  position: relative;
+  isolation: isolate;
+  padding: 88px 0 72px;
+}
+.hero::before{
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  transform: translateX(-50%);
+  width: 100vw;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(1200px 520px at 10% 18%, rgba(11,60,106,.09), transparent 58%),
+    radial-gradient(1000px 480px at 92% 22%, rgba(230,0,18,.05), transparent 55%),
+    linear-gradient(180deg, rgba(249,250,251,.98) 0%, rgba(255,255,255,1) 45%, var(--bg) 100%);
+  border-bottom: 1px solid rgba(17,24,39,.06);
+}
+@media (min-width: 1024px){
+  .hero{ padding: 104px 0 88px; }
 }
 .hero-grid{
   display:grid;
@@ -485,6 +542,12 @@ a{ color: inherit; text-decoration: none; }
   display:grid;
   grid-template-columns: 1fr;
   gap: 14px;
+}
+@media (min-width: 1024px){
+  .product-grid{ gap: 18px; }
+}
+@media (min-width: 1536px){
+  .product-grid{ gap: 20px; }
 }
 .product-card{
   border-radius: 18px;
@@ -1002,7 +1065,7 @@ a{ color: inherit; text-decoration: none; }
 /* Responsive */
 @media (min-width: 768px){
   .nav-desktop{ display:flex; }
-  .hero-grid{ grid-template-columns: 1.08fr .92fr; gap: 22px; }
+  .hero-grid{ grid-template-columns: 1.08fr .92fr; gap: 24px; }
   .trust-badges{ grid-template-columns: repeat(3, 1fr); }
   .product-grid{ grid-template-columns: repeat(2, 1fr); }
   .two-col{ grid-template-columns: 1.05fr .95fr; }
@@ -1016,6 +1079,23 @@ a{ color: inherit; text-decoration: none; }
 }
 
 @media (min-width: 1024px){
+  .hero-grid{ gap: 30px; }
   .product-grid{ grid-template-columns: repeat(4, 1fr); }
   .factory-grid{ grid-template-columns: repeat(4, 1fr); }
+}
+
+@media (min-width: 1280px){
+  .hero-grid{ gap: 36px; }
+}
+
+/* Ultra-wide: 5 then 6 product columns */
+@media (min-width: 1280px){
+  .product-grid{ grid-template-columns: repeat(5, 1fr); }
+}
+@media (min-width: 1536px){
+  .product-grid{ grid-template-columns: repeat(6, 1fr); }
+  .factory-grid{ grid-template-columns: repeat(5, 1fr); }
+}
+@media (min-width: 1800px){
+  .factory-grid{ grid-template-columns: repeat(6, 1fr); }
 }

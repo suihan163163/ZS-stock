@@ -226,3 +226,84 @@
     }
   });
 })();
+
+document.addEventListener("DOMContentLoaded", async () => {
+  const productsGrid = document.getElementById("productsGrid");
+
+  if (!productsGrid) return;
+
+  try {
+    const response = await fetch("/products.json");
+
+    if (!response.ok) {
+      throw new Error(`Failed to load products.json: ${response.status}`);
+    }
+
+    const { products } = await response.json();
+
+    if (!Array.isArray(products)) {
+      throw new Error("Invalid products data.");
+    }
+
+    const productCardsHtml = products
+      .map((product) => {
+        const imagePath = product.imagePath;
+
+        return `
+          <article class="product-card">
+            <div class="product-media">
+              <div class="product-tag">${product.category}</div>
+              <img
+                src="${imagePath}"
+                alt="${product.name}"
+                loading="lazy"
+                onerror="this.closest('.product-media').classList.add('img-missing'); this.style.display='none';"
+              />
+              <div class="img-fallback" aria-hidden="true">
+                <i class="fa-solid fa-box"></i>
+                <div>
+                  <div class="fallback-title">Image Placeholder</div>
+                  <div class="fallback-sub">\`${imagePath}\`</div>
+                </div>
+              </div>
+            </div>
+            <div class="product-body">
+              <h3 class="product-title">${product.name}</h3>
+              <div class="product-meta">
+                <span class="pill"><i class="fa-solid fa-hashtag"></i> Model: ${product.model}</span>
+                <span class="pill"><i class="fa-solid fa-ruler-combined"></i> Spec: ${product.spec}</span>
+                <span class="pill"><i class="fa-solid fa-box-open"></i> MOQ: ${product.moq}</span>
+              </div>
+              <p class="product-desc">${product.description}</p>
+              <a
+                class="btn btn-primary w-full justify-center"
+                href="#contact"
+                data-product-name="${product.name}"
+                data-inquire="${product.model}"
+              >
+                <i class="fa-solid fa-paper-plane"></i>
+                Inquire Now
+              </a>
+            </div>
+          </article>
+        `;
+      })
+      .join("");
+
+    productsGrid.innerHTML = productCardsHtml;
+
+    productsGrid.querySelectorAll("[data-product-name]").forEach((button) => {
+      button.addEventListener("click", () => {
+        alert(button.getAttribute("data-product-name"));
+      });
+    });
+  } catch (error) {
+    console.error("Product rendering failed:", error);
+    productsGrid.innerHTML = `
+      <div class="note">
+        <i class="fa-solid fa-circle-exclamation"></i>
+        <span>Unable to load products at the moment. Please try again later.</span>
+      </div>
+    `;
+  }
+});
