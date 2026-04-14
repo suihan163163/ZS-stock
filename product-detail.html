@@ -1,0 +1,406 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>Product Details | WENZHOU ZHUOSHI SPARE PARTS CO., LTD.</title>
+
+  <meta name="description" content="Detailed product information and specifications" />
+  <meta name="keywords" content="motorcycle parts, product details, specifications" />
+  <meta name="robots" content="index,follow" />
+
+  <!-- Tailwind CSS (CDN allowed) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Font Awesome (CDN allowed) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
+
+  <link rel="stylesheet" href="./style.css" />
+</head>
+
+<body class="bg-white text-slate-900 antialiased">
+  <!-- Skip link -->
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <!-- Sticky Header -->
+  <header id="top" class="site-header">
+    <div class="container mx-auto px-5 sm:px-6 lg:px-8">
+      <div class="header-inner">
+        <a href="index.html" class="brand" aria-label="Go to Home">
+          <img class="brand-logo" src="./images/logo.png" alt="Company logo" />
+          <div class="brand-text">
+            <div class="brand-name">
+              WENZHOU ZHUOSHI SPARE PARTS CO., LTD.
+            </div>
+            <div class="brand-sub">
+              OEM/ODM • Wholesale • Export to USA
+            </div>
+          </div>
+        </a>
+
+        <nav class="nav-desktop" aria-label="Primary">
+          <a class="nav-link" href="index.html#home">Home</a>
+          <div class="nav-dropdown">
+            <a class="nav-link dropdown-toggle" href="index.html#products">Products</a>
+            <div class="dropdown-menu">
+              <a class="dropdown-item" href="index.html#products?category=All">All Products</a>
+              <a class="dropdown-item" href="index.html#products?category=Wholesale">Wholesale</a>
+              <a class="dropdown-item" href="index.html#products?category=OEM/ODM">OEM/ODM</a>
+              <a class="dropdown-item" href="index.html#products?category=Hot Sale">Hot Sale</a>
+              <a class="dropdown-item" href="index.html#products?category=US Market">US Market</a>
+              <a class="dropdown-item" href="index.html#products?category=QC Focus">QC Focus</a>
+            </div>
+          </div>
+          <a class="nav-link" href="index.html#about">About Us</a>
+          <a class="nav-link" href="index.html#factory">Factory</a>
+          <a class="nav-link" href="index.html#contact">Contact</a>
+        </nav>
+
+        <div class="header-actions">
+          <a class="btn btn-outline hidden sm:inline-flex" href="index.html#contact">
+            <i class="fa-solid fa-envelope"></i>
+            Get a Quote
+          </a>
+
+          <button id="menuBtn" class="icon-btn md:hidden" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
+            <i class="fa-solid fa-bars"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu" hidden>
+      <div class="container mx-auto px-5 sm:px-6 lg:px-8">
+        <div class="mobile-card">
+          <a class="mobile-link" href="index.html#home">Home</a>
+          <a class="mobile-link" href="index.html#products">Products</a>
+          <a class="mobile-link" href="index.html#about">About Us</a>
+          <a class="mobile-link" href="index.html#factory">Factory</a>
+          <a class="mobile-link" href="index.html#contact">Contact</a>
+
+          <div class="mobile-cta">
+            <a class="btn btn-primary w-full justify-center" href="index.html#contact">
+              <i class="fa-solid fa-bolt"></i>
+              Inquire Now
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- WhatsApp floating button -->
+  <a
+    class="whatsapp-float"
+    href="https://wa.me/2349052483707"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Chat on WhatsApp"
+    title="WhatsApp"
+  >
+    <i class="fa-brands fa-whatsapp"></i>
+    <span class="whatsapp-text hidden sm:inline">WhatsApp</span>
+  </a>
+
+  <main id="main">
+    <!-- Breadcrumb -->
+    <section class="breadcrumb-section">
+      <div class="container mx-auto px-5 sm:px-6 lg:px-8">
+        <div class="breadcrumb">
+          <a href="index.html" class="breadcrumb-link">Home</a>
+          <span class="breadcrumb-separator">/</span>
+          <a href="index.html#products" class="breadcrumb-link">Products</a>
+          <span class="breadcrumb-separator">/</span>
+          <span id="breadcrumb-product" class="breadcrumb-current">Product Details</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Product Details -->
+    <section class="section">
+      <div class="container mx-auto px-5 sm:px-6 lg:px-8">
+        <div id="productDetail" class="product-detail">
+          <!-- Loading state -->
+          <div class="loading-state">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>Loading product details...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Related Products -->
+    <section class="section section-muted">
+      <div class="container mx-auto px-5 sm:px-6 lg:px-8">
+        <div class="section-head">
+          <div>
+            <h2 class="section-title">Related Products</h2>
+            <p class="section-subtitle">Explore other products in the same category</p>
+          </div>
+        </div>
+        <div id="relatedProducts" class="products-grid product-grid" aria-label="Related products"></div>
+      </div>
+    </section>
+
+    <!-- Inquiry Section -->
+    <section class="section">
+      <div class="container mx-auto px-5 sm:px-6 lg:px-8">
+        <div class="inquiry-card">
+          <div class="inquiry-content">
+            <h3 class="inquiry-title">Interested in this product?</h3>
+            <p class="inquiry-text">Send us an inquiry with your requirements and we'll get back to you within 24 hours.</p>
+          </div>
+          <a id="inquiryBtn" class="btn btn-primary" href="index.html#contact">
+            <i class="fa-solid fa-paper-plane"></i>
+            Send Inquiry
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container mx-auto px-5 sm:px-6 lg:px-8">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <img class="footer-logo" src="./images/logo.png" alt="Company logo" />
+            <div>
+              <div class="brand-name">
+                WENZHOU ZHUOSHI SPARE PARTS CO., LTD.
+              </div>
+              <div class="brand-sub">
+                Industrial-grade manufacturing for US B2B buyers.
+              </div>
+            </div>
+          </div>
+          <p class="footer-note">
+            Motorcycle parts manufacturer in Wenzhou, China—wholesale supply, OEM/ODM development, QC-backed consistency.
+          </p>
+        </div>
+
+        <div class="footer-links">
+          <div class="footer-col">
+            <div class="footer-title">Navigate</div>
+            <a class="footer-link" href="index.html#home">Home</a>
+            <a class="footer-link" href="index.html#products">Products</a>
+            <a class="footer-link" href="index.html#about">About Us</a>
+            <a class="footer-link" href="index.html#factory">Factory</a>
+            <a class="footer-link" href="index.html#contact">Contact</a>
+          </div>
+
+          <div class="footer-col">
+            <div class="footer-title">Compliance</div>
+            <a class="footer-link" href="index.html#privacy">Privacy Policy</a>
+            <a class="footer-link" href="index.html#terms">Terms of Service</a>
+          </div>
+
+          <div class="footer-col">
+            <div class="footer-title">Social</div>
+            <a class="footer-link" href="#" target="_blank" rel="noopener noreferrer">
+              <i class="fa-brands fa-facebook-f"></i> Facebook
+            </a>
+            <a class="footer-link" href="#" target="_blank" rel="noopener noreferrer">
+              <i class="fa-brands fa-tiktok"></i> TikTok
+            </a>
+            <a class="footer-link" href="#" target="_blank" rel="noopener noreferrer">
+              <i class="fa-solid fa-store"></i> Jumia
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div class="copyright">
+          © <span id="year"></span>
+          WENZHOU ZHUOSHI SPARE PARTS CO., LTD. All rights reserved.
+        </div>
+        <a class="back-top" href="#top" aria-label="Back to top">
+          <i class="fa-solid fa-arrow-up"></i>
+          Back to top
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./script.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const productDetail = document.getElementById('productDetail');
+      const relatedProducts = document.getElementById('relatedProducts');
+      const breadcrumbProduct = document.getElementById('breadcrumb-product');
+      const inquiryBtn = document.getElementById('inquiryBtn');
+
+      // Get product ID from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const productId = parseInt(urlParams.get('id'));
+
+      if (!productId) {
+        productDetail.innerHTML = `
+          <div class="error-state">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <h3>Product Not Found</h3>
+            <p>The product you're looking for doesn't exist.</p>
+            <a href="index.html#products" class="btn btn-primary">
+              <i class="fa-solid fa-arrow-left"></i>
+              Back to Products
+            </a>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const response = await fetch('products.json');
+        if (!response.ok) {
+          throw new Error('Failed to load products');
+        }
+
+        const { products } = await response.json();
+        const product = products.find(p => p.id === productId);
+
+        if (!product) {
+          throw new Error('Product not found');
+        }
+
+        // Update breadcrumb
+        breadcrumbProduct.textContent = product.name;
+
+        // Update inquiry button
+        if (inquiryBtn) {
+          inquiryBtn.setAttribute('data-inquire', product.model);
+        }
+
+        // Render product details
+        productDetail.innerHTML = `
+          <div class="product-detail-grid">
+            <div class="product-images">
+              <div class="main-image">
+                <img
+                  src="${product.imagePath}"
+                  alt="${product.name}"
+                  onerror="this.closest('.main-image').classList.add('img-missing'); this.style.display='none';"
+                />
+                <div class="img-fallback" aria-hidden="true">
+                  <i class="fa-solid fa-box"></i>
+                  <div>
+                    <div class="fallback-title">Product Image</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="product-info">
+              <div class="product-category">${product.category}</div>
+              <h1 class="product-title">${product.name}</h1>
+              <div class="product-model">Model: ${product.model}</div>
+              
+              <div class="product-specs">
+                <div class="spec-item">
+                  <span class="spec-label">Specification:</span>
+                  <span class="spec-value">${product.spec}</span>
+                </div>
+                <div class="spec-item">
+                  <span class="spec-label">Minimum Order Quantity:</span>
+                  <span class="spec-value">${product.moq}</span>
+                </div>
+              </div>
+              
+              <div class="product-description">
+                <h3>Description</h3>
+                <p>${product.description}</p>
+              </div>
+              
+              <div class="product-actions">
+                <a
+                  class="btn btn-primary w-full sm:w-auto"
+                  href="index.html#contact"
+                  data-inquire="${product.model}"
+                >
+                  <i class="fa-solid fa-paper-plane"></i>
+                  Inquire Now
+                </a>
+                <a
+                  class="btn btn-outline w-full sm:w-auto mt-2 sm:mt-0 sm:ml-2"
+                  href="index.html#products"
+                >
+                  <i class="fa-solid fa-arrow-left"></i>
+                  Back to Products
+                </a>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Render related products
+        const related = products.filter(p => p.id !== productId && p.category === product.category);
+        if (related.length > 0) {
+          relatedProducts.innerHTML = related.map(p => `
+            <article class="product-card">
+              <a href="product-detail.html?id=${p.id}" class="product-link">
+                <div class="product-media">
+                  <div class="product-tag">${p.category}</div>
+                  <img
+                    src="${p.imagePath}"
+                    alt="${p.name}"
+                    loading="lazy"
+                    onerror="this.closest('.product-media').classList.add('img-missing'); this.style.display='none';"
+                  />
+                  <div class="img-fallback" aria-hidden="true">
+                    <i class="fa-solid fa-box"></i>
+                    <div>
+                      <div class="fallback-title">Product Image</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="product-body">
+                  <h3 class="product-title">${p.name}</h3>
+                  <div class="product-meta">
+                    <span class="pill"><i class="fa-solid fa-hashtag"></i> Model: ${p.model}</span>
+                    <span class="pill"><i class="fa-solid fa-ruler-combined"></i> Spec: ${p.spec}</span>
+                    <span class="pill"><i class="fa-solid fa-box-open"></i> MOQ: ${p.moq}</span>
+                  </div>
+                  <p class="product-desc">${p.description}</p>
+                  <div class="product-actions">
+                    <a
+                      class="btn btn-primary w-full justify-center"
+                      href="index.html#contact"
+                      data-inquire="${p.model}"
+                    >
+                      <i class="fa-solid fa-paper-plane"></i>
+                      Inquire Now
+                    </a>
+                  </div>
+                </div>
+              </a>
+            </article>
+          `).join('');
+        } else {
+          relatedProducts.innerHTML = `
+            <div class="note">
+              <i class="fa-solid fa-circle-info"></i>
+              <span>No related products found in this category.</span>
+            </div>
+          `;
+        }
+
+      } catch (error) {
+        console.error('Error loading product details:', error);
+        productDetail.innerHTML = `
+          <div class="error-state">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            <h3>Error Loading Product</h3>
+            <p>We're having trouble loading the product details. Please try again later.</p>
+            <a href="index.html#products" class="btn btn-primary">
+              <i class="fa-solid fa-arrow-left"></i>
+              Back to Products
+            </a>
+          </div>
+        `;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,979 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Panel | Product Management</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
+  <style>
+    :root{
+      --brand-blue: #0B3C6A;
+      --brand-red: #E60012;
+      --bg: #FFFFFF;
+      --bg-muted: #F9FAFB;
+      --line: rgba(17, 24, 39, .10);
+      --text: #1F2937;
+      --muted: rgba(31, 41, 55, .74);
+      --shadow: 0 18px 50px rgba(17,24,39,.14);
+      --radius: 16px;
+    }
+    body{
+      font-family: ui-sans-serif, system-ui, -apple-system, "Inter", "Roboto", "Segoe UI", Arial, sans-serif;
+      background: var(--bg-muted);
+      color: var(--text);
+    }
+    .container{
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+    .card{
+      background: var(--bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+    .btn{
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      font-weight: 600;
+      border: 1px solid var(--line);
+      background: var(--bg);
+      transition: all .15s ease;
+      cursor: pointer;
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(11,60,106,.1);
+    }
+    .btn-primary{
+      background: var(--brand-blue);
+      color: white;
+      border-color: var(--brand-blue);
+    }
+    .btn-danger{
+      background: var(--brand-red);
+      color: white;
+      border-color: var(--brand-red);
+    }
+    .form-group{
+      margin-bottom: 16px;
+    }
+    label{
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--text);
+    }
+    input, select, textarea{
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      font-size: 14px;
+      transition: border-color .15s ease;
+    }
+    input:focus, select:focus, textarea:focus{
+      outline: none;
+      border-color: var(--brand-blue);
+      box-shadow: 0 0 0 3px rgba(11,60,106,.1);
+    }
+    .nav-tabs{
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--line);
+    }
+    .nav-tab{
+      padding: 12px 20px;
+      border-radius: 8px 8px 0 0;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+      border-bottom: 3px solid transparent;
+    }
+    .nav-tab.active{
+      border-bottom-color: var(--brand-blue);
+      color: var(--brand-blue);
+    }
+    .tab-content{
+      display: none;
+    }
+    .tab-content.active{
+      display: block;
+    }
+    .product-grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+    .product-card{
+      background: var(--bg);
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      overflow: hidden;
+      transition: all .15s ease;
+    }
+    .product-card:hover{
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(17,24,39,.12);
+    }
+    .product-image{
+      height: 150px;
+      background: var(--bg-muted);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .product-image img{
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: cover;
+    }
+    .product-info{
+      padding: 16px;
+    }
+    .product-name{
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .product-model{
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 12px;
+    }
+    .product-actions{
+      display: flex;
+      gap: 8px;
+    }
+    .action-btn{
+      flex: 1;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all .15s ease;
+    }
+    .action-btn.edit{
+      background: var(--brand-blue);
+      color: white;
+    }
+    .action-btn.delete{
+      background: var(--brand-red);
+      color: white;
+    }
+    .category-tree{
+      margin: 20px 0;
+    }
+    .category-level{
+      margin-left: 20px;
+    }
+    .category-item{
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      margin-bottom: 4px;
+      transition: background .15s ease;
+    }
+    .category-item:hover{
+      background: var(--bg-muted);
+    }
+    .category-item .name{
+      flex: 1;
+      font-weight: 600;
+    }
+    .category-item .actions{
+      display: flex;
+      gap: 4px;
+    }
+    .category-item .action-btn{
+      padding: 4px 8px;
+      font-size: 10px;
+    }
+    .alert{
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .alert.success{
+      background: rgba(16, 185, 129, .1);
+      border: 1px solid rgba(16, 185, 129, .3);
+      color: #059669;
+    }
+    .alert.error{
+      background: rgba(239, 68, 68, .1);
+      border: 1px solid rgba(239, 68, 68, .3);
+      color: #dc2626;
+    }
+  </style>
+</head>
+<body>
+  <header style="background: var(--brand-blue); color: white; padding: 16px 0;">
+    <div class="container">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <h1 style="font-size: 20px; font-weight: 700;">Admin Panel - Product Management</h1>
+        <a href="index.html" class="btn" style="background: white; color: var(--brand-blue);">
+          <i class="fa-solid fa-arrow-left"></i>
+          Back to Frontend
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <main style="padding: 40px 0;">
+    <div class="container">
+      <!-- Tabs -->
+      <div class="nav-tabs">
+        <div class="nav-tab active" data-tab="products">Products</div>
+        <div class="nav-tab" data-tab="categories">Categories</div>
+        <div class="nav-tab" data-tab="upload">Upload</div>
+      </div>
+
+      <!-- Products Tab -->
+      <div class="tab-content active" id="products">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="font-size: 18px; font-weight: 700;">Products Management</h2>
+            <button class="btn btn-primary" id="addProductBtn">
+              <i class="fa-solid fa-plus"></i>
+              Add Product
+            </button>
+          </div>
+          <div id="productsList" class="product-grid"></div>
+        </div>
+      </div>
+
+      <!-- Categories Tab -->
+      <div class="tab-content" id="categories">
+        <div class="card">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 style="font-size: 18px; font-weight: 700;">Categories Management</h2>
+            <button class="btn btn-primary" id="addCategoryBtn">
+              <i class="fa-solid fa-plus"></i>
+              Add Category
+            </button>
+          </div>
+          <div id="categoriesList" class="category-tree"></div>
+        </div>
+      </div>
+
+      <!-- Upload Tab -->
+      <div class="tab-content" id="upload">
+        <div class="card">
+          <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">Image Upload</h2>
+          <form id="uploadForm">
+            <div class="form-group">
+              <label for="imageFile">Select Image</label>
+              <input type="file" id="imageFile" accept="image/*" required>
+            </div>
+            <button type="submit" class="btn btn-primary">
+              <i class="fa-solid fa-upload"></i>
+              Upload Image
+            </button>
+          </form>
+          <div id="uploadStatus" style="margin-top: 20px;"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Add/Edit Product Modal -->
+  <div id="productModal" style="position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1000; display: none; align-items: center; justify-content: center;">
+    <div style="background: var(--bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 id="modalTitle" style="font-size: 16px; font-weight: 700;">Add Product</h3>
+        <button id="closeProductModal" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+      </div>
+      <form id="productForm">
+        <input type="hidden" id="productId">
+        <div class="form-group">
+          <label for="productName">Product Name</label>
+          <input type="text" id="productName" required>
+        </div>
+        <div class="form-group">
+          <label for="productModel">Model</label>
+          <input type="text" id="productModel" required>
+        </div>
+        <div class="form-group">
+          <label for="productCategory1">Category Level 1</label>
+          <select id="productCategory1" required></select>
+        </div>
+        <div class="form-group">
+          <label for="productCategory2">Category Level 2</label>
+          <select id="productCategory2"></select>
+        </div>
+        <div class="form-group">
+          <label for="productCategory3">Category Level 3</label>
+          <select id="productCategory3"></select>
+        </div>
+        <div class="form-group">
+          <label for="productSpec">Specification</label>
+          <input type="text" id="productSpec" required>
+        </div>
+        <div class="form-group">
+          <label for="productMoq">MOQ</label>
+          <input type="text" id="productMoq" required>
+        </div>
+        <div class="form-group">
+          <label for="productDescription">Description</label>
+          <textarea id="productDescription" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+          <label for="productImage">Image Path</label>
+          <input type="text" id="productImage" placeholder="/images/filename.jpg" required>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button type="submit" class="btn btn-primary" style="flex: 1;">Save</button>
+          <button type="button" id="cancelProductModal" class="btn" style="flex: 1;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add Category Modal -->
+  <div id="categoryModal" style="position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1000; display: none; align-items: center; justify-content: center;">
+    <div style="background: var(--bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; max-width: 400px; width: 90%;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 id="categoryModalTitle" style="font-size: 16px; font-weight: 700;">Add Category</h3>
+        <button id="closeCategoryModal" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+      </div>
+      <form id="categoryForm">
+        <input type="hidden" id="categoryId">
+        <div class="form-group">
+          <label for="categoryName">Category Name</label>
+          <input type="text" id="categoryName" required>
+        </div>
+        <div class="form-group">
+          <label for="categoryLevel">Level</label>
+          <select id="categoryLevel" required>
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+          </select>
+        </div>
+        <div class="form-group" id="parentCategoryGroup">
+          <label for="parentCategory">Parent Category</label>
+          <select id="parentCategory"></select>
+        </div>
+        <div style="display: flex; gap: 10px; margin-top: 20px;">
+          <button type="submit" class="btn btn-primary" style="flex: 1;">Save</button>
+          <button type="button" id="cancelCategoryModal" class="btn" style="flex: 1;">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    let productsData = {
+      categories: {
+        "Knight motorcycle": {
+          "BAJAJ": ["BAJAJ 100", "CT100"],
+          "CG": ["CG 125", "CG 150", "CGL 125", "CGL 150", "CGL 200"],
+          "CD": ["CD 110"],
+          "CB": ["CB 125"],
+          "RS": ["RS 125"],
+          "YB": ["YB 100"],
+          "AX": ["AX 100"],
+          "GN": ["GN 125"],
+          "TVS": ["HLX"]
+        },
+        "Scooter motorcycle": {
+          "GY6": ["GY6 125"]
+        },
+        "ATV": {
+          "Honda": ["TRX90X", "TRX250X"]
+        },
+        "Tricycle": {},
+        "Curved beam motorcycle": {},
+        "Fuel tricycle": {},
+        "Off-road Motorcycle": {},
+        "Motorcycles in South America": {},
+        "Modification parts": {
+          "shock absorber": [],
+          "handle": []
+        },
+        "Passenger Cars": {},
+        "Commercial Vehicles": {},
+        "excavator": {}
+      },
+      products: [
+        {
+          "id": 1,
+          "name": "Performance Brake Pads",
+          "model": "M126-0020-00",
+          "category": "Wholesale",
+          "spec": "Semi-metallic",
+          "moq": "500 sets",
+          "description": "Stable friction coefficient, low dust, consistent batch performance.",
+          "imagePath": "/images/M126-0020-00.jpg",
+          "category1": "Knight motorcycle",
+          "category2": "CG",
+          "category3": "CG 125"
+        },
+        {
+          "id": 2,
+          "name": "Drive Chain Sprocket",
+          "model": "M139-0021-00",
+          "category": "OEM/ODM",
+          "spec": "Steel, 428/520",
+          "moq": "300 pcs",
+          "description": "Heat-treated for durability, precise tooth profile, custom branding.",
+          "imagePath": "/images/M139-0021-00.jpg",
+          "category1": "Knight motorcycle",
+          "category2": "BAJAJ",
+          "category3": "BAJAJ 100"
+        },
+        {
+          "id": 3,
+          "name": "Oil Filter Assembly",
+          "model": "M142-0010-00",
+          "category": "Hot Sale",
+          "spec": "Micron-rated media",
+          "moq": "1000 pcs",
+          "description": "Leak-tested sealing, stable filtration, consistent thread tolerance.",
+          "imagePath": "/images/M142-0010-00.jpg",
+          "category1": "Knight motorcycle",
+          "category2": "CG",
+          "category3": "CG 150"
+        },
+        {
+          "id": 4,
+          "name": "Clutch Plate Set",
+          "model": "M146-0050-00",
+          "category": "Wholesale",
+          "spec": "Friction + Steel",
+          "moq": "200 sets",
+          "description": "Smooth engagement, stable thickness, optimized for long service life.",
+          "imagePath": "/images/M146-0050-00.jpg",
+          "category1": "Knight motorcycle",
+          "category2": "CD",
+          "category3": "CD 110"
+        },
+        {
+          "id": 5,
+          "name": "CNC Aluminum Handlebar",
+          "model": "WZ-HB-5005",
+          "category": "OEM/ODM",
+          "spec": "6061-T6",
+          "moq": "100 pcs",
+          "description": "Anodized finish, precise machining, custom colors & logos.",
+          "imagePath": "/images/product5.jpg",
+          "category1": "Modification parts",
+          "category2": "handle",
+          "category3": ""
+        },
+        {
+          "id": 6,
+          "name": "LED Turn Signal Kit",
+          "model": "M151-0070-00",
+          "category": "US Market",
+          "spec": "12V, Waterproof",
+          "moq": "300 sets",
+          "description": "High-visibility light output, vibration resistance, stable connectors.",
+          "imagePath": "/images/M151-0070-00.jpg",
+          "category1": "Scooter motorcycle",
+          "category2": "GY6",
+          "category3": "GY6 125"
+        },
+        {
+          "id": 7,
+          "name": "Wheel Bearing Set",
+          "model": "M170-0050-00",
+          "category": "QC Focus",
+          "spec": "Sealed, High-temp",
+          "moq": "500 sets",
+          "description": "Low noise, smooth rotation, controlled clearance for consistency.",
+          "imagePath": "/images/M170-0050-00.jpg",
+          "category1": "ATV",
+          "category2": "Honda",
+          "category3": "TRX90X"
+        },
+        {
+          "id": 8,
+          "name": "Air Filter Element",
+          "model": "M200-0050-00",
+          "category": "Wholesale",
+          "spec": "Multi-layer media",
+          "moq": "1000 pcs",
+          "description": "Stable fitment, strong frame, consistent airflow performance.",
+          "imagePath": "/images/M200-0050-00.jpg",
+          "category1": "Knight motorcycle",
+          "category2": "CB",
+          "category3": "CB 125"
+        }
+      ]
+    };
+
+    // DOM Elements
+    const tabs = document.querySelectorAll('.nav-tab');
+    const tabContents = document.querySelectorAll('.tab-content');
+    const productsList = document.getElementById('productsList');
+    const categoriesList = document.getElementById('categoriesList');
+    const addProductBtn = document.getElementById('addProductBtn');
+    const addCategoryBtn = document.getElementById('addCategoryBtn');
+    const productModal = document.getElementById('productModal');
+    const categoryModal = document.getElementById('categoryModal');
+    const closeProductModal = document.getElementById('closeProductModal');
+    const closeCategoryModal = document.getElementById('closeCategoryModal');
+    const cancelProductModal = document.getElementById('cancelProductModal');
+    const cancelCategoryModal = document.getElementById('cancelCategoryModal');
+    const productForm = document.getElementById('productForm');
+    const categoryForm = document.getElementById('categoryForm');
+    const uploadForm = document.getElementById('uploadForm');
+    const uploadStatus = document.getElementById('uploadStatus');
+    const productCategory1 = document.getElementById('productCategory1');
+    const productCategory2 = document.getElementById('productCategory2');
+    const productCategory3 = document.getElementById('productCategory3');
+    const categoryLevel = document.getElementById('categoryLevel');
+    const parentCategory = document.getElementById('parentCategory');
+    const parentCategoryGroup = document.getElementById('parentCategoryGroup');
+
+    // Load data from products.json
+    async function loadData() {
+      try {
+        const response = await fetch('products.json');
+        if (response.ok) {
+          productsData = await response.json();
+          renderProducts();
+          renderCategories();
+          populateCategorySelects();
+        }
+      } catch (error) {
+        console.error('Error loading data:', error);
+      }
+    }
+
+    // Save data to products.json
+    async function saveData() {
+      try {
+        const response = await fetch('products.json', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(productsData, null, 2)
+        });
+        if (response.ok) {
+          showAlert('Data saved successfully!', 'success');
+        } else {
+          showAlert('Error saving data', 'error');
+        }
+      } catch (error) {
+        console.error('Error saving data:', error);
+        showAlert('Error saving data', 'error');
+      }
+    }
+
+    // Render products
+    function renderProducts() {
+      productsList.innerHTML = '';
+      productsData.products.forEach(product => {
+        const productCard = document.createElement('div');
+        productCard.className = 'product-card';
+        productCard.innerHTML = `
+          <div class="product-image">
+            <img src="${product.imagePath}" alt="${product.name}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI0ZGRkZGRiIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjRjBGMGYwIj7kuK3liIflj6/kuI3kuKrkuo88L3RleHQ+PC9zdmc+'">
+          </div>
+          <div class="product-info">
+            <div class="product-name">${product.name}</div>
+            <div class="product-model">${product.model}</div>
+            <div class="product-actions">
+              <button class="action-btn edit" onclick="editProduct(${product.id})">Edit</button>
+              <button class="action-btn delete" onclick="deleteProduct(${product.id})">Delete</button>
+            </div>
+          </div>
+        `;
+        productsList.appendChild(productCard);
+      });
+    }
+
+    // Render categories
+    function renderCategories() {
+      categoriesList.innerHTML = '';
+      Object.keys(productsData.categories).forEach(category1 => {
+        const category1Item = document.createElement('div');
+        category1Item.className = 'category-item';
+        category1Item.innerHTML = `
+          <div class="name">${category1}</div>
+          <div class="actions">
+            <button class="action-btn edit" onclick="editCategory('${category1}', 1)">Edit</button>
+            <button class="action-btn delete" onclick="deleteCategory('${category1}', 1)">Delete</button>
+          </div>
+        `;
+        categoriesList.appendChild(category1Item);
+
+        const category2Level = document.createElement('div');
+        category2Level.className = 'category-level';
+        categoriesList.appendChild(category2Level);
+
+        Object.keys(productsData.categories[category1]).forEach(category2 => {
+          const category2Item = document.createElement('div');
+          category2Item.className = 'category-item';
+          category2Item.innerHTML = `
+            <div class="name">${category2}</div>
+            <div class="actions">
+              <button class="action-btn edit" onclick="editCategory('${category2}', 2, '${category1}')">Edit</button>
+              <button class="action-btn delete" onclick="deleteCategory('${category2}', 2, '${category1}')">Delete</button>
+            </div>
+          `;
+          category2Level.appendChild(category2Item);
+
+          const category3Level = document.createElement('div');
+          category3Level.className = 'category-level';
+          category2Level.appendChild(category3Level);
+
+          productsData.categories[category1][category2].forEach(category3 => {
+            const category3Item = document.createElement('div');
+            category3Item.className = 'category-item';
+            category3Item.innerHTML = `
+              <div class="name">${category3}</div>
+              <div class="actions">
+                <button class="action-btn edit" onclick="editCategory('${category3}', 3, '${category1}', '${category2}')">Edit</button>
+                <button class="action-btn delete" onclick="deleteCategory('${category3}', 3, '${category1}', '${category2}')">Delete</button>
+              </div>
+            `;
+            category3Level.appendChild(category3Item);
+          });
+        });
+      });
+    }
+
+    // Populate category selects
+    function populateCategorySelects() {
+      // Populate level 1
+      productCategory1.innerHTML = '';
+      const defaultOption1 = document.createElement('option');
+      defaultOption1.value = '';
+      defaultOption1.textContent = 'Select Level 1';
+      productCategory1.appendChild(defaultOption1);
+      
+      Object.keys(productsData.categories).forEach(category1 => {
+        const option = document.createElement('option');
+        option.value = category1;
+        option.textContent = category1;
+        productCategory1.appendChild(option);
+      });
+
+      // Populate level 2 when level 1 changes
+      productCategory1.addEventListener('change', function() {
+        const selectedCategory1 = this.value;
+        productCategory2.innerHTML = '';
+        productCategory3.innerHTML = '';
+        
+        const defaultOption2 = document.createElement('option');
+        defaultOption2.value = '';
+        defaultOption2.textContent = 'Select Level 2';
+        productCategory2.appendChild(defaultOption2);
+        
+        if (selectedCategory1) {
+          Object.keys(productsData.categories[selectedCategory1]).forEach(category2 => {
+            const option = document.createElement('option');
+            option.value = category2;
+            option.textContent = category2;
+            productCategory2.appendChild(option);
+          });
+        }
+      });
+
+      // Populate level 3 when level 2 changes
+      productCategory2.addEventListener('change', function() {
+        const selectedCategory1 = productCategory1.value;
+        const selectedCategory2 = this.value;
+        productCategory3.innerHTML = '';
+        
+        const defaultOption3 = document.createElement('option');
+        defaultOption3.value = '';
+        defaultOption3.textContent = 'Select Level 3';
+        productCategory3.appendChild(defaultOption3);
+        
+        if (selectedCategory1 && selectedCategory2) {
+          productsData.categories[selectedCategory1][selectedCategory2].forEach(category3 => {
+            const option = document.createElement('option');
+            option.value = category3;
+            option.textContent = category3;
+            productCategory3.appendChild(option);
+          });
+        }
+      });
+
+      // Update parent category options when level changes
+      categoryLevel.addEventListener('change', function() {
+        const level = parseInt(this.value);
+        if (level === 1) {
+          parentCategoryGroup.style.display = 'none';
+        } else {
+          parentCategoryGroup.style.display = 'block';
+          parentCategory.innerHTML = '';
+          
+          const defaultOption = document.createElement('option');
+          defaultOption.value = '';
+          defaultOption.textContent = `Select Parent ${level === 2 ? 'Level 1' : 'Level 2'}`;
+          parentCategory.appendChild(defaultOption);
+          
+          if (level === 2) {
+            Object.keys(productsData.categories).forEach(category1 => {
+              const option = document.createElement('option');
+              option.value = category1;
+              option.textContent = category1;
+              parentCategory.appendChild(option);
+            });
+          } else if (level === 3) {
+            // For level 3, we need to show all level 2 categories
+            Object.keys(productsData.categories).forEach(category1 => {
+              Object.keys(productsData.categories[category1]).forEach(category2 => {
+                const option = document.createElement('option');
+                option.value = `${category1}|${category2}`;
+                option.textContent = `${category1} > ${category2}`;
+                parentCategory.appendChild(option);
+              });
+            });
+          }
+        }
+      });
+    }
+
+    // Show alert
+    function showAlert(message, type) {
+      const alert = document.createElement('div');
+      alert.className = `alert ${type}`;
+      alert.innerHTML = `
+        <i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+        <span>${message}</span>
+      `;
+      uploadStatus.innerHTML = '';
+      uploadStatus.appendChild(alert);
+      
+      setTimeout(() => {
+        alert.remove();
+      }, 3000);
+    }
+
+    // Add product
+    function addProduct() {
+      document.getElementById('modalTitle').textContent = 'Add Product';
+      document.getElementById('productId').value = '';
+      document.getElementById('productName').value = '';
+      document.getElementById('productModel').value = '';
+      document.getElementById('productCategory1').value = '';
+      document.getElementById('productCategory2').value = '';
+      document.getElementById('productCategory3').value = '';
+      document.getElementById('productSpec').value = '';
+      document.getElementById('productMoq').value = '';
+      document.getElementById('productDescription').value = '';
+      document.getElementById('productImage').value = '';
+      productModal.style.display = 'flex';
+    }
+
+    // Edit product
+    function editProduct(id) {
+      const product = productsData.products.find(p => p.id === id);
+      if (product) {
+        document.getElementById('modalTitle').textContent = 'Edit Product';
+        document.getElementById('productId').value = product.id;
+        document.getElementById('productName').value = product.name;
+        document.getElementById('productModel').value = product.model;
+        document.getElementById('productCategory1').value = product.category1;
+        // Trigger change event to populate level 2
+        const event = new Event('change');
+        productCategory1.dispatchEvent(event);
+        setTimeout(() => {
+          document.getElementById('productCategory2').value = product.category2;
+          // Trigger change event to populate level 3
+          productCategory2.dispatchEvent(event);
+          setTimeout(() => {
+            document.getElementById('productCategory3').value = product.category3;
+          }, 100);
+        }, 100);
+        document.getElementById('productSpec').value = product.spec;
+        document.getElementById('productMoq').value = product.moq;
+        document.getElementById('productDescription').value = product.description;
+        document.getElementById('productImage').value = product.imagePath;
+        productModal.style.display = 'flex';
+      }
+    }
+
+    // Delete product
+    function deleteProduct(id) {
+      if (confirm('Are you sure you want to delete this product?')) {
+        productsData.products = productsData.products.filter(p => p.id !== id);
+        renderProducts();
+        saveData();
+      }
+    }
+
+    // Add category
+    function addCategory() {
+      document.getElementById('categoryModalTitle').textContent = 'Add Category';
+      document.getElementById('categoryId').value = '';
+      document.getElementById('categoryName').value = '';
+      document.getElementById('categoryLevel').value = '1';
+      categoryLevel.dispatchEvent(new Event('change'));
+      categoryModal.style.display = 'flex';
+    }
+
+    // Edit category
+    function editCategory(name, level, parent1 = '', parent2 = '') {
+      document.getElementById('categoryModalTitle').textContent = 'Edit Category';
+      document.getElementById('categoryId').value = JSON.stringify({ name, level, parent1, parent2 });
+      document.getElementById('categoryName').value = name;
+      document.getElementById('categoryLevel').value = level;
+      categoryLevel.dispatchEvent(new Event('change'));
+      
+      if (level === 2) {
+        parentCategory.value = parent1;
+      } else if (level === 3) {
+        parentCategory.value = `${parent1}|${parent2}`;
+      }
+      
+      categoryModal.style.display = 'flex';
+    }
+
+    // Delete category
+    function deleteCategory(name, level, parent1 = '', parent2 = '') {
+      if (confirm('Are you sure you want to delete this category?')) {
+        if (level === 1) {
+          delete productsData.categories[name];
+        } else if (level === 2) {
+          delete productsData.categories[parent1][name];
+        } else if (level === 3) {
+          productsData.categories[parent1][parent2] = productsData.categories[parent1][parent2].filter(c => c !== name);
+        }
+        renderCategories();
+        populateCategorySelects();
+        saveData();
+      }
+    }
+
+    // Event listeners
+    tabs.forEach(tab => {
+      tab.addEventListener('click', function() {
+        const tabId = this.dataset.tab;
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById(tabId).classList.add('active');
+      });
+    });
+
+    addProductBtn.addEventListener('click', addProduct);
+    addCategoryBtn.addEventListener('click', addCategory);
+
+    closeProductModal.addEventListener('click', () => productModal.style.display = 'none');
+    closeCategoryModal.addEventListener('click', () => categoryModal.style.display = 'none');
+    cancelProductModal.addEventListener('click', () => productModal.style.display = 'none');
+    cancelCategoryModal.addEventListener('click', () => categoryModal.style.display = 'none');
+
+    productForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const id = parseInt(document.getElementById('productId').value) || Date.now();
+      const name = document.getElementById('productName').value;
+      const model = document.getElementById('productModel').value;
+      const category1 = document.getElementById('productCategory1').value;
+      const category2 = document.getElementById('productCategory2').value;
+      const category3 = document.getElementById('productCategory3').value;
+      const spec = document.getElementById('productSpec').value;
+      const moq = document.getElementById('productMoq').value;
+      const description = document.getElementById('productDescription').value;
+      const imagePath = document.getElementById('productImage').value;
+
+      const product = {
+        id,
+        name,
+        model,
+        category: 'Wholesale', // Default category
+        spec,
+        moq,
+        description,
+        imagePath,
+        category1,
+        category2,
+        category3
+      };
+
+      const existingIndex = productsData.products.findIndex(p => p.id === id);
+      if (existingIndex >= 0) {
+        productsData.products[existingIndex] = product;
+      } else {
+        productsData.products.push(product);
+      }
+
+      renderProducts();
+      productModal.style.display = 'none';
+      saveData();
+    });
+
+    categoryForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const id = JSON.parse(document.getElementById('categoryId').value || '{}');
+      const name = document.getElementById('categoryName').value;
+      const level = parseInt(document.getElementById('categoryLevel').value);
+      const parentValue = document.getElementById('parentCategory').value;
+
+      // Delete old category if editing
+      if (id.name) {
+        if (id.level === 1) {
+          delete productsData.categories[id.name];
+        } else if (id.level === 2) {
+          delete productsData.categories[id.parent1][id.name];
+        } else if (id.level === 3) {
+          productsData.categories[id.parent1][id.parent2] = productsData.categories[id.parent1][id.parent2].filter(c => c !== id.name);
+        }
+      }
+
+      // Add new category
+      if (level === 1) {
+        productsData.categories[name] = {};
+      } else if (level === 2) {
+        if (!productsData.categories[parentValue]) {
+          productsData.categories[parentValue] = {};
+        }
+        productsData.categories[parentValue][name] = [];
+      } else if (level === 3) {
+        const [parent1, parent2] = parentValue.split('|');
+        if (!productsData.categories[parent1]) {
+          productsData.categories[parent1] = {};
+        }
+        if (!productsData.categories[parent1][parent2]) {
+          productsData.categories[parent1][parent2] = [];
+        }
+        productsData.categories[parent1][parent2].push(name);
+      }
+
+      renderCategories();
+      populateCategorySelects();
+      categoryModal.style.display = 'none';
+      saveData();
+    });
+
+    uploadForm.addEventListener('submit', function(e) {
+      e.preventDefault();
+      const fileInput = document.getElementById('imageFile');
+      const file = fileInput.files[0];
+      
+      if (file) {
+        // In a real implementation, you would upload the file to the server
+        // For this demo, we'll just simulate a successful upload
+        showAlert(`Image ${file.name} uploaded successfully!`, 'success');
+        fileInput.value = '';
+      }
+    });
+
+    // Initialize
+    loadData();
+  </script>
+</body>
+</html>

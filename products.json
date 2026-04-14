@@ -1,44 +1,87 @@
 {
+  "categories": {
+    "Knight motorcycle": {
+      "BAJAJ": ["BAJAJ 100", "CT100"],
+      "CG": ["CG 125", "CG 150", "CGL 125", "CGL 150", "CGL 200"],
+      "CD": ["CD 110"],
+      "CB": ["CB 125"],
+      "RS": ["RS 125"],
+      "YB": ["YB 100"],
+      "AX": ["AX 100"],
+      "GN": ["GN 125"],
+      "TVS": ["HLX"]
+    },
+    "Scooter motorcycle": {
+      "GY6": ["GY6 125"]
+    },
+    "ATV": {
+      "Honda": ["TRX90X", "TRX250X"]
+    },
+    "Tricycle": {},
+    "Curved beam motorcycle": {},
+    "Fuel tricycle": {},
+    "Off-road Motorcycle": {},
+    "Motorcycles in South America": {},
+    "Modification parts": {
+      "shock absorber": [],
+      "handle": []
+    },
+    "Passenger Cars": {},
+    "Commercial Vehicles": {},
+    "excavator": {}
+  },
   "products": [
     {
       "id": 1,
       "name": "Performance Brake Pads",
-      "model": "WZ-OF-1001",
+      "model": "M126-0020-00",
       "category": "Wholesale",
       "spec": "Semi-metallic",
       "moq": "500 sets",
       "description": "Stable friction coefficient, low dust, consistent batch performance.",
-      "imagePath": "/images/product1.jpg"
+      "imagePath": "/images/M126-0020-00.jpg",
+      "category1": "Knight motorcycle",
+      "category2": "CG",
+      "category3": "CG 125"
     },
     {
       "id": 2,
       "name": "Drive Chain Sprocket",
-      "model": "WZ-SP-2002",
+      "model": "M139-0021-00",
       "category": "OEM/ODM",
       "spec": "Steel, 428/520",
       "moq": "300 pcs",
       "description": "Heat-treated for durability, precise tooth profile, custom branding.",
-      "imagePath": "/images/product2.jpg"
+      "imagePath": "/images/M139-0021-00.jpg",
+      "category1": "Knight motorcycle",
+      "category2": "BAJAJ",
+      "category3": "BAJAJ 100"
     },
     {
       "id": 3,
       "name": "Oil Filter Assembly",
-      "model": "WZ-OF-3003",
+      "model": "M142-0010-00",
       "category": "Hot Sale",
       "spec": "Micron-rated media",
       "moq": "1000 pcs",
       "description": "Leak-tested sealing, stable filtration, consistent thread tolerance.",
-      "imagePath": "/images/product3.jpg"
+      "imagePath": "/images/M142-0010-00.jpg",
+      "category1": "Knight motorcycle",
+      "category2": "CG",
+      "category3": "CG 150"
     },
     {
       "id": 4,
       "name": "Clutch Plate Set",
-      "model": "WZ-CP-4004",
+      "model": "M146-0050-00",
       "category": "Wholesale",
       "spec": "Friction + Steel",
       "moq": "200 sets",
       "description": "Smooth engagement, stable thickness, optimized for long service life.",
-      "imagePath": "/images/product4.jpg"
+      "imagePath": "/images/M146-0050-00.jpg",
+      "category1": "Knight motorcycle",
+      "category2": "CD",
+      "category3": "CD 110"
     },
     {
       "id": 5,
@@ -48,37 +91,49 @@
       "spec": "6061-T6",
       "moq": "100 pcs",
       "description": "Anodized finish, precise machining, custom colors & logos.",
-      "imagePath": "/images/product5.jpg"
+      "imagePath": "/images/product5.jpg",
+      "category1": "Modification parts",
+      "category2": "handle",
+      "category3": ""
     },
     {
       "id": 6,
       "name": "LED Turn Signal Kit",
-      "model": "WZ-TS-6006",
+      "model": "M151-0070-00",
       "category": "US Market",
       "spec": "12V, Waterproof",
       "moq": "300 sets",
       "description": "High-visibility light output, vibration resistance, stable connectors.",
-      "imagePath": "/images/product6.jpg"
+      "imagePath": "/images/M151-0070-00.jpg",
+      "category1": "Scooter motorcycle",
+      "category2": "GY6",
+      "category3": "GY6 125"
     },
     {
       "id": 7,
       "name": "Wheel Bearing Set",
-      "model": "WZ-WB-7007",
+      "model": "M170-0050-00",
       "category": "QC Focus",
       "spec": "Sealed, High-temp",
       "moq": "500 sets",
       "description": "Low noise, smooth rotation, controlled clearance for consistency.",
-      "imagePath": "/images/product7.jpg"
+      "imagePath": "/images/M170-0050-00.jpg",
+      "category1": "ATV",
+      "category2": "Honda",
+      "category3": "TRX90X"
     },
     {
       "id": 8,
       "name": "Air Filter Element",
-      "model": "WZ-AF-8008",
+      "model": "M200-0050-00",
       "category": "Wholesale",
       "spec": "Multi-layer media",
       "moq": "1000 pcs",
       "description": "Stable fitment, strong frame, consistent airflow performance.",
-      "imagePath": "/images/product8.jpg"
+      "imagePath": "/images/M200-0050-00.jpg",
+      "category1": "Knight motorcycle",
+      "category2": "CB",
+      "category3": "CB 125"
     }
   ]
 }

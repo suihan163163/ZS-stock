@@ -233,7 +233,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   if (!productsGrid) return;
 
   try {
-    const response = await fetch("/products.json");
+    const response = await fetch("products.json");
 
     if (!response.ok) {
       throw new Error(`Failed to load products.json: ${response.status}`);
@@ -245,56 +245,89 @@ document.addEventListener("DOMContentLoaded", async () => {
       throw new Error("Invalid products data.");
     }
 
-    const productCardsHtml = products
+    // Get category parameters from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const category1 = urlParams.get('category1');
+    const category2 = urlParams.get('category2');
+    const category3 = urlParams.get('category3');
+
+    // Filter products by multi-level categories
+    let filteredProducts = products;
+    if (category1) {
+      filteredProducts = filteredProducts.filter(product => product.category1 === category1);
+    }
+    if (category2) {
+      filteredProducts = filteredProducts.filter(product => product.category2 === category2);
+    }
+    if (category3) {
+      filteredProducts = filteredProducts.filter(product => product.category3 === category3);
+    }
+
+    const productCardsHtml = filteredProducts
       .map((product) => {
         const imagePath = product.imagePath;
+        const categoryDisplay = product.category1 || product.category;
 
         return `
           <article class="product-card">
-            <div class="product-media">
-              <div class="product-tag">${product.category}</div>
-              <img
-                src="${imagePath}"
-                alt="${product.name}"
-                loading="lazy"
-                onerror="this.closest('.product-media').classList.add('img-missing'); this.style.display='none';"
-              />
-              <div class="img-fallback" aria-hidden="true">
-                <i class="fa-solid fa-box"></i>
-                <div>
-                  <div class="fallback-title">Image Placeholder</div>
-                  <div class="fallback-sub">\`${imagePath}\`</div>
+            <a href="product-detail.html?id=${product.id}" class="product-link">
+              <div class="product-media">
+                <div class="product-tag">${categoryDisplay}</div>
+                <img
+                  src="${imagePath}"
+                  alt="${product.name}"
+                  loading="lazy"
+                  onerror="this.closest('.product-media').classList.add('img-missing'); this.style.display='none';"
+                />
+                <div class="img-fallback" aria-hidden="true">
+                  <i class="fa-solid fa-box"></i>
+                  <div>
+                    <div class="fallback-title">Product Image</div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div class="product-body">
-              <h3 class="product-title">${product.name}</h3>
-              <div class="product-meta">
-                <span class="pill"><i class="fa-solid fa-hashtag"></i> Model: ${product.model}</span>
-                <span class="pill"><i class="fa-solid fa-ruler-combined"></i> Spec: ${product.spec}</span>
-                <span class="pill"><i class="fa-solid fa-box-open"></i> MOQ: ${product.moq}</span>
+              <div class="product-body">
+                <h3 class="product-title">${product.name}</h3>
+                <div class="product-meta">
+                  <span class="pill"><i class="fa-solid fa-hashtag"></i> Model: ${product.model}</span>
+                  <span class="pill"><i class="fa-solid fa-ruler-combined"></i> Spec: ${product.spec}</span>
+                  <span class="pill"><i class="fa-solid fa-box-open"></i> MOQ: ${product.moq}</span>
+                </div>
+                <p class="product-desc">${product.description}</p>
+                <div class="product-actions">
+                  <a
+                    class="btn btn-primary w-full justify-center"
+                    href="#contact"
+                    data-product-name="${product.name}"
+                    data-inquire="${product.model}"
+                  >
+                    <i class="fa-solid fa-paper-plane"></i>
+                    Inquire Now
+                  </a>
+                </div>
               </div>
-              <p class="product-desc">${product.description}</p>
-              <a
-                class="btn btn-primary w-full justify-center"
-                href="#contact"
-                data-product-name="${product.name}"
-                data-inquire="${product.model}"
-              >
-                <i class="fa-solid fa-paper-plane"></i>
-                Inquire Now
-              </a>
-            </div>
+            </a>
           </article>
         `;
       })
       .join("");
 
-    productsGrid.innerHTML = productCardsHtml;
+    if (filteredProducts.length === 0) {
+      productsGrid.innerHTML = `
+        <div class="note">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>No products found in this category.</span>
+        </div>
+      `;
+    } else {
+      productsGrid.innerHTML = productCardsHtml;
+    }
 
-    productsGrid.querySelectorAll("[data-product-name]").forEach((button) => {
-      button.addEventListener("click", () => {
-        alert(button.getAttribute("data-product-name"));
+    // Handle inquiry buttons
+    productsGrid.querySelectorAll("[data-inquire]").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent the product link from firing
+        // The href="#contact" will handle the scrolling
       });
     });
   } catch (error) {
