@@ -228,7 +228,9 @@
 
   <script src="./script.js"></script>
   <script>
+    console.log('Product detail page loaded');
     document.addEventListener("DOMContentLoaded", async () => {
+      console.log('DOM content loaded');
       const productDetail = document.getElementById('productDetail');
       const relatedProducts = document.getElementById('relatedProducts');
       const breadcrumbProduct = document.getElementById('breadcrumb-product');
@@ -237,8 +239,10 @@
       // Get product ID from URL
       const urlParams = new URLSearchParams(window.location.search);
       const productId = parseInt(urlParams.get('id'));
+      console.log('Product ID:', productId);
 
       if (!productId) {
+        console.log('No product ID found');
         productDetail.innerHTML = `
           <div class="error-state">
             <i class="fa-solid fa-circle-exclamation"></i>
@@ -254,13 +258,18 @@
       }
 
       try {
+        console.log('Fetching products.json');
         const response = await fetch('products.json');
+        console.log('Response status:', response.status);
         if (!response.ok) {
           throw new Error('Failed to load products');
         }
 
-        const { products } = await response.json();
+        const data = await response.json();
+        console.log('Loaded data:', data);
+        const { products } = data;
         const product = products.find(p => p.id === productId);
+        console.log('Found product:', product);
 
         if (!product) {
           throw new Error('Product not found');
@@ -280,7 +289,7 @@
             <div class="product-images">
               <div class="main-image">
                 <img
-                  src="${product.imagePath}"
+                  src=".${product.imagePath}"
                   alt="${product.name}"
                   onerror="this.closest('.main-image').classList.add('img-missing'); this.style.display='none';"
                 />
@@ -305,6 +314,10 @@
                 <div class="spec-item">
                   <span class="spec-label">Minimum Order Quantity:</span>
                   <span class="spec-value">${product.moq}</span>
+                </div>
+                <div class="spec-item">
+                  <span class="spec-label">Category:</span>
+                  <span class="spec-value">${product.category1} / ${product.category2} / ${product.category3 || 'N/A'}</span>
                 </div>
               </div>
               
@@ -336,6 +349,7 @@
 
         // Render related products
         const related = products.filter(p => p.id !== productId && p.category === product.category);
+        console.log('Related products:', related);
         if (related.length > 0) {
           relatedProducts.innerHTML = related.map(p => `
             <article class="product-card">
@@ -343,7 +357,7 @@
                 <div class="product-media">
                   <div class="product-tag">${p.category}</div>
                   <img
-                    src="${p.imagePath}"
+                    src=".${p.imagePath}"
                     alt="${p.name}"
                     loading="lazy"
                     onerror="this.closest('.product-media').classList.add('img-missing'); this.style.display='none';"
@@ -393,6 +407,7 @@
             <i class="fa-solid fa-circle-exclamation"></i>
             <h3>Error Loading Product</h3>
             <p>We're having trouble loading the product details. Please try again later.</p>
+            <p>Error: ${error.message}</p>
             <a href="index.html#products" class="btn btn-primary">
               <i class="fa-solid fa-arrow-left"></i>
               Back to Products

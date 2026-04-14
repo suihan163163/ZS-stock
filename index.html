@@ -169,6 +169,16 @@
             Get a Quote
           </a>
 
+          <button id="loginBtn" class="btn btn-outline hidden sm:inline-flex" type="button" aria-label="Login">
+            <i class="fa-solid fa-user"></i>
+            Login
+          </button>
+
+          <a id="adminBtn" class="btn btn-primary hidden sm:inline-flex" href="admin.html" style="display: none;">
+            <i class="fa-solid fa-cog"></i>
+            Manage Products
+          </a>
+
           <button id="menuBtn" class="icon-btn md:hidden" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mobileMenu">
             <i class="fa-solid fa-bars"></i>
           </button>
@@ -471,54 +481,85 @@
           </a>
         </div>
 
-        <div class="factory-grid">
-          <figure class="photo">
-            <img src="./images/workshop1.jpg" alt="<!-- 中文注释：填写图片描述 -->Workshop photo 1" onerror="this.closest('.photo').classList.add('img-missing'); this.style.display='none';" />
-            <div class="img-fallback" aria-hidden="true">
-              <i class="fa-solid fa-image"></i>
-              <div>
-                <div class="fallback-title">Workshop Photo</div>
-                <div class="fallback-sub">`./images/workshop1.jpg`</div>
-              </div>
+        <div class="factory-carousel">
+          <div class="carousel-container">
+            <div class="carousel-wrapper">
+              <figure class="carousel-item">
+                <div class="carousel-image-container">
+                  <img src="./images/1.jpg" alt="Factory photo 1" onerror="this.closest('.carousel-image-container').classList.add('img-missing'); this.style.display='none';" />
+                  <div class="img-fallback" aria-hidden="true">
+                    <i class="fa-solid fa-image"></i>
+                    <div>
+                      <div class="fallback-title">Factory Photo</div>
+                      <div class="fallback-sub">`./images/1.jpg`</div>
+                    </div>
+                  </div>
+                </div>
+                <figcaption>Factory Interior</figcaption>
+              </figure>
+              <figure class="carousel-item">
+                <div class="carousel-image-container">
+                  <img src="./images/2.jpg" alt="Factory photo 2" onerror="this.closest('.carousel-image-container').classList.add('img-missing'); this.style.display='none';" />
+                  <div class="img-fallback" aria-hidden="true">
+                    <i class="fa-solid fa-image"></i>
+                    <div>
+                      <div class="fallback-title">Factory Photo</div>
+                      <div class="fallback-sub">`./images/2.jpg`</div>
+                    </div>
+                  </div>
+                </div>
+                <figcaption>Production Line</figcaption>
+              </figure>
+              <figure class="carousel-item">
+                <div class="carousel-image-container">
+                  <img src="./images/3.jpg" alt="Factory photo 3" onerror="this.closest('.carousel-image-container').classList.add('img-missing'); this.style.display='none';" />
+                  <div class="img-fallback" aria-hidden="true">
+                    <i class="fa-solid fa-image"></i>
+                    <div>
+                      <div class="fallback-title">Factory Photo</div>
+                      <div class="fallback-sub">`./images/3.jpg`</div>
+                    </div>
+                  </div>
+                </div>
+                <figcaption>Quality Control</figcaption>
+              </figure>
+              <figure class="carousel-item">
+                <div class="carousel-image-container">
+                  <img src="./images/4.jpg" alt="Factory photo 4" onerror="this.closest('.carousel-image-container').classList.add('img-missing'); this.style.display='none';" />
+                  <div class="img-fallback" aria-hidden="true">
+                    <i class="fa-solid fa-image"></i>
+                    <div>
+                      <div class="fallback-title">Factory Photo</div>
+                      <div class="fallback-sub">`./images/4.jpg`</div>
+                    </div>
+                  </div>
+                </div>
+                <figcaption>Packaging Area</figcaption>
+              </figure>
+              <figure class="carousel-item">
+                <div class="carousel-image-container">
+                  <img src="./images/5.jpg" alt="Factory photo 5" onerror="this.closest('.carousel-image-container').classList.add('img-missing'); this.style.display='none';" />
+                  <div class="img-fallback" aria-hidden="true">
+                    <i class="fa-solid fa-image"></i>
+                    <div>
+                      <div class="fallback-title">Factory Photo</div>
+                      <div class="fallback-sub">`./images/5.jpg`</div>
+                    </div>
+                  </div>
+                </div>
+                <figcaption>Warehouse</figcaption>
+              </figure>
             </div>
-            <figcaption><!-- 中文注释：填写图片说明 -->Assembly & Line Management</figcaption>
-          </figure>
-
-          <figure class="photo">
-            <img src="./images/workshop2.jpg" alt="<!-- 中文注释：填写图片描述 -->Workshop photo 2" onerror="this.closest('.photo').classList.add('img-missing'); this.style.display='none';" />
-            <div class="img-fallback" aria-hidden="true">
-              <i class="fa-solid fa-image"></i>
-              <div>
-                <div class="fallback-title">Workshop Photo</div>
-                <div class="fallback-sub">`./images/workshop2.jpg`</div>
-              </div>
-            </div>
-            <figcaption><!-- 中文注释：填写图片说明 -->QC Lab & Testing</figcaption>
-          </figure>
-
-          <figure class="photo">
-            <img src="./images/workshop3.jpg" alt="<!-- 中文注释：填写图片描述 -->Workshop photo 3" onerror="this.closest('.photo').classList.add('img-missing'); this.style.display='none';" />
-            <div class="img-fallback" aria-hidden="true">
-              <i class="fa-solid fa-image"></i>
-              <div>
-                <div class="fallback-title">Workshop Photo</div>
-                <div class="fallback-sub">`./images/workshop3.jpg`</div>
-              </div>
-            </div>
-            <figcaption><!-- 中文注释：填写图片说明 -->Packaging & Warehouse</figcaption>
-          </figure>
-
-          <figure class="photo">
-            <img src="./images/workshop4.jpg" alt="<!-- 中文注释：填写图片描述 -->Workshop photo 4" onerror="this.closest('.photo').classList.add('img-missing'); this.style.display='none';" />
-            <div class="img-fallback" aria-hidden="true">
-              <i class="fa-solid fa-image"></i>
-              <div>
-                <div class="fallback-title">Workshop Photo</div>
-                <div class="fallback-sub">`./images/workshop4.jpg`</div>
-              </div>
-            </div>
-            <figcaption><!-- 中文注释：填写图片说明 -->Material Control & Traceability</figcaption>
-          </figure>
+          </div>
+          <div class="carousel-controls">
+            <button class="carousel-control prev" aria-label="Previous slide">
+              <i class="fa-solid fa-chevron-left"></i>
+            </button>
+            <button class="carousel-control next" aria-label="Next slide">
+              <i class="fa-solid fa-chevron-right"></i>
+            </button>
+          </div>
+          <div class="carousel-indicators"></div>
         </div>
 
         <div class="factory-callout">
@@ -817,6 +858,46 @@
           <!-- 中文注释：可填写合规说明 -->
           Note: This static demo shows a success popup. Integrate a backend or email service to actually receive messages.
         </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="loginModal" class="modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="modal-backdrop" data-close="true"></div>
+    <div class="modal-panel" role="document">
+      <div class="modal-head">
+        <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
+        <div>
+          <div id="loginTitle" class="modal-title">Admin Login</div>
+          <div class="modal-subtitle">
+            Please enter your admin credentials to access the management panel.
+          </div>
+        </div>
+        <button class="icon-btn" type="button" aria-label="Close" data-close="true">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <form id="loginForm" class="form" novalidate>
+          <div class="field">
+            <label for="username">Username</label>
+            <input id="username" name="username" type="text" placeholder="Enter username" autocomplete="username" required />
+          </div>
+
+          <div class="field">
+            <label for="password">Password</label>
+            <input id="password" name="password" type="password" placeholder="Enter password" autocomplete="current-password" required />
+          </div>
+
+          <div class="form-actions">
+            <button class="btn btn-primary w-full justify-center" type="submit">
+              <i class="fa-solid fa-right-to-bracket"></i>
+              Login
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   </div>

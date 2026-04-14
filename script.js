@@ -218,6 +218,119 @@
     });
   }
 
+  // Login functionality
+  const loginBtn = $("#loginBtn");
+  const adminBtn = $("#adminBtn");
+  const loginModal = $("#loginModal");
+  const loginForm = $("#loginForm");
+
+  function openLoginModal() {
+    if (!loginModal) return;
+
+    loginModal.hidden = false;
+    loginModal.setAttribute("aria-hidden", "false");
+
+    // Prevent background scroll
+    document.documentElement.style.overflow = "hidden";
+    document.body.style.overflow = "hidden";
+
+    // Focus username input for accessibility
+    const usernameInput = $("#username");
+    if (usernameInput) usernameInput.focus();
+  }
+
+  function closeLoginModal() {
+    if (!loginModal) return;
+
+    loginModal.hidden = true;
+    loginModal.setAttribute("aria-hidden", "true");
+
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+  }
+
+  function checkLoginStatus() {
+    const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+    if (loginBtn && adminBtn) {
+      if (isLoggedIn) {
+        loginBtn.style.display = 'none';
+        adminBtn.style.display = 'inline-flex';
+      } else {
+        loginBtn.style.display = 'inline-flex';
+        adminBtn.style.display = 'none';
+      }
+    }
+  }
+
+  function login(username, password) {
+    // Hardcoded admin credentials
+    if (username === 'admin' && password === 'zsadmin414') {
+      localStorage.setItem('adminLoggedIn', 'true');
+      checkLoginStatus();
+      closeLoginModal();
+      return true;
+    }
+    return false;
+  }
+
+  // Check login status on page load
+  checkLoginStatus();
+
+  // Login button click event
+  if (loginBtn) {
+    loginBtn.addEventListener('click', openLoginModal);
+  }
+
+  // Login modal close interactions
+  if (loginModal) {
+    loginModal.addEventListener("click", (e) => {
+      const target = e.target;
+      if (!(target instanceof HTMLElement)) return;
+
+      if (target.getAttribute("data-close") === "true") closeLoginModal();
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (loginModal && !loginModal.hidden && e.key === "Escape") closeLoginModal();
+    });
+  }
+
+  // Login form submission
+  if (loginForm) {
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      clearErrors(loginForm);
+
+      const username = $("#username") ? $("#username").value.trim() : "";
+      const password = $("#password") ? $("#password").value.trim() : "";
+
+      let ok = true;
+
+      if (!username) {
+        ok = false;
+        setError($("#username"), "Please enter username.");
+      }
+
+      if (!password) {
+        ok = false;
+        setError($("#password"), "Please enter password.");
+      }
+
+      if (!ok) return;
+
+      if (login(username, password)) {
+        // Login successful
+      } else {
+        // Login failed
+        const form = loginForm;
+        const errorDiv = document.createElement('div');
+        errorDiv.className = 'error-text';
+        errorDiv.textContent = 'Invalid username or password. Please try again.';
+        form.appendChild(errorDiv);
+      }
+    });
+  }
+
   // If page loads with hash, scroll with offset
   window.addEventListener("load", () => {
     const hash = (location.hash || "").replace("#", "");
@@ -225,6 +338,78 @@
       setTimeout(() => smoothScrollToId(hash), 50);
     }
   });
+
+  // Factory Carousel
+  function initCarousel() {
+    const carouselContainer = document.querySelector('.factory-carousel');
+    if (!carouselContainer) return;
+
+    const wrapper = carouselContainer.querySelector('.carousel-wrapper');
+    const items = carouselContainer.querySelectorAll('.carousel-item');
+    const prevBtn = carouselContainer.querySelector('.carousel-control.prev');
+    const nextBtn = carouselContainer.querySelector('.carousel-control.next');
+    const indicatorsContainer = carouselContainer.querySelector('.carousel-indicators');
+
+    let currentIndex = 0;
+    const itemCount = items.length;
+
+    // Create indicators
+    items.forEach((_, index) => {
+      const indicator = document.createElement('button');
+      indicator.className = 'carousel-indicator';
+      if (index === 0) indicator.classList.add('active');
+      indicator.addEventListener('click', () => goToSlide(index));
+      indicatorsContainer.appendChild(indicator);
+    });
+
+    const indicators = carouselContainer.querySelectorAll('.carousel-indicator');
+
+    function updateIndicators() {
+      indicators.forEach((indicator, index) => {
+        if (index === currentIndex) {
+          indicator.classList.add('active');
+        } else {
+          indicator.classList.remove('active');
+        }
+      });
+    }
+
+    function goToSlide(index) {
+      currentIndex = index;
+      const translateX = -index * 100;
+      wrapper.style.transform = `translateX(${translateX}%)`;
+      updateIndicators();
+    }
+
+    function nextSlide() {
+      currentIndex = (currentIndex + 1) % itemCount;
+      goToSlide(currentIndex);
+    }
+
+    function prevSlide() {
+      currentIndex = (currentIndex - 1 + itemCount) % itemCount;
+      goToSlide(currentIndex);
+    }
+
+    // Event listeners
+    if (nextBtn) nextBtn.addEventListener('click', nextSlide);
+    if (prevBtn) prevBtn.addEventListener('click', prevSlide);
+
+    // Auto slide
+    let autoSlideInterval = setInterval(nextSlide, 5000);
+
+    // Pause auto slide on hover
+    carouselContainer.addEventListener('mouseenter', () => {
+      clearInterval(autoSlideInterval);
+    });
+
+    carouselContainer.addEventListener('mouseleave', () => {
+      autoSlideInterval = setInterval(nextSlide, 5000);
+    });
+  }
+
+  // Initialize carousel when DOM is loaded
+  document.addEventListener('DOMContentLoaded', initCarousel);
 })();
 
 document.addEventListener("DOMContentLoaded", async () => {

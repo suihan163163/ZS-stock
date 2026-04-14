@@ -3,7 +3,8 @@ const fs = require('fs');
 const path = require('path');
 
 const server = http.createServer((req, res) => {
-  let filePath = '.' + req.url;
+  // Remove query parameters from the URL
+  let filePath = '.' + req.url.split('?')[0];
   if (filePath === './') {
     filePath = './index.html';
   }
@@ -65,7 +66,7 @@ const server = http.createServer((req, res) => {
   });
 });
 
-const PORT = process.env.PORT || 8083;
+const PORT = process.env.PORT || 8088;
 server.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}/`);
   console.log(`Admin panel available at http://localhost:${PORT}/admin.html`);
