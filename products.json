@@ -1,21 +1,49 @@
 {
   "categories": {
     "Knight motorcycle": {
-      "BAJAJ": ["BAJAJ 100", "CT100"],
-      "CG": ["CG 125", "CG 150", "CGL 125", "CGL 150", "CGL 200"],
-      "CD": ["CD 110"],
-      "CB": ["CB 125"],
-      "RS": ["RS 125"],
-      "YB": ["YB 100"],
-      "AX": ["AX 100"],
-      "GN": ["GN 125"],
-      "TVS": ["HLX"]
+      "BAJAJ": [
+        "BAJAJ 100",
+        "CT100"
+      ],
+      "CG": [
+        "CG 125",
+        "CG 150",
+        "CGL 125",
+        "CGL 150",
+        "CGL 200"
+      ],
+      "CD": [
+        "CD 110"
+      ],
+      "CB": [
+        "CB 125"
+      ],
+      "RS": [
+        "RS 125"
+      ],
+      "YB": [
+        "YB 100"
+      ],
+      "AX": [
+        "AX 100"
+      ],
+      "GN": [
+        "GN 125"
+      ],
+      "TVS": [
+        "HLX"
+      ]
     },
     "Scooter motorcycle": {
-      "GY6": ["GY6 125"]
+      "GY6": [
+        "GY6 125"
+      ]
     },
     "ATV": {
-      "Honda": ["TRX90X", "TRX250X"]
+      "Honda": [
+        "TRX90X",
+        "TRX250X"
+      ]
     },
     "Tricycle": {},
     "Curved beam motorcycle": {},
@@ -39,7 +67,7 @@
       "spec": "Semi-metallic",
       "moq": "500 sets",
       "description": "Stable friction coefficient, low dust, consistent batch performance.",
-      "imagePath": "/images/M126-0020-00.jpg",
+      "imagePath": "/images/upload_1776234681186.jpg",
       "category1": "Knight motorcycle",
       "category2": "CG",
       "category3": "CG 125"
@@ -48,11 +76,11 @@
       "id": 2,
       "name": "Drive Chain Sprocket",
       "model": "M139-0021-00",
-      "category": "OEM/ODM",
+      "category": "Wholesale",
       "spec": "Steel, 428/520",
       "moq": "300 pcs",
       "description": "Heat-treated for durability, precise tooth profile, custom branding.",
-      "imagePath": "/images/M139-0021-00.jpg",
+      "imagePath": "/images/upload_1776235761404.jpg",
       "category1": "Knight motorcycle",
       "category2": "BAJAJ",
       "category3": "BAJAJ 100"
@@ -134,6 +162,19 @@
       "category1": "Knight motorcycle",
       "category2": "CB",
       "category3": "CB 125"
+    },
+    {
+      "id": 1776236200572,
+      "name": "Aluminum alloy shock absorber",
+      "model": "M126-0020-01",
+      "category": "Wholesale",
+      "spec": "10",
+      "moq": "5 ctn",
+      "description": "铝合金减震器Aluminum alloy shock absorber",
+      "imagePath": "/images/upload_1776236200587.jpg",
+      "category1": "Scooter motorcycle",
+      "category2": "GY6",
+      "category3": ""
     }
   ]
 }

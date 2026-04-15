@@ -333,8 +333,11 @@
           <textarea id="productDescription" rows="4" required></textarea>
         </div>
         <div class="form-group">
-          <label for="productImage">Image Path</label>
-          <input type="text" id="productImage" placeholder="/images/filename.jpg" required>
+          <label for="productImage">Product Image</label>
+          <input type="file" id="productImage" accept="image/*" required>
+          <div id="imagePreview" style="margin-top: 10px; display: none;">
+            <img id="previewImg" src="" alt="Preview" style="max-width: 200px; max-height: 200px;">
+          </div>
         </div>
         <div style="display: flex; gap: 10px; margin-top: 20px;">
           <button type="submit" class="btn btn-primary" style="flex: 1;">Save</button>
@@ -669,7 +672,9 @@
       });
 
       // Populate level 2 when level 1 changes
-      productCategory1.addEventListener('change', function() {
+      // Remove existing change event listener before adding a new one
+      // Use a named function to make it easier to remove
+      const handleCategory1Change = function() {
         const selectedCategory1 = this.value;
         productCategory2.innerHTML = '';
         productCategory3.innerHTML = '';
@@ -687,10 +692,14 @@
             productCategory2.appendChild(option);
           });
         }
-      });
+      };
+      
+      // Remove any existing listener with the same name
+      productCategory1.removeEventListener('change', handleCategory1Change);
+      productCategory1.addEventListener('change', handleCategory1Change);
 
       // Populate level 3 when level 2 changes
-      productCategory2.addEventListener('change', function() {
+      const handleCategory2Change = function() {
         const selectedCategory1 = productCategory1.value;
         const selectedCategory2 = this.value;
         productCategory3.innerHTML = '';
@@ -708,59 +717,108 @@
             productCategory3.appendChild(option);
           });
         }
-      });
-
-      // Update parent category options when level changes
-      categoryLevel.addEventListener('change', function() {
-        const level = parseInt(this.value);
-        if (level === 1) {
-          parentCategoryGroup.style.display = 'none';
-        } else {
-          parentCategoryGroup.style.display = 'block';
-          parentCategory.innerHTML = '';
-          
-          const defaultOption = document.createElement('option');
-          defaultOption.value = '';
-          defaultOption.textContent = `Select Parent ${level === 2 ? 'Level 1' : 'Level 2'}`;
-          parentCategory.appendChild(defaultOption);
-          
-          if (level === 2) {
-            Object.keys(productsData.categories).forEach(category1 => {
-              const option = document.createElement('option');
-              option.value = category1;
-              option.textContent = category1;
-              parentCategory.appendChild(option);
-            });
-          } else if (level === 3) {
-            // For level 3, we need to show all level 2 categories
-            Object.keys(productsData.categories).forEach(category1 => {
-              Object.keys(productsData.categories[category1]).forEach(category2 => {
-                const option = document.createElement('option');
-                option.value = `${category1}|${category2}`;
-                option.textContent = `${category1} > ${category2}`;
-                parentCategory.appendChild(option);
-              });
-            });
-          }
-        }
-      });
+      };
+      
+      // Remove any existing listener with the same name
+      productCategory2.removeEventListener('change', handleCategory2Change);
+      productCategory2.addEventListener('change', handleCategory2Change);
     }
 
     // Show alert
     function showAlert(message, type) {
+      // Create alert container if it doesn't exist
+      let alertContainer = document.getElementById('alertContainer');
+      if (!alertContainer) {
+        alertContainer = document.createElement('div');
+        alertContainer.id = 'alertContainer';
+        alertContainer.style.position = 'fixed';
+        alertContainer.style.top = '20px';
+        alertContainer.style.left = '50%';
+        alertContainer.style.transform = 'translateX(-50%)';
+        alertContainer.style.zIndex = '10000';
+        alertContainer.style.width = '80%';
+        alertContainer.style.maxWidth = '600px';
+        document.body.appendChild(alertContainer);
+      }
+      
+      // Create alert element
       const alert = document.createElement('div');
       alert.className = `alert ${type}`;
-      alert.innerHTML = `
-        <i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-        <span>${message}</span>
-      `;
-      uploadStatus.innerHTML = '';
-      uploadStatus.appendChild(alert);
+      alert.style.padding = '16px 20px';
+      alert.style.borderRadius = '8px';
+      alert.style.marginBottom = '10px';
+      alert.style.display = 'flex';
+      alert.style.alignItems = 'center';
+      alert.style.justifyContent = 'space-between';
+      alert.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+      alert.style.animation = 'slideDown 0.3s ease-in-out';
       
+      if (type === 'success') {
+        alert.style.backgroundColor = '#ffffff';
+        alert.style.border = '1px solid #e5e7eb';
+        alert.style.color = '#10b981';
+      } else {
+        alert.style.backgroundColor = '#ffffff';
+        alert.style.border = '1px solid #fecaca';
+        alert.style.color = '#dc2626';
+      }
+      
+      alert.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
+          <span>${message}</span>
+        </div>
+        <button style="background: none; border: none; font-size: 18px; cursor: pointer; color: inherit;">
+          <i class="fa-solid fa-times"></i>
+        </button>
+      `;
+      
+      // Add close button functionality
+      const closeButton = alert.querySelector('button');
+      closeButton.addEventListener('click', () => {
+        alert.style.animation = 'slideUp 0.3s ease-in-out';
+        setTimeout(() => {
+          alert.remove();
+        }, 300);
+      });
+      
+      // Add alert to container
+      alertContainer.appendChild(alert);
+      
+      // Auto remove after 5 seconds
       setTimeout(() => {
-        alert.remove();
-      }, 3000);
+        alert.style.animation = 'slideUp 0.3s ease-in-out';
+        setTimeout(() => {
+          alert.remove();
+        }, 300);
+      }, 5000);
     }
+    
+    // Add CSS animations
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideDown {
+        from {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      @keyframes slideUp {
+        from {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        to {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+      }
+    `;
+    document.head.appendChild(style);
 
     // Add product
     function addProduct() {
@@ -775,6 +833,29 @@
       document.getElementById('productMoq').value = '';
       document.getElementById('productDescription').value = '';
       document.getElementById('productImage').value = '';
+      document.getElementById('imagePreview').style.display = 'none';
+      document.getElementById('previewImg').src = '';
+      
+      // Ensure category selects are populated
+      populateCategorySelects();
+      
+      // Add image preview functionality
+      const productImageInput = document.getElementById('productImage');
+      productImageInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            document.getElementById('previewImg').src = e.target.result;
+            document.getElementById('imagePreview').style.display = 'block';
+          };
+          reader.readAsDataURL(file);
+        } else {
+          document.getElementById('imagePreview').style.display = 'none';
+          document.getElementById('previewImg').src = '';
+        }
+      });
+      
       productModal.style.display = 'flex';
     }
 
@@ -801,7 +882,40 @@
         document.getElementById('productSpec').value = product.spec;
         document.getElementById('productMoq').value = product.moq;
         document.getElementById('productDescription').value = product.description;
-        document.getElementById('productImage').value = product.imagePath;
+        document.getElementById('productImage').value = '';
+        
+        // Show existing image as preview
+        if (product.imagePath) {
+          document.getElementById('previewImg').src = product.imagePath;
+          document.getElementById('imagePreview').style.display = 'block';
+        } else {
+          document.getElementById('imagePreview').style.display = 'none';
+          document.getElementById('previewImg').src = '';
+        }
+        
+        // Add image preview functionality
+        const productImageInput = document.getElementById('productImage');
+        productImageInput.addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+              document.getElementById('previewImg').src = e.target.result;
+              document.getElementById('imagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+          } else {
+            // If no file selected, show the existing image again
+            if (product.imagePath) {
+              document.getElementById('previewImg').src = product.imagePath;
+              document.getElementById('imagePreview').style.display = 'block';
+            } else {
+              document.getElementById('imagePreview').style.display = 'none';
+              document.getElementById('previewImg').src = '';
+            }
+          }
+        });
+        
         productModal.style.display = 'flex';
       }
     }
@@ -888,8 +1002,46 @@
       const spec = document.getElementById('productSpec').value;
       const moq = document.getElementById('productMoq').value;
       const description = document.getElementById('productDescription').value;
-      const imagePath = document.getElementById('productImage').value;
+      const productImageInput = document.getElementById('productImage');
+      const file = productImageInput.files[0];
 
+      // If a file is selected, upload it first
+      if (file) {
+        const formData = new FormData();
+        formData.append('image', file); // 确保字段名为 'image'，与后端 Multer 配置一致
+
+        fetch(window.location.origin + '/upload', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Server responded with ' + response.status);
+          }
+          return response.json();
+        })
+        .then(data => {
+          if (data.success) {
+            const imagePath = data.imagePath;
+            saveProduct(id, name, model, category1, category2, category3, spec, moq, description, imagePath);
+          } else {
+            showAlert('Error uploading image: ' + data.message, 'error');
+          }
+        })
+        .catch(error => {
+          console.error('Error uploading image:', error);
+          showAlert('Error uploading image: ' + error.message, 'error');
+        });
+      } else {
+        // If no file is selected, use the existing image path if editing
+        const existingProduct = productsData.products.find(p => p.id === id);
+        const imagePath = existingProduct ? existingProduct.imagePath : '';
+        saveProduct(id, name, model, category1, category2, category3, spec, moq, description, imagePath);
+      }
+    });
+
+    // Save product function
+    function saveProduct(id, name, model, category1, category2, category3, spec, moq, description, imagePath) {
       const product = {
         id,
         name,
@@ -914,7 +1066,7 @@
       renderProducts();
       productModal.style.display = 'none';
       saveData();
-    });
+    }
 
     categoryForm.addEventListener('submit', function(e) {
       e.preventDefault();
