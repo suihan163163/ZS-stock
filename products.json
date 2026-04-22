@@ -1,23 +1,16 @@
 {
+  "tags": [
+    "热卖品",
+    "测试标签123123",
+    "中文标签123！"
+  ],
   "categories": {
     "Knight motorcycle": {
-      "BAJAJ": [
-        "BAJAJ 100",
-        "CT100"
-      ],
-      "CG": [
-        "CG 125",
-        "CG 150",
-        "CGL 125",
-        "CGL 150",
-        "CGL 200"
-      ],
-      "CD": [
-        "CD 110"
-      ],
       "CB": [
-        "CB 125"
+        "CB 125",
+        "测试二级目录"
       ],
+      "CD": [],
       "RS": [
         "RS 125"
       ],
@@ -32,7 +25,8 @@
       ],
       "TVS": [
         "HLX"
-      ]
+      ],
+      "BAJAJ111": []
     },
     "Scooter motorcycle": {
       "GY6": [
@@ -56,125 +50,193 @@
     },
     "Passenger Cars": {},
     "Commercial Vehicles": {},
-    "excavator": {}
+    "excavator": {},
+    "": {
+      "测试二级目录": []
+    }
   },
   "products": [
     {
       "id": 1,
-      "name": "Performance Brake Pads",
+      "name": "高性能刹车片",
       "model": "M126-0020-00",
-      "category": "Wholesale",
-      "spec": "Semi-metallic",
-      "moq": "500 sets",
-      "description": "Stable friction coefficient, low dust, consistent batch performance.",
+      "category": "批发",
+      "spec": "半金属",
+      "moq": "500 套",
+      "description": "稳定摩擦系数，低粉尘，批次性能一致。",
       "imagePath": "/images/upload_1776234681186.jpg",
       "category1": "Knight motorcycle",
-      "category2": "CG",
-      "category3": "CG 125"
+      "category2": "",
+      "category3": "",
+      "tag": "中文标签123！"
     },
     {
       "id": 2,
-      "name": "Drive Chain Sprocket",
+      "name": "传动链轮",
       "model": "M139-0021-00",
-      "category": "Wholesale",
-      "spec": "Steel, 428/520",
-      "moq": "300 pcs",
-      "description": "Heat-treated for durability, precise tooth profile, custom branding.",
+      "category": "批发",
+      "spec": "钢材，428/520",
+      "moq": "300 件",
+      "description": "热处理耐用，精密齿形，支持定制品牌。",
       "imagePath": "/images/upload_1776235761404.jpg",
       "category1": "Knight motorcycle",
       "category2": "BAJAJ",
-      "category3": "BAJAJ 100"
+      "category3": "BAJAJ 100",
+      "tag": ""
     },
     {
       "id": 3,
-      "name": "Oil Filter Assembly",
+      "name": "机油滤清器总成",
       "model": "M142-0010-00",
-      "category": "Hot Sale",
-      "spec": "Micron-rated media",
-      "moq": "1000 pcs",
-      "description": "Leak-tested sealing, stable filtration, consistent thread tolerance.",
+      "category": "热销",
+      "spec": "微米级滤材",
+      "moq": "1000 件",
+      "description": "密封防漏，过滤稳定，螺纹公差一致。",
       "imagePath": "/images/M142-0010-00.jpg",
       "category1": "Knight motorcycle",
       "category2": "CG",
-      "category3": "CG 150"
+      "category3": "CG 150",
+      "tag": ""
     },
     {
       "id": 4,
-      "name": "Clutch Plate Set",
+      "name": "离合器片套装",
       "model": "M146-0050-00",
-      "category": "Wholesale",
-      "spec": "Friction + Steel",
-      "moq": "200 sets",
-      "description": "Smooth engagement, stable thickness, optimized for long service life.",
+      "category": "批发",
+      "spec": "摩擦片+钢片",
+      "moq": "200 套",
+      "description": "接合平顺，厚度稳定，优化长寿命设计。",
       "imagePath": "/images/M146-0050-00.jpg",
       "category1": "Knight motorcycle",
       "category2": "CD",
-      "category3": "CD 110"
+      "category3": "CD 110",
+      "tag": ""
     },
     {
       "id": 5,
-      "name": "CNC Aluminum Handlebar",
+      "name": "CNC 铝合金车把",
       "model": "WZ-HB-5005",
       "category": "OEM/ODM",
       "spec": "6061-T6",
-      "moq": "100 pcs",
-      "description": "Anodized finish, precise machining, custom colors & logos.",
+      "moq": "100 件",
+      "description": "阳极氧化表面，精密加工，支持定制颜色与 Logo。",
       "imagePath": "/images/product5.jpg",
       "category1": "Modification parts",
       "category2": "handle",
-      "category3": ""
+      "category3": "",
+      "tag": ""
     },
     {
       "id": 6,
-      "name": "LED Turn Signal Kit",
+      "name": "LED 转向灯套件",
       "model": "M151-0070-00",
-      "category": "US Market",
-      "spec": "12V, Waterproof",
-      "moq": "300 sets",
-      "description": "High-visibility light output, vibration resistance, stable connectors.",
+      "category": "美国市场",
+      "spec": "12V，防水",
+      "moq": "300 套",
+      "description": "高亮输出，抗震耐用，连接器稳定。",
       "imagePath": "/images/M151-0070-00.jpg",
       "category1": "Scooter motorcycle",
       "category2": "GY6",
-      "category3": "GY6 125"
+      "category3": "GY6 125",
+      "tag": ""
     },
     {
       "id": 7,
-      "name": "Wheel Bearing Set",
+      "name": "轮毂轴承套装",
       "model": "M170-0050-00",
-      "category": "QC Focus",
-      "spec": "Sealed, High-temp",
-      "moq": "500 sets",
-      "description": "Low noise, smooth rotation, controlled clearance for consistency.",
+      "category": "质检重点",
+      "spec": "密封，耐高温",
+      "moq": "500 套",
+      "description": "低噪音，旋转顺滑，间隙控制一致。",
       "imagePath": "/images/M170-0050-00.jpg",
       "category1": "ATV",
       "category2": "Honda",
-      "category3": "TRX90X"
+      "category3": "TRX90X",
+      "tag": ""
     },
     {
       "id": 8,
-      "name": "Air Filter Element",
+      "name": "空气滤芯",
       "model": "M200-0050-00",
-      "category": "Wholesale",
-      "spec": "Multi-layer media",
-      "moq": "1000 pcs",
-      "description": "Stable fitment, strong frame, consistent airflow performance.",
+      "category": "批发",
+      "spec": "多层滤材",
+      "moq": "1000 件",
+      "description": "安装稳固，骨架结实，气流性能一致。",
       "imagePath": "/images/M200-0050-00.jpg",
       "category1": "Knight motorcycle",
       "category2": "CB",
-      "category3": "CB 125"
+      "category3": "CB 125",
+      "tag": ""
     },
     {
       "id": 1776236200572,
-      "name": "Aluminum alloy shock absorber",
+      "name": "铝合金减震器",
       "model": "M126-0020-01",
-      "category": "Wholesale",
+      "category": "批发",
       "spec": "10",
-      "moq": "5 ctn",
-      "description": "铝合金减震器Aluminum alloy shock absorber",
+      "moq": "5 箱",
+      "description": "铝合金减震器",
       "imagePath": "/images/upload_1776236200587.jpg",
       "category1": "Scooter motorcycle",
       "category2": "GY6",
-      "category3": ""
+      "category3": "",
+      "tag": ""
+    },
+    {
+      "id": 1776316119523,
+      "name": "高性能刹车片",
+      "model": "M126-0020-23",
+      "category": "批发",
+      "spec": "10",
+      "moq": "11",
+      "description": "1111111111111",
+      "imagePath": "/images/upload_1776316119535.png",
+      "category1": "Knight motorcycle",
+      "category2": "BAJAJ",
+      "category3": "CT100",
+      "tag": ""
+    },
+    {
+      "id": 1776316157160,
+      "name": "传动链轮",
+      "model": "M126-0020-01",
+      "category": "批发",
+      "spec": "11",
+      "moq": "111",
+      "description": "11111",
+      "imagePath": "/images/upload_1776316157181.png",
+      "category1": "Scooter motorcycle",
+      "category2": "GY6",
+      "category3": "GY6 125",
+      "tag": ""
+    },
+    {
+      "id": 1776316176551,
+      "name": "高性能刹车片",
+      "model": "M126-0020-00",
+      "category": "批发",
+      "spec": "1",
+      "moq": "1",
+      "description": "1",
+      "imagePath": "/images/upload_1776316176567.jpg",
+      "category1": "Knight motorcycle",
+      "category2": "",
+      "category3": "",
+      "tag": ""
+    },
+    {
+      "id": 1776317616899,
+      "name": "测试第三级别",
+      "model": "测试第三级别",
+      "category": "批发",
+      "spec": "测试第三级别",
+      "moq": "测试第三级别",
+      "description": "测试第三级别测试第三级别",
+      "imagePath": "/images/upload_1776317616915.jpg",
+      "category1": "Knight motorcycle",
+      "category2": "",
+      "category3": "",
+      "tag": ""
     }
   ]
 }

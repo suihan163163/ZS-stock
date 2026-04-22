@@ -1,0 +1,467 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>产品中心 | WENZHOU ZHUOSHI SPARE PARTS CO., LTD.</title>
+  <meta name="description" content="浏览全系列摩托车配件产品，按分类筛选、搜索型号。" />
+  <meta name="keywords" content="摩托车配件, 产品目录, 分类筛选, 型号搜索" />
+  <meta name="robots" content="index,follow" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { darkMode: 'class', corePlugins: { preflight: false } };</script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <a class="skip-link" href="#main">跳转到主要内容</a>
+
+  <header id="top" class="site-header">
+    <div class="top-bar">
+      <div class="container">
+        <div class="top-bar-left">
+          <span><i class="fa-solid fa-globe"></i> 全球配送</span>
+          <span><i class="fa-solid fa-industry"></i> 工厂直供</span>
+          <span><i class="fa-solid fa-certificate"></i> OEM/ODM 定制</span>
+        </div>
+        <div class="top-bar-right">
+          <a href="https://wa.me/2349052483707" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-whatsapp"></i> +234 905 248 3707</a>
+          <a href="mailto:19519313121@163.com"><i class="fa-solid fa-envelope"></i> 19519313121@163.com</a>
+        </div>
+      </div>
+    </div>
+    <div class="middle-bar">
+      <div class="container">
+        <a href="index.html" class="brand" aria-label="返回首页">
+          <img class="brand-logo" src="./images/logo.png" alt="公司标志" />
+          <div class="brand-text">
+            <div class="brand-name">WENZHOU ZHUOSHI SPARE PARTS CO., LTD.</div>
+            <div class="brand-sub">OEM/ODM · 批发 · 出口美国</div>
+          </div>
+        </a>
+        <div class="search-box">
+          <input id="globalSearch" type="text" placeholder="搜索型号、产品名称..." aria-label="搜索产品" />
+          <button type="button" aria-label="搜索"><i class="fa-solid fa-search"></i></button>
+        </div>
+        <div class="header-actions">
+          <a class="header-action-btn" href="index.html#contact"><i class="fa-solid fa-phone"></i> 联系我们</a>
+          <a class="header-action-btn primary mobile-hide" href="index.html#contact"><i class="fa-solid fa-file-lines"></i> 询价单</a>
+          <button id="menuBtn" class="icon-btn" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="mobileMenu" style="display:none;"><i class="fa-solid fa-bars"></i></button>
+        </div>
+      </div>
+    </div>
+    <div class="nav-bar">
+      <div class="container">
+        <a class="nav-link" href="index.html#home">首页</a>
+        <a class="nav-link active" href="products.html">产品中心</a>
+        <a class="nav-link" href="index.html#about">关于我们</a>
+        <a class="nav-link" href="index.html#factory">工厂展示</a>
+        <a class="nav-link" href="index.html#contact">联系我们</a>
+      </div>
+    </div>
+    <div id="mobileMenu" class="mobile-menu" hidden>
+      <div class="container">
+        <div class="mobile-card">
+          <a class="mobile-link" href="index.html#home">首页</a>
+          <a class="mobile-link" href="products.html">产品中心</a>
+          <a class="mobile-link" href="index.html#about">关于我们</a>
+          <a class="mobile-link" href="index.html#factory">工厂展示</a>
+          <a class="mobile-link" href="index.html#contact">联系我们</a>
+          <div class="mobile-cta">
+            <a class="btn btn-primary w-full justify-center" href="index.html#contact"><i class="fa-solid fa-bolt"></i> 立即询价</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <a class="whatsapp-float" href="https://wa.me/2349052483707" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp 咨询">
+    <i class="fa-brands fa-whatsapp"></i>
+    <span class="hidden sm:inline">WhatsApp</span>
+  </a>
+
+  <main id="main">
+    <section class="breadcrumb-section">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="index.html" class="breadcrumb-link">首页</a>
+          <span class="breadcrumb-separator">/</span>
+          <span class="breadcrumb-current">产品中心</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="products-page-section">
+      <div class="container">
+        <div class="products-page-layout">
+          <aside class="filter-sidebar" id="filterSidebar">
+            <div class="sidebar-header">
+              <h3 class="sidebar-title"><i class="fa-solid fa-filter"></i> 分类筛选</h3>
+              <button id="clearAllFilters" class="clear-btn" type="button" style="display:none;">
+                <i class="fa-solid fa-rotate-left"></i> 重置
+              </button>
+            </div>
+            <div class="sidebar-search">
+              <input id="sidebarSearch" type="text" placeholder="搜索型号或名称..." aria-label="搜索产品" />
+            </div>
+            <nav class="sidebar-categories" id="sidebarCategories" aria-label="分类导航">
+              <div class="sidebar-loading"><i class="fa-solid fa-spinner fa-spin"></i> 加载分类...</div>
+            </nav>
+          </aside>
+
+          <div class="products-main">
+            <div class="products-toolbar">
+              <div class="toolbar-left">
+                <h1 class="toolbar-title">全部产品</h1>
+                <span class="toolbar-count" id="productCount">0 件产品</span>
+              </div>
+              <div class="toolbar-right">
+                <div id="activeFilterTag" class="active-filter-tag" style="display:none;"></div>
+              </div>
+            </div>
+            <div class="products-grid product-grid" id="productsGrid" aria-label="产品展示网格">
+              <div class="loading-state">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <p>正在加载产品...</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <img class="footer-logo" src="./images/logo.png" alt="公司标志" />
+            <div>
+              <div class="brand-name">WENZHOU ZHUOSHI SPARE PARTS CO., LTD.</div>
+              <div class="brand-sub">面向 B2B 采购商的工业级制造。</div>
+            </div>
+          </div>
+          <p class="footer-note">中国温州摩托车配件制造商——批发供应、OEM/ODM 开发、质检保障。</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <div class="footer-title">网站导航</div>
+            <a class="footer-link" href="index.html#home">首页</a>
+            <a class="footer-link" href="products.html">产品中心</a>
+            <a class="footer-link" href="index.html#about">关于我们</a>
+            <a class="footer-link" href="index.html#factory">工厂展示</a>
+            <a class="footer-link" href="index.html#contact">联系我们</a>
+          </div>
+          <div class="footer-col">
+            <div class="footer-title">合规信息</div>
+            <a class="footer-link" href="index.html#privacy">隐私政策</a>
+            <a class="footer-link" href="index.html#terms">服务条款</a>
+          </div>
+          <div class="footer-col">
+            <div class="footer-title">社交媒体</div>
+            <a class="footer-link" href="#" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-facebook-f"></i> Facebook</a>
+            <a class="footer-link" href="#" target="_blank" rel="noopener noreferrer"><i class="fa-brands fa-tiktok"></i> TikTok</a>
+            <a class="footer-link" href="#" target="_blank" rel="noopener noreferrer"><i class="fa-solid fa-store"></i> Jumia</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <div class="copyright">&copy; <span id="year"></span> WENZHOU ZHUOSHI SPARE PARTS CO., LTD. 保留所有权利。</div>
+        <a class="back-top" href="#top" aria-label="回到顶部"><i class="fa-solid fa-arrow-up"></i> 回到顶部</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="./script.js"></script>
+  <script>
+  (function(){
+    const yearEl = document.getElementById("year");
+    if (yearEl) yearEl.textContent = String(new Date().getFullYear());
+
+    const sidebarCategories = document.getElementById("sidebarCategories");
+    const productsGrid = document.getElementById("productsGrid");
+    const productCount = document.getElementById("productCount");
+    const toolbarTitle = document.querySelector(".toolbar-title");
+    const activeFilterTag = document.getElementById("activeFilterTag");
+    const clearAllBtn = document.getElementById("clearAllFilters");
+    const sidebarSearch = document.getElementById("sidebarSearch");
+    const globalSearch = document.getElementById("globalSearch");
+
+    let allProducts = [];
+    let categoriesData = {};
+    let activeCat1 = null;
+    let activeCat2 = null;
+    let activeCat3 = null;
+    let searchTerm = "";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get("category1")) activeCat1 = urlParams.get("category1");
+    if (urlParams.get("category2")) activeCat2 = urlParams.get("category2");
+    if (urlParams.get("category3")) activeCat3 = urlParams.get("category3");
+    if (urlParams.get("category")) activeCat1 = urlParams.get("category");
+
+    async function initData() {
+      try {
+        const response = await fetch("products.json");
+        if (!response.ok) throw new Error("产品数据加载失败");
+        const data = await response.json();
+        allProducts = data.products || [];
+        categoriesData = data.categories || {};
+        renderSidebar();
+        filterAndRender();
+      } catch (err) {
+        productsGrid.innerHTML = '<div class="note"><i class="fa-solid fa-circle-exclamation"></i><span>暂时无法加载产品，请稍后重试。</span></div>';
+      }
+    }
+
+    function renderSidebar() {
+      const catKeys = Object.keys(categoriesData).filter(k => k.trim() !== "");
+      if (catKeys.length === 0) {
+        sidebarCategories.innerHTML = '<div class="note"><i class="fa-solid fa-circle-info"></i><span>暂无分类数据。</span></div>';
+        return;
+      }
+
+      let html = '<button class="cat-item cat-all' + (!activeCat1 ? ' active' : '') + '" data-cat1="">全部产品</button>';
+
+      catKeys.forEach(cat1 => {
+        const subCats = categoriesData[cat1];
+        const subKeys = Object.keys(subCats).filter(k => k.trim() !== "");
+        const isActive1 = activeCat1 === cat1;
+        const hasSub = subKeys.length > 0;
+
+        html += '<div class="cat-group' + (isActive1 ? ' open' : '') + '">';
+        html += '<button class="cat-item cat-l1' + (isActive1 ? ' active' : '') + '" data-cat1="' + cat1 + '">';
+        html += '<span class="cat-arrow">' + (hasSub ? '<i class="fa-solid fa-chevron-right"></i>' : '') + '</span>';
+        html += '<span class="cat-label">' + cat1 + '</span>';
+        html += '</button>';
+
+        if (hasSub) {
+          html += '<div class="cat-sub-list"' + (isActive1 ? '' : ' style="display:none;"') + '>';
+          subKeys.forEach(cat2 => {
+            const level3 = subCats[cat2] || [];
+            const isActive2 = activeCat2 === cat2;
+            const hasL3 = level3.length > 0;
+
+            html += '<div class="cat-sub-group' + (isActive2 ? ' open' : '') + '">';
+            html += '<button class="cat-item cat-l2' + (isActive2 ? ' active' : '') + '" data-cat1="' + cat1 + '" data-cat2="' + cat2 + '">';
+            html += '<span class="cat-arrow">' + (hasL3 ? '<i class="fa-solid fa-chevron-right"></i>' : '') + '</span>';
+            html += '<span class="cat-label">' + cat2 + '</span>';
+            html += '</button>';
+
+            if (hasL3) {
+              html += '<div class="cat-sub-list cat-l3-list"' + (isActive2 ? '' : ' style="display:none;"') + '>';
+              level3.forEach(cat3 => {
+                const isActive3 = activeCat3 === cat3;
+                html += '<button class="cat-item cat-l3' + (isActive3 ? ' active' : '') + '" data-cat1="' + cat1 + '" data-cat2="' + cat2 + '" data-cat3="' + cat3 + '">' + cat3 + '</button>';
+              });
+              html += '</div>';
+            }
+
+            html += '</div>';
+          });
+          html += '</div>';
+        }
+
+        html += '</div>';
+      });
+
+      sidebarCategories.innerHTML = html;
+      bindSidebarEvents();
+    }
+
+    function bindSidebarEvents() {
+      sidebarCategories.querySelectorAll(".cat-item").forEach(btn => {
+        btn.addEventListener("click", function() {
+          const cat1 = this.dataset.cat1;
+          const cat2 = this.dataset.cat2 || null;
+          const cat3 = this.dataset.cat3 || null;
+
+          if (cat1 === "") {
+            activeCat1 = null;
+            activeCat2 = null;
+            activeCat3 = null;
+          } else if (cat3) {
+            activeCat1 = cat1;
+            activeCat2 = cat2;
+            activeCat3 = cat3;
+          } else if (cat2) {
+            activeCat1 = cat1;
+            activeCat2 = cat2;
+            activeCat3 = null;
+          } else {
+            if (activeCat1 === cat1 && !cat2) {
+              activeCat1 = null;
+              activeCat2 = null;
+              activeCat3 = null;
+            } else {
+              activeCat1 = cat1;
+              activeCat2 = null;
+              activeCat3 = null;
+            }
+          }
+
+          updateURL();
+          renderSidebar();
+          filterAndRender();
+        });
+      });
+
+      sidebarCategories.querySelectorAll(".cat-l1 .cat-arrow, .cat-l2 .cat-arrow").forEach(arrow => {
+        arrow.addEventListener("click", function(e) {
+          e.stopPropagation();
+          const catItem = this.closest(".cat-item");
+          const group = catItem.parentElement;
+          const subList = group.querySelector(":scope > .cat-sub-list");
+          if (subList) {
+            const isOpen = subList.style.display !== "none";
+            subList.style.display = isOpen ? "none" : "block";
+            group.classList.toggle("open", !isOpen);
+            this.querySelector("i").style.transform = isOpen ? "" : "rotate(90deg)";
+          }
+        });
+      });
+    }
+
+    function updateURL() {
+      const url = new URL(window.location.origin + window.location.pathname);
+      if (activeCat1) url.searchParams.set("category1", activeCat1);
+      if (activeCat2) url.searchParams.set("category2", activeCat2);
+      if (activeCat3) url.searchParams.set("category3", activeCat3);
+      history.replaceState(null, "", url.toString());
+    }
+
+    function filterAndRender() {
+      let filtered = allProducts;
+
+      if (activeCat1) {
+        filtered = filtered.filter(p => p.category1 === activeCat1);
+      }
+      if (activeCat2) {
+        filtered = filtered.filter(p => p.category2 === activeCat2);
+      }
+      if (activeCat3) {
+        filtered = filtered.filter(p => p.category3 === activeCat3);
+      }
+      if (searchTerm) {
+        const term = searchTerm.toLowerCase();
+        filtered = filtered.filter(p =>
+          (p.name && p.name.toLowerCase().includes(term)) ||
+          (p.model && p.model.toLowerCase().includes(term)) ||
+          (p.spec && p.spec.toLowerCase().includes(term)) ||
+          (p.description && p.description.toLowerCase().includes(term))
+        );
+      }
+
+      updateToolbar(filtered.length);
+      renderProducts(filtered);
+    }
+
+    function updateToolbar(count) {
+      productCount.textContent = count + " 件产品";
+
+      if (activeCat1 || activeCat2 || activeCat3) {
+        let parts = [];
+        if (activeCat1) parts.push(activeCat1);
+        if (activeCat2) parts.push(activeCat2);
+        if (activeCat3) parts.push(activeCat3);
+        toolbarTitle.textContent = parts.join(" / ");
+        activeFilterTag.style.display = "inline-flex";
+        activeFilterTag.innerHTML = '<i class="fa-solid fa-filter" style="font-size:11px;"></i> ' + parts.join(" / ") + ' <button class="tag-remove" id="tagRemove" type="button"><i class="fa-solid fa-xmark"></i></button>';
+        clearAllBtn.style.display = "inline-flex";
+        document.getElementById("tagRemove")?.addEventListener("click", clearFilters);
+      } else {
+        toolbarTitle.textContent = "全部产品";
+        activeFilterTag.style.display = "none";
+        activeFilterTag.innerHTML = "";
+        clearAllBtn.style.display = "none";
+      }
+    }
+
+    function clearFilters() {
+      activeCat1 = null;
+      activeCat2 = null;
+      activeCat3 = null;
+      searchTerm = "";
+      if (sidebarSearch) sidebarSearch.value = "";
+      if (globalSearch) globalSearch.value = "";
+      updateURL();
+      renderSidebar();
+      filterAndRender();
+    }
+
+    if (clearAllBtn) {
+      clearAllBtn.addEventListener("click", clearFilters);
+    }
+
+    function renderProducts(products) {
+      if (products.length === 0) {
+        productsGrid.innerHTML = '<div class="note" style="grid-column:1/-1;"><i class="fa-solid fa-box-open"></i><span>暂无该分类产品，请尝试其他筛选条件。</span></div>';
+        return;
+      }
+
+      productsGrid.innerHTML = products.map(product => {
+        const tagHtml = product.tag ? '<div class="product-tag">' + product.tag + '</div>' : '';
+        return '<article class="product-card">' +
+          '<a href="product-detail.html?id=' + product.id + '" class="product-link">' +
+            '<div class="product-media">' +
+              tagHtml +
+              '<img src="' + product.imagePath + '" alt="' + product.name + '" loading="lazy" onerror="this.closest(\'.product-media\').classList.add(\'img-missing\'); this.style.display=\'none\';" />' +
+              '<div class="img-fallback" aria-hidden="true"><i class="fa-solid fa-box"></i><div><div class="fallback-title">产品图片</div></div></div>' +
+            '</div>' +
+            '<div class="product-body">' +
+              '<h3 class="product-title">' + product.name + '</h3>' +
+              '<div class="product-sku"><i class="fa-solid fa-hashtag" style="font-size:11px;margin-right:4px;color:var(--muted-2);"></i> 型号：<strong>' + product.model + '</strong></div>' +
+              '<div class="product-moq"><i class="fa-solid fa-box-open" style="font-size:11px;margin-right:4px;color:var(--muted-2);"></i> 起订量：' + product.moq + '</div>' +
+              '<p class="product-desc">' + product.description + '</p>' +
+            '</div>' +
+          '</a>' +
+          '<div class="product-actions">' +
+            '<button class="inquiry-btn" type="button" data-inquire="' + product.model + '">' +
+              '<i class="fa-solid fa-paper-plane"></i> 立即询价' +
+            '</button>' +
+          '</div>' +
+        '</article>';
+      }).join("");
+
+      bindInquiryButtons();
+    }
+
+    function bindInquiryButtons() {
+      productsGrid.querySelectorAll("[data-inquire]").forEach(button => {
+        button.addEventListener("click", function(e) {
+          e.preventDefault();
+          e.stopPropagation();
+          const model = this.getAttribute("data-inquire") || "";
+          window.location.href = "index.html#contact?model=" + encodeURIComponent(model);
+        });
+      });
+    }
+
+    function setupSearch() {
+      let debounce;
+      function onSearch(value) {
+        searchTerm = value.trim();
+        clearTimeout(debounce);
+        debounce = setTimeout(filterAndRender, 250);
+      }
+
+      if (sidebarSearch) {
+        sidebarSearch.addEventListener("input", function() {
+          if (globalSearch) globalSearch.value = this.value;
+          onSearch(this.value);
+        });
+      }
+      if (globalSearch) {
+        globalSearch.addEventListener("input", function() {
+          if (sidebarSearch) sidebarSearch.value = this.value;
+          onSearch(this.value);
+        });
+      }
+    }
+
+    setupSearch();
+    initData();
+  })();
+  </script>
+</body>
+</html>

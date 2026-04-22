@@ -2,20 +2,16 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-  // Year in footer
   const yearEl = $("#year");
   if (yearEl) yearEl.textContent = String(new Date().getFullYear());
 
-  // Mobile menu toggle
   const menuBtn = $("#menuBtn");
   const mobileMenu = $("#mobileMenu");
 
   function setMenuOpen(open) {
     if (!menuBtn || !mobileMenu) return;
-
     mobileMenu.hidden = !open;
     menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
-
     const icon = menuBtn.querySelector("i");
     if (icon) {
       icon.classList.toggle("fa-bars", !open);
@@ -28,24 +24,17 @@
       const expanded = menuBtn.getAttribute("aria-expanded") === "true";
       setMenuOpen(!expanded);
     });
-
-    // Close menu on link click
     $$("#mobileMenu a[href^='#']").forEach((a) => {
       a.addEventListener("click", () => setMenuOpen(false));
     });
-
-    // Close on Esc
     document.addEventListener("keydown", (e) => {
       if (e.key === "Escape") setMenuOpen(false);
     });
-
-    // Close if resized to desktop
     window.addEventListener("resize", () => {
       if (window.matchMedia("(min-width: 768px)").matches) setMenuOpen(false);
     });
   }
 
-  // Smooth scroll with sticky header offset
   const header = $(".site-header");
   function headerOffset() {
     return header ? header.getBoundingClientRect().height + 10 : 82;
@@ -54,32 +43,23 @@
   function smoothScrollToId(id) {
     const el = document.getElementById(id);
     if (!el) return;
-
     const top = window.scrollY + el.getBoundingClientRect().top - headerOffset();
     window.scrollTo({ top, behavior: "smooth" });
   }
 
-  // Intercept in-page anchor clicks
   $$("a[href^='#']").forEach((a) => {
     a.addEventListener("click", (e) => {
       const href = a.getAttribute("href");
       if (!href || href === "#") return;
-
       const id = href.slice(1);
       if (!id) return;
-
-      // Allow normal behavior if target not found
       if (!document.getElementById(id)) return;
-
       e.preventDefault();
       smoothScrollToId(id);
-
-      // Update URL hash without jump
       history.pushState(null, "", `#${id}`);
     });
   });
 
-  // Product "Inquire Now" buttons -> prefill message
   const inquiryForm = $("#inquiryForm");
   const messageEl = $("#message");
   const modal = $("#successModal");
@@ -87,52 +67,23 @@
 
   function openModal(referenceText) {
     if (!modal) return;
-    if (modalRef) modalRef.textContent = referenceText || "General Inquiry";
-
+    if (modalRef) modalRef.textContent = referenceText || "一般询价";
     modal.hidden = false;
     modal.setAttribute("aria-hidden", "false");
-
-    // Prevent background scroll
     document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
-
-    // Focus close button for accessibility
     const closeBtn = modal.querySelector("[data-close='true']");
     if (closeBtn) closeBtn.focus();
   }
 
   function closeModal() {
     if (!modal) return;
-
     modal.hidden = true;
     modal.setAttribute("aria-hidden", "true");
-
     document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
   }
 
-  $$("[data-inquire]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      const model = btn.getAttribute("data-inquire") || "";
-      if (messageEl) {
-        const template =
-          `Hello, I'm interested in model ${model}.\n` +
-          `Please quote: unit price, MOQ, lead time, packaging options, and shipping to (ZIP/Port): \n\n` +
-          `Quantity: \n` +
-          `Company: \n` +
-          `Notes (OEM/ODM, logo, etc.): \n`;
-
-        // Only overwrite if empty; otherwise append politely
-        if (!messageEl.value.trim()) {
-          messageEl.value = template;
-        } else if (!messageEl.value.includes(model)) {
-          messageEl.value = `${messageEl.value.trim()}\n\n---\nInterested model: ${model}\n`;
-        }
-      }
-    });
-  });
-
-  // Form validation + success popup (static site)
   function clearErrors(form) {
     $$(".field", form).forEach((field) => {
       field.classList.remove("error");
@@ -144,13 +95,9 @@
   function setError(inputEl, msg) {
     const field = inputEl.closest(".field");
     if (!field) return;
-
     field.classList.add("error");
-
-    // Avoid duplicates
     const existing = $(".error-text", field);
     if (existing) existing.remove();
-
     const div = document.createElement("div");
     div.className = "error-text";
     div.textContent = msg;
@@ -165,60 +112,33 @@
     inquiryForm.addEventListener("submit", (e) => {
       e.preventDefault();
       clearErrors(inquiryForm);
-
       const name = $("#name") ? $("#name").value.trim() : "";
       const email = $("#email") ? $("#email").value.trim() : "";
       const message = $("#message") ? $("#message").value.trim() : "";
-
       let ok = true;
-
-      if (!name) {
-        ok = false;
-        setError($("#name"), "Please enter your name.");
-      }
-
-      if (!email) {
-        ok = false;
-        setError($("#email"), "Please enter your email.");
-      } else if (!isValidEmail(email)) {
-        ok = false;
-        setError($("#email"), "Please enter a valid email address.");
-      }
-
-      if (!message) {
-        ok = false;
-        setError($("#message"), "Please enter your message.");
-      } else if (message.length < 15) {
-        ok = false;
-        setError($("#message"), "Please add a bit more detail (model, quantity, destination).");
-      }
-
+      if (!name) { ok = false; setError($("#name"), "请输入您的姓名。"); }
+      if (!email) { ok = false; setError($("#email"), "请输入您的邮箱。"); }
+      else if (!isValidEmail(email)) { ok = false; setError($("#email"), "请输入有效的邮箱地址。"); }
+      if (!message) { ok = false; setError($("#message"), "请输入留言内容。"); }
+      else if (message.length < 15) { ok = false; setError($("#message"), "请补充更多细节（型号、数量、目的地等）。"); }
       if (!ok) return;
-
-      // Create a lightweight reference
       const ref = `INQ-${new Date().toISOString().slice(0, 10)}-${Math.random().toString(16).slice(2, 6).toUpperCase()}`;
       openModal(ref);
-
-      // Reset fields (static demo)
       inquiryForm.reset();
     });
   }
 
-  // Modal close interactions
   if (modal) {
     modal.addEventListener("click", (e) => {
       const target = e.target;
       if (!(target instanceof HTMLElement)) return;
-
       if (target.getAttribute("data-close") === "true") closeModal();
     });
-
     document.addEventListener("keydown", (e) => {
       if (!modal.hidden && e.key === "Escape") closeModal();
     });
   }
 
-  // Login functionality
   const loginBtn = $("#loginBtn");
   const adminBtn = $("#adminBtn");
   const loginModal = $("#loginModal");
@@ -226,25 +146,18 @@
 
   function openLoginModal() {
     if (!loginModal) return;
-
     loginModal.hidden = false;
     loginModal.setAttribute("aria-hidden", "false");
-
-    // Prevent background scroll
     document.documentElement.style.overflow = "hidden";
     document.body.style.overflow = "hidden";
-
-    // Focus username input for accessibility
     const usernameInput = $("#username");
     if (usernameInput) usernameInput.focus();
   }
 
   function closeLoginModal() {
     if (!loginModal) return;
-
     loginModal.hidden = true;
     loginModal.setAttribute("aria-hidden", "true");
-
     document.documentElement.style.overflow = "";
     document.body.style.overflow = "";
   }
@@ -263,7 +176,6 @@
   }
 
   function login(username, password) {
-    // Hardcoded admin credentials
     if (username === 'admin' && password === 'zsadmin414') {
       localStorage.setItem('adminLoggedIn', 'true');
       checkLoginStatus();
@@ -273,65 +185,44 @@
     return false;
   }
 
-  // Check login status on page load
   checkLoginStatus();
 
-  // Login button click event
   if (loginBtn) {
     loginBtn.addEventListener('click', openLoginModal);
   }
 
-  // Login modal close interactions
   if (loginModal) {
     loginModal.addEventListener("click", (e) => {
       const target = e.target;
       if (!(target instanceof HTMLElement)) return;
-
       if (target.getAttribute("data-close") === "true") closeLoginModal();
     });
-
     document.addEventListener("keydown", (e) => {
       if (loginModal && !loginModal.hidden && e.key === "Escape") closeLoginModal();
     });
   }
 
-  // Login form submission
   if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       clearErrors(loginForm);
-
       const username = $("#username") ? $("#username").value.trim() : "";
       const password = $("#password") ? $("#password").value.trim() : "";
-
       let ok = true;
-
-      if (!username) {
-        ok = false;
-        setError($("#username"), "Please enter username.");
-      }
-
-      if (!password) {
-        ok = false;
-        setError($("#password"), "Please enter password.");
-      }
-
+      if (!username) { ok = false; setError($("#username"), "请输入用户名。"); }
+      if (!password) { ok = false; setError($("#password"), "请输入密码。"); }
       if (!ok) return;
-
       if (login(username, password)) {
-        // Login successful
+        // success
       } else {
-        // Login failed
-        const form = loginForm;
         const errorDiv = document.createElement('div');
         errorDiv.className = 'error-text';
-        errorDiv.textContent = 'Invalid username or password. Please try again.';
-        form.appendChild(errorDiv);
+        errorDiv.textContent = '用户名或密码错误，请重试。';
+        loginForm.appendChild(errorDiv);
       }
     });
   }
 
-  // If page loads with hash, scroll with offset
   window.addEventListener("load", () => {
     const hash = (location.hash || "").replace("#", "");
     if (hash && document.getElementById(hash)) {
@@ -339,21 +230,16 @@
     }
   });
 
-  // Factory Carousel
   function initCarousel() {
     const carouselContainer = document.querySelector('.factory-carousel');
     if (!carouselContainer) return;
-
     const wrapper = carouselContainer.querySelector('.carousel-wrapper');
     const items = carouselContainer.querySelectorAll('.carousel-item');
     const prevBtn = carouselContainer.querySelector('.carousel-control.prev');
     const nextBtn = carouselContainer.querySelector('.carousel-control.next');
     const indicatorsContainer = carouselContainer.querySelector('.carousel-indicators');
-
     let currentIndex = 0;
     const itemCount = items.length;
-
-    // Create indicators
     items.forEach((_, index) => {
       const indicator = document.createElement('button');
       indicator.className = 'carousel-indicator';
@@ -361,167 +247,329 @@
       indicator.addEventListener('click', () => goToSlide(index));
       indicatorsContainer.appendChild(indicator);
     });
-
     const indicators = carouselContainer.querySelectorAll('.carousel-indicator');
-
     function updateIndicators() {
       indicators.forEach((indicator, index) => {
-        if (index === currentIndex) {
-          indicator.classList.add('active');
-        } else {
-          indicator.classList.remove('active');
-        }
+        indicator.classList.toggle('active', index === currentIndex);
       });
     }
-
     function goToSlide(index) {
       currentIndex = index;
-      const translateX = -index * 100;
-      wrapper.style.transform = `translateX(${translateX}%)`;
+      wrapper.style.transform = `translateX(-${index * 100}%)`;
       updateIndicators();
     }
-
-    function nextSlide() {
-      currentIndex = (currentIndex + 1) % itemCount;
-      goToSlide(currentIndex);
-    }
-
-    function prevSlide() {
-      currentIndex = (currentIndex - 1 + itemCount) % itemCount;
-      goToSlide(currentIndex);
-    }
-
-    // Event listeners
+    function nextSlide() { goToSlide((currentIndex + 1) % itemCount); }
+    function prevSlide() { goToSlide((currentIndex - 1 + itemCount) % itemCount); }
     if (nextBtn) nextBtn.addEventListener('click', nextSlide);
     if (prevBtn) prevBtn.addEventListener('click', prevSlide);
-
-    // Auto slide
     let autoSlideInterval = setInterval(nextSlide, 5000);
-
-    // Pause auto slide on hover
-    carouselContainer.addEventListener('mouseenter', () => {
-      clearInterval(autoSlideInterval);
-    });
-
-    carouselContainer.addEventListener('mouseleave', () => {
-      autoSlideInterval = setInterval(nextSlide, 5000);
-    });
+    carouselContainer.addEventListener('mouseenter', () => clearInterval(autoSlideInterval));
+    carouselContainer.addEventListener('mouseleave', () => { autoSlideInterval = setInterval(nextSlide, 5000); });
   }
 
-  // Initialize carousel when DOM is loaded
   document.addEventListener('DOMContentLoaded', initCarousel);
+})();
+
+(function initHeroSlider() {
+  const wrapper = document.getElementById('heroSlider');
+  const controls = document.getElementById('sliderControls');
+  const prevBtn = document.getElementById('sliderPrev');
+  const nextBtn = document.getElementById('sliderNext');
+  if (!wrapper || !controls) return;
+
+  const slides = wrapper.querySelectorAll('.slide');
+  const total = slides.length;
+  if (total === 0) return;
+
+  let current = 0;
+  let autoInterval;
+
+  controls.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'slider-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', '切换到第 ' + (i + 1) + ' 张');
+    dot.addEventListener('click', () => goTo(i));
+    controls.appendChild(dot);
+  }
+
+  function goTo(index) {
+    current = ((index % total) + total) % total;
+    wrapper.style.transform = 'translateX(-' + (current * 100) + '%)';
+    const dots = controls.querySelectorAll('.slider-dot');
+    dots.forEach((d, i) => d.classList.toggle('active', i === current));
+  }
+
+  function next() { goTo(current + 1); }
+  function prev() { goTo(current - 1); }
+
+  if (prevBtn) prevBtn.addEventListener('click', () => { prev(); resetAuto(); });
+  if (nextBtn) nextBtn.addEventListener('click', () => { next(); resetAuto(); });
+
+  function resetAuto() {
+    clearInterval(autoInterval);
+    autoInterval = setInterval(next, 5000);
+  }
+
+  const slider = wrapper.closest('.hero-slider');
+  if (slider) {
+    slider.addEventListener('mouseenter', () => clearInterval(autoInterval));
+    slider.addEventListener('mouseleave', resetAuto);
+  }
+
+  resetAuto();
 })();
 
 document.addEventListener("DOMContentLoaded", async () => {
   const productsGrid = document.getElementById("productsGrid");
-
   if (!productsGrid) return;
+
+  let allProducts = [];
 
   try {
     const response = await fetch("products.json");
-
     if (!response.ok) {
-      throw new Error(`Failed to load products.json: ${response.status}`);
+      throw new Error(`产品数据加载失败: ${response.status}`);
     }
-
     const { products } = await response.json();
-
     if (!Array.isArray(products)) {
-      throw new Error("Invalid products data.");
+      throw new Error("产品数据格式无效。");
     }
-
-    // Get category parameters from URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const category1 = urlParams.get('category1');
-    const category2 = urlParams.get('category2');
-    const category3 = urlParams.get('category3');
-
-    // Filter products by multi-level categories
-    let filteredProducts = products;
-    if (category1) {
-      filteredProducts = filteredProducts.filter(product => product.category1 === category1);
-    }
-    if (category2) {
-      filteredProducts = filteredProducts.filter(product => product.category2 === category2);
-    }
-    if (category3) {
-      filteredProducts = filteredProducts.filter(product => product.category3 === category3);
-    }
-
-    const productCardsHtml = filteredProducts
-      .map((product) => {
-        const imagePath = product.imagePath;
-        const categoryDisplay = product.category1 || product.category;
-
-        return `
-          <article class="product-card">
-            <a href="product-detail.html?id=${product.id}" class="product-link">
-              <div class="product-media">
-                <div class="product-tag">${categoryDisplay}</div>
-                <img
-                  src="${imagePath}"
-                  alt="${product.name}"
-                  loading="lazy"
-                  onerror="this.closest('.product-media').classList.add('img-missing'); this.style.display='none';"
-                />
-                <div class="img-fallback" aria-hidden="true">
-                  <i class="fa-solid fa-box"></i>
-                  <div>
-                    <div class="fallback-title">Product Image</div>
-                  </div>
-                </div>
-              </div>
-              <div class="product-body">
-                <h3 class="product-title">${product.name}</h3>
-                <div class="product-meta">
-                  <span class="pill"><i class="fa-solid fa-hashtag"></i> Model: ${product.model}</span>
-                  <span class="pill"><i class="fa-solid fa-ruler-combined"></i> Spec: ${product.spec}</span>
-                  <span class="pill"><i class="fa-solid fa-box-open"></i> MOQ: ${product.moq}</span>
-                </div>
-                <p class="product-desc">${product.description}</p>
-                <div class="product-actions">
-                  <a
-                    class="btn btn-primary w-full justify-center"
-                    href="#contact"
-                    data-product-name="${product.name}"
-                    data-inquire="${product.model}"
-                  >
-                    <i class="fa-solid fa-paper-plane"></i>
-                    Inquire Now
-                  </a>
-                </div>
-              </div>
-            </a>
-          </article>
-        `;
-      })
-      .join("");
-
-    if (filteredProducts.length === 0) {
-      productsGrid.innerHTML = `
-        <div class="note">
-          <i class="fa-solid fa-circle-info"></i>
-          <span>No products found in this category.</span>
-        </div>
-      `;
-    } else {
-      productsGrid.innerHTML = productCardsHtml;
-    }
-
-    // Handle inquiry buttons
-    productsGrid.querySelectorAll("[data-inquire]").forEach((button) => {
-      button.addEventListener("click", (e) => {
-        e.stopPropagation(); // Prevent the product link from firing
-        // The href="#contact" will handle the scrolling
-      });
-    });
+    allProducts = products;
   } catch (error) {
-    console.error("Product rendering failed:", error);
+    console.error("产品渲染失败:", error);
     productsGrid.innerHTML = `
       <div class="note">
         <i class="fa-solid fa-circle-exclamation"></i>
-        <span>Unable to load products at the moment. Please try again later.</span>
+        <span>暂时无法加载产品，请稍后重试。</span>
       </div>
     `;
+    return;
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  let activeCategory1 = urlParams.get('category1');
+  let activeCategory2 = urlParams.get('category2');
+  let activeCategory3 = urlParams.get('category3');
+
+  const sectionHead = document.querySelector("#products .section-head");
+
+  function updateFilterBreadcrumb() {
+    let existing = document.getElementById("filterBreadcrumb");
+    if (existing) existing.remove();
+
+    if (!activeCategory1 && !activeCategory2 && !activeCategory3) return;
+
+    const div = document.createElement("div");
+    div.id = "filterBreadcrumb";
+    div.style.cssText = "display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;";
+
+    let parts = [];
+    if (activeCategory1) parts.push(activeCategory1);
+    if (activeCategory2) parts.push(activeCategory2);
+    if (activeCategory3) parts.push(activeCategory3);
+
+    div.innerHTML = `
+      <span style="font-size:13px;color:var(--muted-2);">当前筛选：</span>
+      <span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(11,60,106,.06);border:1px solid var(--line);border-radius:2px;font-size:13px;font-weight:700;color:var(--brand-blue);">
+        <i class="fa-solid fa-filter" style="font-size:11px;"></i>
+        ${parts.join(' / ')}
+      </span>
+      <button id="clearFilter" type="button" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1px solid var(--line);border-radius:2px;background:var(--bg);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;">
+        <i class="fa-solid fa-xmark" style="font-size:10px;"></i> 清除筛选
+      </button>
+    `;
+
+    sectionHead.appendChild(div);
+
+    document.getElementById("clearFilter")?.addEventListener("click", () => {
+      activeCategory1 = null;
+      activeCategory2 = null;
+      activeCategory3 = null;
+      history.replaceState(null, "", "index.html#products");
+      filterProducts();
+      updateFilterBreadcrumb();
+      highlightActiveCategory();
+    });
+  }
+
+  function highlightActiveCategory() {
+    document.querySelectorAll(".category-item").forEach(item => {
+      const href = item.getAttribute("href") || "";
+      const url = new URL(href, window.location.origin + window.location.pathname);
+      const itemCat1 = url.searchParams.get("category1");
+      if (activeCategory1 && itemCat1 === activeCategory1) {
+        item.style.borderColor = "var(--brand-blue)";
+        item.style.boxShadow = "0 4px 16px rgba(11,60,106,.10)";
+      } else {
+        item.style.borderColor = "";
+        item.style.boxShadow = "";
+      }
+    });
+  }
+
+  function renderProducts(products) {
+    if (products.length === 0) {
+      productsGrid.innerHTML = `
+        <div class="note">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>该分类下暂无产品。</span>
+        </div>
+      `;
+      return;
+    }
+
+    productsGrid.innerHTML = products.map((product) => {
+      const imagePath = product.imagePath;
+      const tagHtml = product.tag ? `<div class="product-tag">${product.tag}</div>` : '';
+
+      return `
+        <article class="product-card">
+          <a href="product-detail.html?id=${product.id}" class="product-link">
+            <div class="product-media">
+              ${tagHtml}
+              <img
+                src="${imagePath}"
+                alt="${product.name}"
+                loading="lazy"
+                onerror="this.closest('.product-media').classList.add('img-missing'); this.style.display='none';"
+              />
+              <div class="img-fallback" aria-hidden="true">
+                <i class="fa-solid fa-box"></i>
+                <div>
+                  <div class="fallback-title">产品图片</div>
+                </div>
+              </div>
+            </div>
+            <div class="product-body">
+              <h3 class="product-title">${product.name}</h3>
+              <div class="product-sku"><i class="fa-solid fa-hashtag" style="font-size:11px;margin-right:4px;color:var(--muted-2);"></i> 型号：<strong>${product.model}</strong></div>
+              <div class="product-moq"><i class="fa-solid fa-box-open" style="font-size:11px;margin-right:4px;color:var(--muted-2);"></i> 起订量：${product.moq}</div>
+              <p class="product-desc">${product.description}</p>
+            </div>
+          </a>
+          <div class="product-actions">
+            <button
+              class="inquiry-btn"
+              type="button"
+              data-product-name="${product.name}"
+              data-inquire="${product.model}"
+            >
+              <i class="fa-solid fa-paper-plane"></i>
+              立即询价
+            </button>
+          </div>
+        </article>
+      `;
+    }).join("");
+
+    bindInquiryButtons();
+  }
+
+  function filterProducts() {
+    let filtered = allProducts;
+    const searchTerm = document.getElementById("searchInput")?.value?.trim().toLowerCase() || "";
+
+    if (activeCategory1) {
+      filtered = filtered.filter(p => p.category1 === activeCategory1);
+    }
+    if (activeCategory2) {
+      filtered = filtered.filter(p => p.category2 === activeCategory2);
+    }
+    if (activeCategory3) {
+      filtered = filtered.filter(p => p.category3 === activeCategory3);
+    }
+    if (searchTerm) {
+      filtered = filtered.filter(p =>
+        (p.name && p.name.toLowerCase().includes(searchTerm)) ||
+        (p.model && p.model.toLowerCase().includes(searchTerm)) ||
+        (p.spec && p.spec.toLowerCase().includes(searchTerm)) ||
+        (p.description && p.description.toLowerCase().includes(searchTerm)) ||
+        (p.category1 && p.category1.toLowerCase().includes(searchTerm)) ||
+        (p.category2 && p.category2.toLowerCase().includes(searchTerm))
+      );
+    }
+    renderProducts(filtered);
+  }
+
+  const searchInput = document.getElementById("searchInput");
+  if (searchInput) {
+    let debounceTimer;
+    searchInput.addEventListener("input", () => {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(filterProducts, 300);
+    });
+    searchInput.closest(".search-box")?.querySelector("button")?.addEventListener("click", filterProducts);
+  }
+
+  filterProducts();
+  updateFilterBreadcrumb();
+  highlightActiveCategory();
+
+  if (activeCategory1 || activeCategory2 || activeCategory3) {
+    setTimeout(() => {
+      const productsSection = document.getElementById("products");
+      if (productsSection) {
+        const headerH = document.querySelector(".site-header")?.getBoundingClientRect().height || 0;
+        const top = productsSection.getBoundingClientRect().top + window.scrollY - headerH - 10;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    }, 100);
+  }
+
+  document.querySelectorAll(".category-item").forEach(item => {
+    item.addEventListener("click", (e) => {
+      e.preventDefault();
+      const href = item.getAttribute("href") || "";
+      const url = new URL(href, window.location.origin + window.location.pathname);
+      activeCategory1 = url.searchParams.get("category1");
+      activeCategory2 = url.searchParams.get("category2");
+      activeCategory3 = url.searchParams.get("category3");
+      const newUrl = new URL(window.location.origin + window.location.pathname);
+      if (activeCategory1) newUrl.searchParams.set("category1", activeCategory1);
+      if (activeCategory2) newUrl.searchParams.set("category2", activeCategory2);
+      if (activeCategory3) newUrl.searchParams.set("category3", activeCategory3);
+      newUrl.hash = "products";
+      history.pushState(null, "", newUrl.toString());
+      filterProducts();
+      updateFilterBreadcrumb();
+      highlightActiveCategory();
+      const productsSection = document.getElementById("products");
+      if (productsSection) {
+        const headerH = document.querySelector(".site-header")?.getBoundingClientRect().height || 0;
+        const top = window.scrollY + productsSection.getBoundingClientRect().top - headerH - 10;
+        window.scrollTo({ top, behavior: "smooth" });
+      }
+    });
+  });
+
+  function bindInquiryButtons() {
+    productsGrid.querySelectorAll("[data-inquire]").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const model = button.getAttribute("data-inquire") || "";
+        const messageEl = document.getElementById("message");
+        if (messageEl) {
+          const template =
+            `您好，我对型号 ${model} 很感兴趣。\n` +
+            `请报价：单价、起订量、交货期、包装方式，以及运至（邮编/港口）：\n\n` +
+            `采购数量：\n` +
+            `公司名称：\n` +
+            `备注（OEM/ODM、贴牌等）：\n`;
+          if (!messageEl.value.trim()) {
+            messageEl.value = template;
+          } else if (!messageEl.value.includes(model)) {
+            messageEl.value = `${messageEl.value.trim()}\n\n---\n感兴趣的型号：${model}\n`;
+          }
+        }
+        const contactSection = document.getElementById("contact");
+        if (contactSection) {
+          const headerH = document.querySelector(".site-header")?.getBoundingClientRect().height || 0;
+          const top = window.scrollY + contactSection.getBoundingClientRect().top - headerH - 10;
+          window.scrollTo({ top, behavior: "smooth" });
+        }
+      });
+    });
   }
 });

@@ -1,387 +1,279 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Admin Panel | Product Management</title>
+  <title>管理后台 | 产品管理</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx/dist/xlsx.full.min.js"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" referrerpolicy="no-referrer" />
   <style>
     :root{
-      --brand-blue: #0B3C6A;
-      --brand-red: #E60012;
-      --bg: #FFFFFF;
-      --bg-muted: #F9FAFB;
-      --line: rgba(17, 24, 39, .10);
-      --text: #1F2937;
-      --muted: rgba(31, 41, 55, .74);
-      --shadow: 0 18px 50px rgba(17,24,39,.14);
-      --radius: 16px;
+      --brand-blue:#0B3C6A;
+      --brand-red:#E60012;
+      --bg:#FFFFFF;
+      --bg-muted:#F9FAFB;
+      --line:rgba(17,24,39,.10);
+      --text:#1F2937;
+      --muted:rgba(31,41,55,.74);
+      --shadow:0 18px 50px rgba(17,24,39,.14);
+      --radius:16px;
     }
-    body{
-      font-family: ui-sans-serif, system-ui, -apple-system, "Inter", "Roboto", "Segoe UI", Arial, sans-serif;
-      background: var(--bg-muted);
-      color: var(--text);
+    body{font-family:ui-sans-serif,system-ui,-apple-system,"Inter","Roboto","Segoe UI",Arial,sans-serif;background:var(--bg-muted);color:var(--text);}
+    .container{width:100%;max-width:1200px;margin:0 auto;padding:0 20px;}
+    .card{background:var(--bg);border-radius:var(--radius);border:1px solid var(--line);box-shadow:var(--shadow);padding:24px;margin-bottom:24px;}
+    .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 16px;border-radius:12px;font-weight:600;border:1px solid var(--line);background:var(--bg);transition:all .15s ease;cursor:pointer;}
+    .btn:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(11,60,106,.1);}
+    .btn-primary{background:var(--brand-blue);color:white;border-color:var(--brand-blue);}
+    .btn-danger{background:var(--brand-red);color:white;border-color:var(--brand-red);}
+    .form-group{margin-bottom:16px;}
+    label{display:block;margin-bottom:8px;font-weight:600;color:var(--text);}
+    input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;transition:border-color .15s ease;box-sizing:border-box;}
+    input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand-blue);box-shadow:0 0 0 3px rgba(11,60,106,.1);}
+    select:disabled{background-color:#f3f4f6;color:#9ca3af;cursor:not-allowed;}
+    .nav-tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--line);}
+    .nav-tab{padding:12px 20px;border-radius:8px 8px 0 0;font-weight:600;cursor:pointer;transition:all .15s ease;border-bottom:3px solid transparent;}
+    .nav-tab.active{border-bottom-color:var(--brand-blue);color:var(--brand-blue);}
+    .tab-content{display:none;}
+    .tab-content.active{display:block;}
+    .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:20px;}
+    .product-card{background:var(--bg);border-radius:var(--radius);border:1px solid var(--line);overflow:hidden;transition:all .15s ease;}
+    .product-card:hover{transform:translateY(-4px);box-shadow:0 20px 40px rgba(17,24,39,.12);}
+    .product-image{height:150px;background:var(--bg-muted);display:flex;align-items:center;justify-content:center;}
+    .product-image img{max-width:100%;max-height:100%;object-fit:cover;}
+    .product-info{padding:16px;}
+    .product-name{font-weight:700;margin-bottom:8px;}
+    .product-model{font-size:14px;color:var(--muted);margin-bottom:12px;}
+    .product-actions{display:flex;gap:8px;}
+    .action-btn{flex:1;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s ease;border:none;}
+    .action-btn.edit{background:var(--brand-blue);color:white;}
+    .action-btn.delete{background:var(--brand-red);color:white;}
+    .action-btn.add-child{background:#059669;color:white;}
+
+    .tree-container{margin:0;padding:0;list-style:none;}
+    .tree-container ul{margin:0;padding:0;list-style:none;}
+    .tree-node{position:relative;}
+    .tree-node .tree-node{padding-left:32px;}
+    .tree-node .tree-node::before{
+      content:'';position:absolute;left:14px;top:0;bottom:0;width:1px;background:#e5e7eb;
     }
-    .container{
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 20px;
+    .tree-node .tree-node:last-child::before{bottom:calc(100% - 28px);}
+
+    .tree-row{
+      display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:8px;
+      margin-bottom:2px;cursor:default;transition:background .12s ease;border:1px solid transparent;position:relative;
     }
-    .card{
-      background: var(--bg);
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      box-shadow: var(--shadow);
-      padding: 24px;
-      margin-bottom: 24px;
-    }
-    .btn{
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-weight: 600;
-      border: 1px solid var(--line);
-      background: var(--bg);
-      transition: all .15s ease;
-      cursor: pointer;
-    }
-    .btn:hover{
-      transform: translateY(-1px);
-      box-shadow: 0 10px 20px rgba(11,60,106,.1);
-    }
-    .btn-primary{
-      background: var(--brand-blue);
-      color: white;
-      border-color: var(--brand-blue);
-    }
-    .btn-danger{
-      background: var(--brand-red);
-      color: white;
-      border-color: var(--brand-red);
-    }
-    .form-group{
-      margin-bottom: 16px;
-    }
-    label{
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: var(--text);
-    }
-    input, select, textarea{
-      width: 100%;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      font-size: 14px;
-      transition: border-color .15s ease;
-    }
-    input:focus, select:focus, textarea:focus{
-      outline: none;
-      border-color: var(--brand-blue);
-      box-shadow: 0 0 0 3px rgba(11,60,106,.1);
-    }
-    .nav-tabs{
-      display: flex;
-      gap: 4px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--line);
-    }
-    .nav-tab{
-      padding: 12px 20px;
-      border-radius: 8px 8px 0 0;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .15s ease;
-      border-bottom: 3px solid transparent;
-    }
-    .nav-tab.active{
-      border-bottom-color: var(--brand-blue);
-      color: var(--brand-blue);
-    }
-    .tab-content{
-      display: none;
-    }
-    .tab-content.active{
-      display: block;
-    }
-    .product-grid{
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 16px;
-      margin-top: 20px;
-    }
-    .product-card{
-      background: var(--bg);
-      border-radius: var(--radius);
-      border: 1px solid var(--line);
-      overflow: hidden;
-      transition: all .15s ease;
-    }
-    .product-card:hover{
-      transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(17,24,39,.12);
-    }
-    .product-image{
-      height: 150px;
-      background: var(--bg-muted);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .product-image img{
-      max-width: 100%;
-      max-height: 100%;
-      object-fit: cover;
-    }
-    .product-info{
-      padding: 16px;
-    }
-    .product-name{
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-    .product-model{
-      font-size: 14px;
-      color: var(--muted);
-      margin-bottom: 12px;
-    }
-    .product-actions{
-      display: flex;
-      gap: 8px;
-    }
-    .action-btn{
-      flex: 1;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all .15s ease;
-    }
-    .action-btn.edit{
-      background: var(--brand-blue);
-      color: white;
-    }
-    .action-btn.delete{
-      background: var(--brand-red);
-      color: white;
-    }
-    .category-tree{
-      margin: 20px 0;
-    }
-    .category-level{
-      margin-left: 20px;
-    }
-    .category-item{
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 12px;
-      border-radius: 8px;
-      margin-bottom: 4px;
-      transition: background .15s ease;
-    }
-    .category-item:hover{
-      background: var(--bg-muted);
-    }
-    .category-item .name{
-      flex: 1;
-      font-weight: 600;
-    }
-    .category-item .actions{
-      display: flex;
-      gap: 4px;
-    }
-    .category-item .action-btn{
-      padding: 4px 8px;
-      font-size: 10px;
-    }
-    .alert{
-      padding: 12px 16px;
-      border-radius: 8px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .alert.success{
-      background: rgba(16, 185, 129, .1);
-      border: 1px solid rgba(16, 185, 129, .3);
-      color: #059669;
-    }
-    .alert.error{
-      background: rgba(239, 68, 68, .1);
-      border: 1px solid rgba(239, 68, 68, .3);
-      color: #dc2626;
-    }
+    .tree-node[data-level="1"] > .tree-row{background:rgba(11,60,106,.03);border-color:rgba(11,60,106,.06);}
+    .tree-node[data-level="1"] > .tree-row:hover{background:rgba(11,60,106,.07);border-color:rgba(11,60,106,.12);}
+    .tree-node[data-level="2"] > .tree-row:hover,
+    .tree-node[data-level="3"] > .tree-row:hover{background:rgba(11,60,106,.04);border-color:rgba(11,60,106,.08);}
+    .tree-row.drag-over-valid{border:2px dashed var(--brand-blue);background:rgba(11,60,106,.06);}
+    .tree-row.drag-over-invalid{border:2px dashed var(--brand-red);background:rgba(230,0,18,.04);}
+    .tree-toggle{width:20px;height:20px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--muted);transition:transform .2s ease;flex-shrink:0;border:none;background:none;font-size:11px;}
+    .tree-toggle.expanded{transform:rotate(90deg);}
+    .tree-toggle.hidden{visibility:hidden;}
+    .tree-drag-handle{cursor:grab;color:#c0c4cc;display:flex;align-items:center;gap:1px;flex-shrink:0;padding:2px;font-size:12px;transition:color .15s ease;}
+    .tree-drag-handle:hover{color:var(--brand-blue);}
+    .tree-drag-handle:active{cursor:grabbing;}
+    .tree-icon{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-weight:700;color:white;font-size:11px;flex-shrink:0;}
+    .tree-icon.level-1{background:var(--brand-blue);}
+    .tree-icon.level-2{background:#059669;}
+    .tree-icon.level-3{background:#7c3aed;}
+    .tree-label{flex:1;font-size:14px;line-height:1.5;min-width:0;}
+    .tree-label.level-1{font-weight:700;color:var(--text);font-size:15px;}
+    .tree-label.level-2{font-weight:500;color:var(--text);}
+    .tree-label.level-3{font-weight:400;color:var(--muted);}
+    .tree-actions{display:flex;gap:4px;opacity:0;transition:opacity .15s ease;flex-shrink:0;}
+    .tree-row:hover .tree-actions{opacity:1;}
+    .tree-actions .action-btn{padding:4px 10px;font-size:11px;flex:none;}
+    .tree-children{overflow:hidden;transition:max-height .25s ease;}
+    .tree-children.collapsed{max-height:0 !important;}
+    .tree-empty{padding:16px 20px;text-align:center;color:var(--muted);font-size:13px;border:1px dashed var(--line);border-radius:8px;margin:8px 0;}
+    .sortable-ghost .tree-row{opacity:.4;background:rgba(11,60,106,.06);border:2px dashed var(--brand-blue);}
+    .sortable-chosen .tree-row{box-shadow:0 8px 24px rgba(11,60,106,.12);}
+    @keyframes slideDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+    @keyframes slideUp{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-20px);}}
   </style>
 </head>
 <body>
-  <header style="background: var(--brand-blue); color: white; padding: 16px 0;">
+  <header style="background:var(--brand-blue);color:white;padding:16px 0;">
     <div class="container">
-      <div style="display: flex; justify-content: space-between; align-items: center;">
-        <h1 style="font-size: 20px; font-weight: 700;">Admin Panel - Product Management</h1>
-        <a href="index.html" class="btn" style="background: white; color: var(--brand-blue);">
-          <i class="fa-solid fa-arrow-left"></i>
-          Back to Frontend
+      <div style="display:flex;justify-content:space-between;align-items:center;">
+        <h1 style="font-size:20px;font-weight:700;">管理后台 - 产品管理</h1>
+        <a href="index.html" class="btn" style="background:white;color:var(--brand-blue);">
+          <i class="fa-solid fa-arrow-left"></i> 返回网站首页
         </a>
       </div>
     </div>
   </header>
 
-  <main style="padding: 40px 0;">
+  <main style="padding:40px 0;">
     <div class="container">
-      <!-- Tabs -->
       <div class="nav-tabs">
-        <div class="nav-tab active" data-tab="products">Products</div>
-        <div class="nav-tab" data-tab="categories">Categories</div>
-        <div class="nav-tab" data-tab="upload">Upload</div>
+        <div class="nav-tab active" data-tab="products">产品管理</div>
+        <div class="nav-tab" data-tab="categories">分类管理</div>
+        <div class="nav-tab" data-tab="tags">标签管理</div>
+        <div class="nav-tab" data-tab="upload">批量上传</div>
       </div>
 
-      <!-- Products Tab -->
       <div class="tab-content active" id="products">
         <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="font-size: 18px; font-weight: 700;">Products Management</h2>
-            <button class="btn btn-primary" id="addProductBtn">
-              <i class="fa-solid fa-plus"></i>
-              Add Product
-            </button>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <h2 style="font-size:18px;font-weight:700;">产品管理</h2>
+            <button class="btn btn-primary" id="addProductBtn"><i class="fa-solid fa-plus"></i> 发布产品</button>
           </div>
           <div id="productsList" class="product-grid"></div>
         </div>
       </div>
 
-      <!-- Categories Tab -->
       <div class="tab-content" id="categories">
         <div class="card">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-            <h2 style="font-size: 18px; font-weight: 700;">Categories Management</h2>
-            <button class="btn btn-primary" id="addCategoryBtn">
-              <i class="fa-solid fa-plus"></i>
-              Add Category
-            </button>
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div>
+              <h2 style="font-size:18px;font-weight:700;">分类管理</h2>
+              <p style="color:var(--muted);font-size:13px;margin-top:4px;">
+                <i class="fa-solid fa-arrows-up-down-left-right"></i> 拖拽排序 &nbsp;|&nbsp;
+                <i class="fa-solid fa-chevron-right"></i> 点击箭头展开/折叠
+              </p>
+            </div>
+            <button class="btn btn-primary" id="addCategoryBtn"><i class="fa-solid fa-plus"></i> 新增分类</button>
           </div>
-          <div id="categoriesList" class="category-tree"></div>
+          <div id="categoriesList"></div>
         </div>
       </div>
 
-      <!-- Upload Tab -->
+      <div class="tab-content" id="tags">
+        <div class="card">
+          <div style="margin-bottom:20px;">
+            <h2 style="font-size:18px;font-weight:700;">标签管理</h2>
+            <p style="color:var(--muted);font-size:13px;margin-top:4px;">
+              <i class="fa-solid fa-tags"></i> 管理产品标签，新增或删除标签后将实时保存
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:20px;">
+            <input type="text" id="newTagInput" placeholder="输入新标签名称..." style="flex:1;">
+            <button class="btn btn-primary" id="addTagBtn"><i class="fa-solid fa-plus"></i> 添加标签</button>
+          </div>
+          <div id="tagsList" style="display:flex;flex-wrap:wrap;gap:10px;"></div>
+        </div>
+      </div>
+
       <div class="tab-content" id="upload">
         <div class="card">
-          <h2 style="font-size: 18px; font-weight: 700; margin-bottom: 20px;">Image Upload</h2>
-          <form id="uploadForm">
-            <div class="form-group">
-              <label for="imageFile">Select Image</label>
-              <input type="file" id="imageFile" accept="image/*" required>
+          <div style="margin-bottom:20px;">
+            <h2 style="font-size:18px;font-weight:700;">批量上传产品</h2>
+            <p style="color:var(--muted);font-size:13px;margin-top:4px;">
+              <i class="fa-solid fa-file-excel"></i> 下载标准模板，填写后上传即可批量导入产品
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;margin-bottom:24px;">
+            <button class="btn btn-primary" id="downloadTemplateBtn"><i class="fa-solid fa-download"></i> 下载标准 Excel 模板</button>
+          </div>
+          <div id="dropZone" style="border:2px dashed var(--line);border-radius:12px;padding:48px 24px;text-align:center;cursor:pointer;transition:all .2s ease;background:var(--bg-muted);">
+            <i class="fa-solid fa-cloud-arrow-up" style="font-size:40px;color:var(--brand-blue);margin-bottom:12px;display:block;"></i>
+            <div style="font-size:15px;font-weight:600;margin-bottom:6px;">拖拽 Excel 文件到此处，或点击选择文件</div>
+            <div style="font-size:12px;color:var(--muted);">支持 .xlsx / .xls / .csv 格式</div>
+            <input type="file" id="excelFileInput" accept=".xlsx,.xls,.csv" style="display:none;">
+          </div>
+          <div id="uploadPreview" style="margin-top:20px;display:none;">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <h3 style="font-size:15px;font-weight:700;">预览导入数据</h3>
+              <div style="display:flex;gap:10px;">
+                <button class="btn" id="cancelUploadBtn">取消</button>
+                <button class="btn btn-primary" id="confirmUploadBtn"><i class="fa-solid fa-check"></i> 确认导入</button>
+              </div>
             </div>
-            <button type="submit" class="btn btn-primary">
-              <i class="fa-solid fa-upload"></i>
-              Upload Image
-            </button>
-          </form>
-          <div id="uploadStatus" style="margin-top: 20px;"></div>
+            <div id="previewTableWrap" style="max-height:400px;overflow:auto;border:1px solid var(--line);border-radius:8px;"></div>
+          </div>
+          <div id="uploadStatus" style="margin-top:20px;"></div>
         </div>
       </div>
     </div>
   </main>
 
-  <!-- Add/Edit Product Modal -->
-  <div id="productModal" style="position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1000; display: none; align-items: center; justify-content: center;">
-    <div style="background: var(--bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; max-width: 500px; width: 90%; max-height: 90vh; overflow-y: auto;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 id="modalTitle" style="font-size: 16px; font-weight: 700;">Add Product</h3>
-        <button id="closeProductModal" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+  <!-- 产品弹窗 -->
+  <div id="productModal" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:none;align-items:center;justify-content:center;">
+    <div style="background:var(--bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <h3 id="modalTitle" style="font-size:16px;font-weight:700;">发布产品</h3>
+        <button id="closeProductModal" style="background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
       </div>
       <form id="productForm">
         <input type="hidden" id="productId">
+        <div class="form-group"><label for="productName">产品名称</label><input type="text" id="productName" required></div>
+        <div class="form-group"><label for="productModel">型号</label><input type="text" id="productModel" required></div>
+        <div class="form-group"><label for="productCategory1">一级分类</label><select id="productCategory1" required></select></div>
+        <div class="form-group"><label for="productCategory2">二级分类</label><select id="productCategory2"></select></div>
+        <div class="form-group"><label for="productCategory3">三级分类</label><select id="productCategory3"></select></div>
+        <div class="form-group"><label for="productSpec">规格</label><input type="text" id="productSpec" required></div>
+        <div class="form-group"><label for="productMoq">起订量</label><input type="text" id="productMoq" required></div>
+        <div class="form-group"><label for="productDescription">描述</label><textarea id="productDescription" rows="4" required></textarea></div>
+        <div class="form-group"><label for="productTag">产品标签</label><select id="productTag"></select></div>
         <div class="form-group">
-          <label for="productName">Product Name</label>
-          <input type="text" id="productName" required>
-        </div>
-        <div class="form-group">
-          <label for="productModel">Model</label>
-          <input type="text" id="productModel" required>
-        </div>
-        <div class="form-group">
-          <label for="productCategory1">Category Level 1</label>
-          <select id="productCategory1" required></select>
-        </div>
-        <div class="form-group">
-          <label for="productCategory2">Category Level 2</label>
-          <select id="productCategory2"></select>
-        </div>
-        <div class="form-group">
-          <label for="productCategory3">Category Level 3</label>
-          <select id="productCategory3"></select>
-        </div>
-        <div class="form-group">
-          <label for="productSpec">Specification</label>
-          <input type="text" id="productSpec" required>
-        </div>
-        <div class="form-group">
-          <label for="productMoq">MOQ</label>
-          <input type="text" id="productMoq" required>
-        </div>
-        <div class="form-group">
-          <label for="productDescription">Description</label>
-          <textarea id="productDescription" rows="4" required></textarea>
-        </div>
-        <div class="form-group">
-          <label for="productImage">Product Image</label>
-          <input type="file" id="productImage" accept="image/*" required>
-          <div id="imagePreview" style="margin-top: 10px; display: none;">
-            <img id="previewImg" src="" alt="Preview" style="max-width: 200px; max-height: 200px;">
+          <label for="productImage">产品图片</label>
+          <input type="file" id="productImage" accept="image/*">
+          <div id="imagePreview" style="margin-top:10px;display:none;">
+            <img id="previewImg" src="" alt="预览" style="max-width:200px;max-height:200px;">
           </div>
         </div>
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-          <button type="submit" class="btn btn-primary" style="flex: 1;">Save</button>
-          <button type="button" id="cancelProductModal" class="btn" style="flex: 1;">Cancel</button>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          <button type="submit" class="btn btn-primary" style="flex:1;">保存</button>
+          <button type="button" id="cancelProductModal" class="btn" style="flex:1;">取消</button>
         </div>
       </form>
     </div>
   </div>
 
-  <!-- Add Category Modal -->
-  <div id="categoryModal" style="position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 1000; display: none; align-items: center; justify-content: center;">
-    <div style="background: var(--bg); border-radius: var(--radius); box-shadow: var(--shadow); padding: 24px; max-width: 400px; width: 90%;">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-        <h3 id="categoryModalTitle" style="font-size: 16px; font-weight: 700;">Add Category</h3>
-        <button id="closeCategoryModal" style="background: none; border: none; font-size: 20px; cursor: pointer;">&times;</button>
+  <!-- 分类弹窗 -->
+  <div id="categoryModal" style="position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1000;display:none;align-items:center;justify-content:center;">
+    <div style="background:var(--bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;max-width:420px;width:90%;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+        <h3 id="categoryModalTitle" style="font-size:16px;font-weight:700;">新增分类</h3>
+        <button id="closeCategoryModal" style="background:none;border:none;font-size:20px;cursor:pointer;">&times;</button>
       </div>
       <form id="categoryForm">
-        <input type="hidden" id="categoryId">
+        <input type="hidden" id="categoryId" value="">
         <div class="form-group">
-          <label for="categoryName">Category Name</label>
+          <label for="categoryName">分类名称</label>
           <input type="text" id="categoryName" required>
         </div>
         <div class="form-group">
-          <label for="categoryLevel">Level</label>
-          <select id="categoryLevel" required>
-            <option value="1">Level 1</option>
-            <option value="2">Level 2</option>
-            <option value="3">Level 3</option>
+          <label for="categoryParent">所属父级</label>
+          <select id="categoryParent">
+            <option value="">无（设为顶级分类）</option>
           </select>
         </div>
-        <div class="form-group" id="parentCategoryGroup">
-          <label for="parentCategory">Parent Category</label>
-          <select id="parentCategory"></select>
+        <div id="categoryLevelPreview" style="padding:10px 14px;background:var(--bg-muted);border-radius:8px;margin-bottom:16px;font-size:13px;display:flex;align-items:center;gap:8px;">
+          <i class="fa-solid fa-layer-group" style="color:var(--brand-blue);"></i>
+          <span>将创建为：<strong id="previewLevelText">一级分类</strong></span>
         </div>
-        <div style="display: flex; gap: 10px; margin-top: 20px;">
-          <button type="submit" class="btn btn-primary" style="flex: 1;">Save</button>
-          <button type="button" id="cancelCategoryModal" class="btn" style="flex: 1;">Cancel</button>
+        <div style="display:flex;gap:10px;margin-top:20px;">
+          <button type="submit" class="btn btn-primary" style="flex:1;">保存</button>
+          <button type="button" id="cancelCategoryModal" class="btn" style="flex:1;">取消</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- 删除确认弹窗 -->
+  <div id="deleteModal" style="position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(2px);z-index:1000;display:none;align-items:center;justify-content:center;overflow:hidden;">
+    <div style="background:var(--bg);border-radius:var(--radius);box-shadow:var(--shadow);padding:24px;max-width:400px;width:90%;">
+      <div style="display:flex;align-items:center;margin-bottom:20px;">
+        <i class="fa-solid fa-exclamation-circle" style="color:#dc2626;font-size:24px;margin-right:12px;"></i>
+        <h3 style="font-size:16px;font-weight:700;">确认删除</h3>
+      </div>
+      <p id="deleteModalText" style="margin-bottom:24px;color:var(--muted);">确定要删除吗？（此操作不可恢复）</p>
+      <div style="display:flex;gap:10px;">
+        <button id="confirmDelete" class="btn btn-primary" style="flex:1;">确认</button>
+        <button id="cancelDelete" class="btn" style="flex:1;background:#6B7280;color:white;border-color:#6B7280;">取消</button>
+      </div>
     </div>
   </div>
 
   <script>
     let productsData = {
+      tags: ["Wholesale", "OEM/ODM", "Hot Sale", "New"],
       categories: {
         "Knight motorcycle": {
           "BAJAJ": ["BAJAJ 100", "CT100"],
@@ -394,134 +286,30 @@
           "GN": ["GN 125"],
           "TVS": ["HLX"]
         },
-        "Scooter motorcycle": {
-          "GY6": ["GY6 125"]
-        },
-        "ATV": {
-          "Honda": ["TRX90X", "TRX250X"]
-        },
+        "Scooter motorcycle": { "GY6": ["GY6 125"] },
+        "ATV": { "Honda": ["TRX90X", "TRX250X"] },
         "Tricycle": {},
         "Curved beam motorcycle": {},
         "Fuel tricycle": {},
         "Off-road Motorcycle": {},
         "Motorcycles in South America": {},
-        "Modification parts": {
-          "shock absorber": [],
-          "handle": []
-        },
+        "Modification parts": { "shock absorber": [], "handle": [] },
         "Passenger Cars": {},
         "Commercial Vehicles": {},
         "excavator": {}
       },
       products: [
-        {
-          "id": 1,
-          "name": "Performance Brake Pads",
-          "model": "M126-0020-00",
-          "category": "Wholesale",
-          "spec": "Semi-metallic",
-          "moq": "500 sets",
-          "description": "Stable friction coefficient, low dust, consistent batch performance.",
-          "imagePath": "/images/M126-0020-00.jpg",
-          "category1": "Knight motorcycle",
-          "category2": "CG",
-          "category3": "CG 125"
-        },
-        {
-          "id": 2,
-          "name": "Drive Chain Sprocket",
-          "model": "M139-0021-00",
-          "category": "OEM/ODM",
-          "spec": "Steel, 428/520",
-          "moq": "300 pcs",
-          "description": "Heat-treated for durability, precise tooth profile, custom branding.",
-          "imagePath": "/images/M139-0021-00.jpg",
-          "category1": "Knight motorcycle",
-          "category2": "BAJAJ",
-          "category3": "BAJAJ 100"
-        },
-        {
-          "id": 3,
-          "name": "Oil Filter Assembly",
-          "model": "M142-0010-00",
-          "category": "Hot Sale",
-          "spec": "Micron-rated media",
-          "moq": "1000 pcs",
-          "description": "Leak-tested sealing, stable filtration, consistent thread tolerance.",
-          "imagePath": "/images/M142-0010-00.jpg",
-          "category1": "Knight motorcycle",
-          "category2": "CG",
-          "category3": "CG 150"
-        },
-        {
-          "id": 4,
-          "name": "Clutch Plate Set",
-          "model": "M146-0050-00",
-          "category": "Wholesale",
-          "spec": "Friction + Steel",
-          "moq": "200 sets",
-          "description": "Smooth engagement, stable thickness, optimized for long service life.",
-          "imagePath": "/images/M146-0050-00.jpg",
-          "category1": "Knight motorcycle",
-          "category2": "CD",
-          "category3": "CD 110"
-        },
-        {
-          "id": 5,
-          "name": "CNC Aluminum Handlebar",
-          "model": "WZ-HB-5005",
-          "category": "OEM/ODM",
-          "spec": "6061-T6",
-          "moq": "100 pcs",
-          "description": "Anodized finish, precise machining, custom colors & logos.",
-          "imagePath": "/images/product5.jpg",
-          "category1": "Modification parts",
-          "category2": "handle",
-          "category3": ""
-        },
-        {
-          "id": 6,
-          "name": "LED Turn Signal Kit",
-          "model": "M151-0070-00",
-          "category": "US Market",
-          "spec": "12V, Waterproof",
-          "moq": "300 sets",
-          "description": "High-visibility light output, vibration resistance, stable connectors.",
-          "imagePath": "/images/M151-0070-00.jpg",
-          "category1": "Scooter motorcycle",
-          "category2": "GY6",
-          "category3": "GY6 125"
-        },
-        {
-          "id": 7,
-          "name": "Wheel Bearing Set",
-          "model": "M170-0050-00",
-          "category": "QC Focus",
-          "spec": "Sealed, High-temp",
-          "moq": "500 sets",
-          "description": "Low noise, smooth rotation, controlled clearance for consistency.",
-          "imagePath": "/images/M170-0050-00.jpg",
-          "category1": "ATV",
-          "category2": "Honda",
-          "category3": "TRX90X"
-        },
-        {
-          "id": 8,
-          "name": "Air Filter Element",
-          "model": "M200-0050-00",
-          "category": "Wholesale",
-          "spec": "Multi-layer media",
-          "moq": "1000 pcs",
-          "description": "Stable fitment, strong frame, consistent airflow performance.",
-          "imagePath": "/images/M200-0050-00.jpg",
-          "category1": "Knight motorcycle",
-          "category2": "CB",
-          "category3": "CB 125"
-        }
+        { "id":1,"name":"高性能刹车片","model":"M126-0020-00","category":"批发","spec":"半金属","moq":"500 套","description":"稳定摩擦系数，低粉尘，批次性能一致。","imagePath":"/images/M126-0020-00.jpg","category1":"Knight motorcycle","category2":"CG","category3":"CG 125" },
+        { "id":2,"name":"传动链轮","model":"M139-0021-00","category":"OEM/ODM","spec":"钢材，428/520","moq":"300 件","description":"热处理耐用，精密齿形，支持定制品牌。","imagePath":"/images/M139-0021-00.jpg","category1":"Knight motorcycle","category2":"BAJAJ","category3":"BAJAJ 100" },
+        { "id":3,"name":"机油滤清器总成","model":"M142-0010-00","category":"热销","spec":"微米级滤材","moq":"1000 件","description":"密封防漏，过滤稳定，螺纹公差一致。","imagePath":"/images/M142-0010-00.jpg","category1":"Knight motorcycle","category2":"CG","category3":"CG 150" },
+        { "id":4,"name":"离合器片套装","model":"M146-0050-00","category":"批发","spec":"摩擦片+钢片","moq":"200 套","description":"接合平顺，厚度稳定，优化长寿命设计。","imagePath":"/images/M146-0050-00.jpg","category1":"Knight motorcycle","category2":"CD","category3":"CD 110" },
+        { "id":5,"name":"CNC 铝合金车把","model":"WZ-HB-5005","category":"OEM/ODM","spec":"6061-T6","moq":"100 件","description":"阳极氧化表面，精密加工，支持定制颜色与 Logo。","imagePath":"/images/product5.jpg","category1":"Modification parts","category2":"handle","category3":"" },
+        { "id":6,"name":"LED 转向灯套件","model":"M151-0070-00","category":"美国市场","spec":"12V，防水","moq":"300 套","description":"高亮输出，抗震耐用，连接器稳定。","imagePath":"/images/M151-0070-00.jpg","category1":"Scooter motorcycle","category2":"GY6","category3":"GY6 125" },
+        { "id":7,"name":"轮毂轴承套装","model":"M170-0050-00","category":"质检重点","spec":"密封，耐高温","moq":"500 套","description":"低噪音，旋转顺滑，间隙控制一致。","imagePath":"/images/M170-0050-00.jpg","category1":"ATV","category2":"Honda","category3":"TRX90X" },
+        { "id":8,"name":"空气滤芯","model":"M200-0050-00","category":"批发","spec":"多层滤材","moq":"1000 件","description":"安装稳固，骨架结实，气流性能一致。","imagePath":"/images/M200-0050-00.jpg","category1":"Knight motorcycle","category2":"CB","category3":"CB 125" }
       ]
     };
 
-    // DOM Elements
     const tabs = document.querySelectorAll('.nav-tab');
     const tabContents = document.querySelectorAll('.tab-content');
     const productsList = document.getElementById('productsList');
@@ -530,58 +318,87 @@
     const addCategoryBtn = document.getElementById('addCategoryBtn');
     const productModal = document.getElementById('productModal');
     const categoryModal = document.getElementById('categoryModal');
+    const deleteModal = document.getElementById('deleteModal');
     const closeProductModal = document.getElementById('closeProductModal');
     const closeCategoryModal = document.getElementById('closeCategoryModal');
     const cancelProductModal = document.getElementById('cancelProductModal');
     const cancelCategoryModal = document.getElementById('cancelCategoryModal');
+    const confirmDelete = document.getElementById('confirmDelete');
+    const cancelDelete = document.getElementById('cancelDelete');
     const productForm = document.getElementById('productForm');
     const categoryForm = document.getElementById('categoryForm');
-    const uploadForm = document.getElementById('uploadForm');
-    const uploadStatus = document.getElementById('uploadStatus');
     const productCategory1 = document.getElementById('productCategory1');
     const productCategory2 = document.getElementById('productCategory2');
     const productCategory3 = document.getElementById('productCategory3');
-    const categoryLevel = document.getElementById('categoryLevel');
-    const parentCategory = document.getElementById('parentCategory');
-    const parentCategoryGroup = document.getElementById('parentCategoryGroup');
+    const categoryParent = document.getElementById('categoryParent');
+    const previewLevelText = document.getElementById('previewLevelText');
+    const deleteModalText = document.getElementById('deleteModalText');
 
-    // Load data from products.json
+    let itemToDelete = null;
+    let sortableInstances = [];
+    let collapsedNodes = new Set();
+
+    function esc(str) {
+      return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
     async function loadData() {
       try {
         const response = await fetch('products.json');
         if (response.ok) {
           productsData = await response.json();
+          if (!productsData.tags) productsData.tags = ["Wholesale", "OEM/ODM", "Hot Sale", "New"];
           renderProducts();
           renderCategories();
+          renderTags();
           populateCategorySelects();
+          populateTagSelect();
         }
       } catch (error) {
-        console.error('Error loading data:', error);
+        console.error('数据加载失败:', error);
+        renderCategories();
+        renderTags();
       }
     }
 
-    // Save data to products.json
-    async function saveData() {
+    async function saveData(message = '保存成功！') {
+      showAlert(message, 'success');
       try {
-        const response = await fetch('products.json', {
+        await fetch('products.json', {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(productsData, null, 2)
         });
-        if (response.ok) {
-          showAlert('Data saved successfully!', 'success');
-        } else {
-          showAlert('Error saving data', 'error');
-        }
       } catch (error) {
-        console.error('Error saving data:', error);
-        showAlert('Error saving data', 'error');
+        console.error('保存失败:', error);
+        showAlert('保存失败，请重试', 'error');
       }
     }
 
-    // Render products
+    function showAlert(message, type) {
+      let alertContainer = document.getElementById('alertContainer');
+      if (!alertContainer) {
+        alertContainer = document.createElement('div');
+        alertContainer.id = 'alertContainer';
+        alertContainer.style.cssText = 'position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:10000;width:80%;max-width:600px;';
+        document.body.appendChild(alertContainer);
+      }
+      // 清空旧提示，确保新提示顶上去
+      alertContainer.innerHTML = '';
+      const alert = document.createElement('div');
+      alert.style.cssText = `padding:16px 20px;border-radius:8px;margin-bottom:10px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 12px rgba(0,0,0,0.15);animation:slideDown 0.3s ease-in-out;background:#ffffff;color:${type==='success'?'#10b981':'#dc2626'};border:1px solid ${type==='success'?'#e5e7eb':'#fecaca'};`;
+      alert.innerHTML = `
+        <div style="display:flex;align-items:center;gap:10px;">
+          <i class="fa-solid ${type==='success'?'fa-check-circle':'fa-exclamation-circle'}"></i>
+          <span>${message}</span>
+        </div>
+        <button style="background:none;border:none;font-size:18px;cursor:pointer;color:inherit;"><i class="fa-solid fa-times"></i></button>
+      `;
+      alert.querySelector('button').addEventListener('click', () => { alert.remove(); });
+      alertContainer.appendChild(alert);
+      setTimeout(() => { alert.remove(); }, 3000);
+    }
+
     function renderProducts() {
       productsList.innerHTML = '';
       productsData.products.forEach(product => {
@@ -589,14 +406,14 @@
         productCard.className = 'product-card';
         productCard.innerHTML = `
           <div class="product-image">
-            <img src="${product.imagePath}" alt="${product.name}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI0ZGRkZGRiIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjRjBGMGYwIj7kuK3liIflj6/kuI3kuKrkuo88L3RleHQ+PC9zdmc+'">
+            <img src="${product.imagePath}" alt="${esc(product.name)}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI0ZGRkZGRiIvPjx0ZXh0IHg9IjUwIiB5PSI1NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkFyaWFsIiBmb250LXNpemU9IjE0IiBmaWxsPSIjRjBGMGYwIj7kuK3liIflj6/kuI3kuKrkuo88L3RleHQ+PC9zdmc+'">
           </div>
           <div class="product-info">
             <div class="product-name">${product.name}</div>
             <div class="product-model">${product.model}</div>
             <div class="product-actions">
-              <button class="action-btn edit" onclick="editProduct(${product.id})">Edit</button>
-              <button class="action-btn delete" onclick="deleteProduct(${product.id})">Delete</button>
+              <button class="action-btn edit" onclick="editProduct(${product.id})">编辑</button>
+              <button class="action-btn delete" onclick="deleteProduct(${product.id})">删除</button>
             </div>
           </div>
         `;
@@ -604,465 +421,533 @@
       });
     }
 
-    // Render categories
     function renderCategories() {
+      sortableInstances.forEach(i => i.destroy());
+      sortableInstances = [];
       categoriesList.innerHTML = '';
-      Object.keys(productsData.categories).forEach(category1 => {
-        const category1Item = document.createElement('div');
-        category1Item.className = 'category-item';
-        category1Item.innerHTML = `
-          <div class="name">${category1}</div>
-          <div class="actions">
-            <button class="action-btn edit" onclick="editCategory('${category1}', 1)">Edit</button>
-            <button class="action-btn delete" onclick="deleteCategory('${category1}', 1)">Delete</button>
-          </div>
-        `;
-        categoriesList.appendChild(category1Item);
 
-        const category2Level = document.createElement('div');
-        category2Level.className = 'category-level';
-        categoriesList.appendChild(category2Level);
+      const rootUl = document.createElement('ul');
+      rootUl.className = 'tree-container';
+      rootUl.id = 'tree-root';
 
-        Object.keys(productsData.categories[category1]).forEach(category2 => {
-          const category2Item = document.createElement('div');
-          category2Item.className = 'category-item';
-          category2Item.innerHTML = `
-            <div class="name">${category2}</div>
-            <div class="actions">
-              <button class="action-btn edit" onclick="editCategory('${category2}', 2, '${category1}')">Edit</button>
-              <button class="action-btn delete" onclick="deleteCategory('${category2}', 2, '${category1}')">Delete</button>
-            </div>
-          `;
-          category2Level.appendChild(category2Item);
+      const catKeys = Object.keys(productsData.categories);
+      if (catKeys.length === 0) {
+        categoriesList.innerHTML = '<div class="tree-empty"><i class="fa-solid fa-folder-open"></i> 暂无分类，点击"新增分类"创建</div>';
+        return;
+      }
 
-          const category3Level = document.createElement('div');
-          category3Level.className = 'category-level';
-          category2Level.appendChild(category3Level);
-
-          productsData.categories[category1][category2].forEach(category3 => {
-            const category3Item = document.createElement('div');
-            category3Item.className = 'category-item';
-            category3Item.innerHTML = `
-              <div class="name">${category3}</div>
-              <div class="actions">
-                <button class="action-btn edit" onclick="editCategory('${category3}', 3, '${category1}', '${category2}')">Edit</button>
-                <button class="action-btn delete" onclick="deleteCategory('${category3}', 3, '${category1}', '${category2}')">Delete</button>
-              </div>
-            `;
-            category3Level.appendChild(category3Item);
+      catKeys.forEach(c1 => {
+        const li1 = buildTreeNode(c1, 1, '', '');
+        const c2Keys = Object.keys(productsData.categories[c1]);
+        if (c2Keys.length > 0) {
+          const ul2 = document.createElement('ul');
+          ul2.className = 'tree-children' + (collapsedNodes.has(c1) ? ' collapsed' : '');
+          ul2.dataset.parent1 = c1;
+          c2Keys.forEach(c2 => {
+            const li2 = buildTreeNode(c2, 2, c1, '');
+            const c3Arr = productsData.categories[c1][c2];
+            if (c3Arr.length > 0) {
+              const ul3 = document.createElement('ul');
+              ul3.className = 'tree-children' + (collapsedNodes.has(c1+'>'+c2) ? ' collapsed' : '');
+              ul3.dataset.parent1 = c1;
+              ul3.dataset.parent2 = c2;
+              c3Arr.forEach(c3 => { ul3.appendChild(buildTreeNode(c3, 3, c1, c2)); });
+              li2.appendChild(ul3);
+            }
+            ul2.appendChild(li2);
           });
-        });
-      });
-    }
-
-    // Populate category selects
-    function populateCategorySelects() {
-      // Populate level 1
-      productCategory1.innerHTML = '';
-      const defaultOption1 = document.createElement('option');
-      defaultOption1.value = '';
-      defaultOption1.textContent = 'Select Level 1';
-      productCategory1.appendChild(defaultOption1);
-      
-      Object.keys(productsData.categories).forEach(category1 => {
-        const option = document.createElement('option');
-        option.value = category1;
-        option.textContent = category1;
-        productCategory1.appendChild(option);
+          li1.appendChild(ul2);
+        }
+        rootUl.appendChild(li1);
       });
 
-      // Populate level 2 when level 1 changes
-      // Remove existing change event listener before adding a new one
-      // Use a named function to make it easier to remove
-      const handleCategory1Change = function() {
-        const selectedCategory1 = this.value;
-        productCategory2.innerHTML = '';
-        productCategory3.innerHTML = '';
-        
-        const defaultOption2 = document.createElement('option');
-        defaultOption2.value = '';
-        defaultOption2.textContent = 'Select Level 2';
-        productCategory2.appendChild(defaultOption2);
-        
-        if (selectedCategory1) {
-          Object.keys(productsData.categories[selectedCategory1]).forEach(category2 => {
-            const option = document.createElement('option');
-            option.value = category2;
-            option.textContent = category2;
-            productCategory2.appendChild(option);
-          });
-        }
-      };
-      
-      // Remove any existing listener with the same name
-      productCategory1.removeEventListener('change', handleCategory1Change);
-      productCategory1.addEventListener('change', handleCategory1Change);
-
-      // Populate level 3 when level 2 changes
-      const handleCategory2Change = function() {
-        const selectedCategory1 = productCategory1.value;
-        const selectedCategory2 = this.value;
-        productCategory3.innerHTML = '';
-        
-        const defaultOption3 = document.createElement('option');
-        defaultOption3.value = '';
-        defaultOption3.textContent = 'Select Level 3';
-        productCategory3.appendChild(defaultOption3);
-        
-        if (selectedCategory1 && selectedCategory2) {
-          productsData.categories[selectedCategory1][selectedCategory2].forEach(category3 => {
-            const option = document.createElement('option');
-            option.value = category3;
-            option.textContent = category3;
-            productCategory3.appendChild(option);
-          });
-        }
-      };
-      
-      // Remove any existing listener with the same name
-      productCategory2.removeEventListener('change', handleCategory2Change);
-      productCategory2.addEventListener('change', handleCategory2Change);
+      categoriesList.appendChild(rootUl);
+      initSortable();
     }
 
-    // Show alert
-    function showAlert(message, type) {
-      // Create alert container if it doesn't exist
-      let alertContainer = document.getElementById('alertContainer');
-      if (!alertContainer) {
-        alertContainer = document.createElement('div');
-        alertContainer.id = 'alertContainer';
-        alertContainer.style.position = 'fixed';
-        alertContainer.style.top = '20px';
-        alertContainer.style.left = '50%';
-        alertContainer.style.transform = 'translateX(-50%)';
-        alertContainer.style.zIndex = '10000';
-        alertContainer.style.width = '80%';
-        alertContainer.style.maxWidth = '600px';
-        document.body.appendChild(alertContainer);
-      }
-      
-      // Create alert element
-      const alert = document.createElement('div');
-      alert.className = `alert ${type}`;
-      alert.style.padding = '16px 20px';
-      alert.style.borderRadius = '8px';
-      alert.style.marginBottom = '10px';
-      alert.style.display = 'flex';
-      alert.style.alignItems = 'center';
-      alert.style.justifyContent = 'space-between';
-      alert.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
-      alert.style.animation = 'slideDown 0.3s ease-in-out';
-      
-      if (type === 'success') {
-        alert.style.backgroundColor = '#ffffff';
-        alert.style.border = '1px solid #e5e7eb';
-        alert.style.color = '#10b981';
-      } else {
-        alert.style.backgroundColor = '#ffffff';
-        alert.style.border = '1px solid #fecaca';
-        alert.style.color = '#dc2626';
-      }
-      
-      alert.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 10px;">
-          <i class="fa-solid ${type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle'}"></i>
-          <span>${message}</span>
-        </div>
-        <button style="background: none; border: none; font-size: 18px; cursor: pointer; color: inherit;">
-          <i class="fa-solid fa-times"></i>
+    function buildTreeNode(name, level, parent1, parent2) {
+      const li = document.createElement('li');
+      li.className = 'tree-node';
+      li.dataset.level = level;
+      li.dataset.name = name;
+      li.dataset.parent1 = parent1;
+      li.dataset.parent2 = parent2;
+
+      const hasChildren = level === 1
+        ? Object.keys(productsData.categories[name] || {}).length > 0
+        : level === 2
+          ? (productsData.categories[parent1] && productsData.categories[parent1][name] && productsData.categories[parent1][name].length > 0)
+          : false;
+
+      const isCollapsed = collapsedNodes.has(level === 1 ? name : level === 2 ? parent1 + '>' + name : parent1 + '>' + parent2 + '>' + name);
+
+      const row = document.createElement('div');
+      row.className = 'tree-row';
+      row.innerHTML = `
+        <button class="tree-toggle ${hasChildren ? (isCollapsed ? '' : 'expanded') : 'hidden'}" onclick="toggleNode(this)" title="展开/折叠">
+          <i class="fa-solid fa-chevron-right"></i>
         </button>
+        <div class="tree-drag-handle" title="拖拽排序">
+          <i class="fa-solid fa-ellipsis-vertical"></i><i class="fa-solid fa-ellipsis-vertical"></i>
+        </div>
+        <div class="tree-icon level-${level}">${level}</div>
+        <div class="tree-label level-${level}">${esc(name)}</div>
+        <div class="tree-actions">
+          ${level < 3 ? `<button class="action-btn add-child" onclick="addChildCategory('${esc(name)}',${level},'${esc(parent1)}','${esc(parent2)}')">+ 子级</button>` : ''}
+          <button class="action-btn edit" onclick="editCategory('${esc(name)}',${level},'${esc(parent1)}','${esc(parent2)}')"><i class="fa-solid fa-pen"></i></button>
+          <button class="action-btn delete" onclick="deleteCategory('${esc(name)}',${level},'${esc(parent1)}','${esc(parent2)}')"><i class="fa-solid fa-trash"></i></button>
+        </div>
       `;
-      
-      // Add close button functionality
-      const closeButton = alert.querySelector('button');
-      closeButton.addEventListener('click', () => {
-        alert.style.animation = 'slideUp 0.3s ease-in-out';
-        setTimeout(() => {
-          alert.remove();
-        }, 300);
-      });
-      
-      // Add alert to container
-      alertContainer.appendChild(alert);
-      
-      // Auto remove after 5 seconds
-      setTimeout(() => {
-        alert.style.animation = 'slideUp 0.3s ease-in-out';
-        setTimeout(() => {
-          alert.remove();
-        }, 300);
-      }, 5000);
+      li.insertBefore(row, li.firstChild);
+      return li;
     }
-    
-    // Add CSS animations
-    const style = document.createElement('style');
-    style.textContent = `
-      @keyframes slideDown {
-        from {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      @keyframes slideUp {
-        from {
-          opacity: 1;
-          transform: translateY(0);
-        }
-        to {
-          opacity: 0;
-          transform: translateY(-20px);
-        }
-      }
-    `;
-    document.head.appendChild(style);
 
-    // Add product
+    function toggleNode(btn) {
+      const li = btn.closest('.tree-node');
+      const childrenUl = li.querySelector(':scope > ul.tree-children');
+      if (!childrenUl) return;
+      btn.classList.toggle('expanded');
+      const name = li.dataset.name;
+      const level = parseInt(li.dataset.level);
+      const parent1 = li.dataset.parent1;
+      const key = level === 1 ? name : parent1 + '>' + name;
+      if (btn.classList.contains('expanded')) {
+        childrenUl.classList.remove('collapsed');
+        collapsedNodes.delete(key);
+      } else {
+        childrenUl.classList.add('collapsed');
+        collapsedNodes.add(key);
+      }
+    }
+
+    function initSortable() {
+      const root = document.getElementById('tree-root');
+      if (!root) return;
+      sortableInstances.push(new Sortable(root, {
+        group: { name: 'tree-l1', pull: false, put: false },
+        animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
+        handle: '.tree-drag-handle', draggable: '> .tree-node[data-level="1"]',
+        onEnd: function() { syncTreeFromDOM(); }
+      }));
+      document.querySelectorAll('.tree-node[data-level="1"] > ul.tree-children').forEach(ul => {
+        sortableInstances.push(new Sortable(ul, {
+          group: { name: 'tree-l2', pull: false, put: false },
+          animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
+          handle: '.tree-drag-handle', draggable: '> .tree-node[data-level="2"]',
+          onEnd: function() { syncTreeFromDOM(); }
+        }));
+      });
+      document.querySelectorAll('.tree-node[data-level="2"] > ul.tree-children').forEach(ul => {
+        sortableInstances.push(new Sortable(ul, {
+          group: { name: 'tree-l3', pull: false, put: false },
+          animation: 150, ghostClass: 'sortable-ghost', chosenClass: 'sortable-chosen',
+          handle: '.tree-drag-handle', draggable: '> .tree-node[data-level="3"]',
+          onEnd: function() { syncTreeFromDOM(); }
+        }));
+      });
+    }
+
+    function syncTreeFromDOM() {
+      const newCategories = {};
+      document.querySelectorAll('#tree-root > .tree-node[data-level="1"]').forEach(li1 => {
+        const c1 = li1.dataset.name;
+        newCategories[c1] = {};
+        const ul2 = li1.querySelector(':scope > ul.tree-children');
+        if (ul2) {
+          ul2.querySelectorAll(':scope > .tree-node[data-level="2"]').forEach(li2 => {
+            const c2 = li2.dataset.name;
+            newCategories[c1][c2] = [];
+            const ul3 = li2.querySelector(':scope > ul.tree-children');
+            if (ul3) {
+              ul3.querySelectorAll(':scope > .tree-node[data-level="3"]').forEach(li3 => {
+                newCategories[c1][c2].push(li3.dataset.name);
+              });
+            }
+          });
+        }
+      });
+      productsData.categories = newCategories;
+      populateCategorySelects();
+      saveData('分类排序已更新！');
+    }
+
+    function renderTags() {
+      const tagsList = document.getElementById('tagsList');
+      if (!tagsList) return;
+      tagsList.innerHTML = '';
+      const tags = productsData.tags || [];
+      if (tags.length === 0) {
+        tagsList.innerHTML = '<div style="color:var(--muted);font-size:13px;padding:8px 0;">暂无标签，请添加新标签。</div>';
+        return;
+      }
+      tags.forEach((tag, index) => {
+        const tagEl = document.createElement('div');
+        tagEl.style.cssText = 'display:inline-flex;align-items:center;gap:8px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--bg-muted);font-size:14px;font-weight:600;transition:all .15s ease;';
+        tagEl.innerHTML = `
+          <i class="fa-solid fa-tag" style="color:var(--brand-blue);font-size:12px;"></i>
+          <span>${esc(tag)}</span>
+          <button class="action-btn delete" style="padding:2px 8px;font-size:11px;flex:none;" onclick="deleteTag(${index})" title="删除标签"><i class="fa-solid fa-xmark"></i></button>
+        `;
+        tagsList.appendChild(tagEl);
+      });
+    }
+
+    function populateTagSelect(selectedTag) {
+      const productTag = document.getElementById('productTag');
+      if (!productTag) return;
+      productTag.innerHTML = '<option value="">无标签 (None)</option>';
+      const tags = productsData.tags || [];
+      tags.forEach(tag => {
+        const opt = document.createElement('option');
+        opt.value = tag;
+        opt.textContent = tag;
+        if (tag === selectedTag) opt.selected = true;
+        productTag.appendChild(opt);
+      });
+    }
+
+    function addTag() {
+      const input = document.getElementById('newTagInput');
+      const tagName = input.value.trim();
+      if (!tagName) { showAlert('请输入标签名称', 'error'); return; }
+      if (!productsData.tags) productsData.tags = [];
+      if (productsData.tags.includes(tagName)) { showAlert('该标签已存在', 'error'); return; }
+      productsData.tags.push(tagName);
+      input.value = '';
+      renderTags();
+      populateTagSelect();
+      saveData('标签添加成功！');
+    }
+
+    function deleteTag(index) {
+      if (!productsData.tags) return;
+      const tagName = productsData.tags[index];
+      productsData.tags.splice(index, 1);
+      productsData.products.forEach(p => {
+        if (p.tag === tagName) p.tag = '';
+      });
+      renderTags();
+      populateTagSelect();
+      saveData('标签删除成功！');
+    }
+
+    document.getElementById('addTagBtn').addEventListener('click', addTag);
+    document.getElementById('newTagInput').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); addTag(); }
+    });
+
+    function populateCategorySelects() {
+      productCategory1.innerHTML = '<option value="">请选择一级分类</option>';
+      Object.keys(productsData.categories).forEach(c1 => {
+        productCategory1.innerHTML += `<option value="${esc(c1)}">${c1}</option>`;
+      });
+      productCategory2.disabled = true;
+      productCategory3.disabled = true;
+      productCategory2.innerHTML = '<option value="">请先选择一级分类</option>';
+      productCategory3.innerHTML = '<option value="">请先选择二级分类</option>';
+
+      productCategory1.onchange = function() {
+        const v = this.value;
+        productCategory3.innerHTML = '<option value="">请先选择二级分类</option>';
+        productCategory3.disabled = true;
+        productCategory2.innerHTML = '';
+        if (v) {
+          productCategory2.disabled = false;
+          productCategory2.innerHTML = '<option value="">请选择二级分类</option>';
+          const subs = productsData.categories[v];
+          if (subs && Object.keys(subs).length > 0) {
+            Object.keys(subs).forEach(c2 => { productCategory2.innerHTML += `<option value="${esc(c2)}">${c2}</option>`; });
+          } else {
+            productCategory2.innerHTML = '<option value="">暂无二级分类</option>';
+          }
+        } else {
+          productCategory2.disabled = true;
+          productCategory2.innerHTML = '<option value="">请先选择一级分类</option>';
+        }
+      };
+
+      productCategory2.onchange = function() {
+        const c1 = productCategory1.value;
+        const c2 = this.value;
+        productCategory3.innerHTML = '';
+        if (c1 && c2) {
+          productCategory3.disabled = false;
+          productCategory3.innerHTML = '<option value="">请选择三级分类</option>';
+          const subs = productsData.categories[c1] && productsData.categories[c1][c2];
+          if (subs && subs.length > 0) {
+            subs.forEach(c3 => { productCategory3.innerHTML += `<option value="${esc(c3)}">${c3}</option>`; });
+          } else {
+            productCategory3.innerHTML = '<option value="">暂无三级分类</option>';
+          }
+        } else {
+          productCategory3.disabled = true;
+          productCategory3.innerHTML = '<option value="">请先选择二级分类</option>';
+        }
+      };
+    }
+
+    function populateParentSelect(editingName, editingLevel, editingParent1, editingParent2) {
+      categoryParent.innerHTML = '<option value="">无（设为顶级分类）</option>';
+
+      const selfAndDescendants = new Set();
+      if (editingName) {
+        selfAndDescendants.add(editingName);
+        if (editingLevel === 1 && productsData.categories[editingName]) {
+          Object.keys(productsData.categories[editingName]).forEach(c2 => {
+            selfAndDescendants.add(c2);
+            if (productsData.categories[editingName][c2]) {
+              productsData.categories[editingName][c2].forEach(c3 => selfAndDescendants.add(c3));
+            }
+          });
+        } else if (editingLevel === 2 && editingParent1 && productsData.categories[editingParent1] && productsData.categories[editingParent1][editingName]) {
+          productsData.categories[editingParent1][editingName].forEach(c3 => selfAndDescendants.add(c3));
+        }
+      }
+
+      const optGroupL1 = document.createElement('optgroup');
+      optGroupL1.label = '── 一级分类 ──';
+      Object.keys(productsData.categories).forEach(c1 => {
+        if (!selfAndDescendants.has(c1)) {
+          const opt = document.createElement('option');
+          opt.value = 'L1|' + c1;
+          opt.textContent = c1;
+          optGroupL1.appendChild(opt);
+        }
+      });
+      categoryParent.appendChild(optGroupL1);
+
+      const optGroupL2 = document.createElement('optgroup');
+      optGroupL2.label = '── 二级分类 ──';
+      Object.keys(productsData.categories).forEach(c1 => {
+        if (productsData.categories[c1]) {
+          Object.keys(productsData.categories[c1]).forEach(c2 => {
+            if (!selfAndDescendants.has(c2)) {
+              const opt = document.createElement('option');
+              opt.value = 'L2|' + c1 + '|' + c2;
+              opt.textContent = c1 + ' > ' + c2;
+              optGroupL2.appendChild(opt);
+            }
+          });
+        }
+      });
+      categoryParent.appendChild(optGroupL2);
+      updateLevelPreview();
+    }
+
+    function updateLevelPreview() {
+      const val = categoryParent.value;
+      if (!val) {
+        previewLevelText.textContent = '一级分类（顶级）';
+        previewLevelText.style.color = 'var(--brand-blue)';
+      } else if (val.startsWith('L1|')) {
+        previewLevelText.textContent = '二级分类（归属于 ' + val.split('|')[1] + '）';
+        previewLevelText.style.color = '#059669';
+      } else if (val.startsWith('L2|')) {
+        previewLevelText.textContent = '三级分类（归属于 ' + val.split('|')[2] + '）';
+        previewLevelText.style.color = '#7c3aed';
+      }
+    }
+
+    categoryParent.addEventListener('change', updateLevelPreview);
+
     function addProduct() {
-      document.getElementById('modalTitle').textContent = 'Add Product';
+      document.getElementById('modalTitle').textContent = '发布产品';
       document.getElementById('productId').value = '';
       document.getElementById('productName').value = '';
       document.getElementById('productModel').value = '';
-      document.getElementById('productCategory1').value = '';
-      document.getElementById('productCategory2').value = '';
-      document.getElementById('productCategory3').value = '';
       document.getElementById('productSpec').value = '';
       document.getElementById('productMoq').value = '';
       document.getElementById('productDescription').value = '';
       document.getElementById('productImage').value = '';
       document.getElementById('imagePreview').style.display = 'none';
       document.getElementById('previewImg').src = '';
-      
-      // Ensure category selects are populated
       populateCategorySelects();
-      
-      // Add image preview functionality
-      const productImageInput = document.getElementById('productImage');
-      productImageInput.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.onload = function(e) {
-            document.getElementById('previewImg').src = e.target.result;
-            document.getElementById('imagePreview').style.display = 'block';
-          };
-          reader.readAsDataURL(file);
-        } else {
-          document.getElementById('imagePreview').style.display = 'none';
-          document.getElementById('previewImg').src = '';
-        }
-      });
-      
+      populateTagSelect('');
       productModal.style.display = 'flex';
     }
 
-    // Edit product
     function editProduct(id) {
       const product = productsData.products.find(p => p.id === id);
-      if (product) {
-        document.getElementById('modalTitle').textContent = 'Edit Product';
-        document.getElementById('productId').value = product.id;
-        document.getElementById('productName').value = product.name;
-        document.getElementById('productModel').value = product.model;
-        document.getElementById('productCategory1').value = product.category1;
-        // Trigger change event to populate level 2
-        const event = new Event('change');
-        productCategory1.dispatchEvent(event);
-        setTimeout(() => {
-          document.getElementById('productCategory2').value = product.category2;
-          // Trigger change event to populate level 3
-          productCategory2.dispatchEvent(event);
-          setTimeout(() => {
-            document.getElementById('productCategory3').value = product.category3;
-          }, 100);
-        }, 100);
-        document.getElementById('productSpec').value = product.spec;
-        document.getElementById('productMoq').value = product.moq;
-        document.getElementById('productDescription').value = product.description;
-        document.getElementById('productImage').value = '';
-        
-        // Show existing image as preview
-        if (product.imagePath) {
-          document.getElementById('previewImg').src = product.imagePath;
-          document.getElementById('imagePreview').style.display = 'block';
-        } else {
-          document.getElementById('imagePreview').style.display = 'none';
-          document.getElementById('previewImg').src = '';
-        }
-        
-        // Add image preview functionality
-        const productImageInput = document.getElementById('productImage');
-        productImageInput.addEventListener('change', function(e) {
-          const file = e.target.files[0];
-          if (file) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-              document.getElementById('previewImg').src = e.target.result;
-              document.getElementById('imagePreview').style.display = 'block';
-            };
-            reader.readAsDataURL(file);
-          } else {
-            // If no file selected, show the existing image again
-            if (product.imagePath) {
-              document.getElementById('previewImg').src = product.imagePath;
-              document.getElementById('imagePreview').style.display = 'block';
-            } else {
-              document.getElementById('imagePreview').style.display = 'none';
-              document.getElementById('previewImg').src = '';
-            }
-          }
-        });
-        
-        productModal.style.display = 'flex';
+      if (!product) return;
+      document.getElementById('modalTitle').textContent = '编辑产品';
+      document.getElementById('productId').value = product.id;
+      document.getElementById('productName').value = product.name;
+      document.getElementById('productModel').value = product.model;
+      populateCategorySelects();
+      document.getElementById('productCategory1').value = product.category1;
+      productCategory1.dispatchEvent(new Event('change'));
+      setTimeout(() => {
+        document.getElementById('productCategory2').value = product.category2;
+        productCategory2.dispatchEvent(new Event('change'));
+        setTimeout(() => { document.getElementById('productCategory3').value = product.category3; }, 100);
+      }, 100);
+      document.getElementById('productSpec').value = product.spec;
+      document.getElementById('productMoq').value = product.moq;
+      document.getElementById('productDescription').value = product.description;
+      populateTagSelect(product.tag || '');
+      document.getElementById('productImage').value = '';
+      if (product.imagePath) {
+        document.getElementById('previewImg').src = product.imagePath;
+        document.getElementById('imagePreview').style.display = 'block';
+      } else {
+        document.getElementById('imagePreview').style.display = 'none';
+        document.getElementById('previewImg').src = '';
       }
+      productModal.style.display = 'flex';
     }
 
-    // Delete product
     function deleteProduct(id) {
-      if (confirm('Are you sure you want to delete this product?')) {
-        productsData.products = productsData.products.filter(p => p.id !== id);
-        renderProducts();
-        saveData();
-      }
+      const product = productsData.products.find(p => p.id === id);
+      itemToDelete = { type: 'product', id };
+      deleteModalText.textContent = `确定要删除产品"${product ? product.name : ''}"吗？（此操作不可恢复）`;
+      deleteModal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
     }
 
-    // Add category
-    function addCategory() {
-      document.getElementById('categoryModalTitle').textContent = 'Add Category';
+    function addChildCategory(name, level, parent1, parent2) {
+      document.getElementById('categoryModalTitle').textContent = '新增子分类';
       document.getElementById('categoryId').value = '';
       document.getElementById('categoryName').value = '';
-      document.getElementById('categoryLevel').value = '1';
-      categoryLevel.dispatchEvent(new Event('change'));
+      populateParentSelect('', 0, '', '');
+      if (level === 1) { categoryParent.value = 'L1|' + name; }
+      else if (level === 2) { categoryParent.value = 'L2|' + parent1 + '|' + name; }
+      updateLevelPreview();
       categoryModal.style.display = 'flex';
     }
 
-    // Edit category
-    function editCategory(name, level, parent1 = '', parent2 = '') {
-      document.getElementById('categoryModalTitle').textContent = 'Edit Category';
+    function addCategory() {
+      document.getElementById('categoryModalTitle').textContent = '新增分类';
+      document.getElementById('categoryId').value = '';
+      document.getElementById('categoryName').value = '';
+      populateParentSelect('', 0, '', '');
+      categoryParent.value = '';
+      updateLevelPreview();
+      categoryModal.style.display = 'flex';
+    }
+
+    function editCategory(name, level, parent1, parent2) {
+      document.getElementById('categoryModalTitle').textContent = '编辑分类';
       document.getElementById('categoryId').value = JSON.stringify({ name, level, parent1, parent2 });
       document.getElementById('categoryName').value = name;
-      document.getElementById('categoryLevel').value = level;
-      categoryLevel.dispatchEvent(new Event('change'));
-      
-      if (level === 2) {
-        parentCategory.value = parent1;
-      } else if (level === 3) {
-        parentCategory.value = `${parent1}|${parent2}`;
-      }
-      
+      populateParentSelect(name, level, parent1, parent2);
+      if (level === 1) { categoryParent.value = ''; }
+      else if (level === 2) { categoryParent.value = 'L1|' + parent1; }
+      else if (level === 3) { categoryParent.value = 'L2|' + parent1 + '|' + parent2; }
+      updateLevelPreview();
       categoryModal.style.display = 'flex';
     }
 
-    // Delete category
-    function deleteCategory(name, level, parent1 = '', parent2 = '') {
-      if (confirm('Are you sure you want to delete this category?')) {
-        if (level === 1) {
-          delete productsData.categories[name];
-        } else if (level === 2) {
-          delete productsData.categories[parent1][name];
-        } else if (level === 3) {
-          productsData.categories[parent1][parent2] = productsData.categories[parent1][parent2].filter(c => c !== name);
-        }
-        renderCategories();
-        populateCategorySelects();
-        saveData();
-      }
+    function deleteCategory(name, level, parent1, parent2) {
+      let desc = '';
+      if (level === 1) desc = `确定要删除"${name}"及其所有子分类吗？（此操作不可恢复）`;
+      else if (level === 2) desc = `确定要删除"${name}"及其所有子项吗？（此操作不可恢复）`;
+      else desc = `确定要删除"${name}"吗？（此操作不可恢复）`;
+      itemToDelete = { type: 'category', name, level, parent1, parent2 };
+      deleteModalText.textContent = desc;
+      deleteModal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
     }
 
-    // Event listeners
     tabs.forEach(tab => {
       tab.addEventListener('click', function() {
-        const tabId = this.dataset.tab;
         tabs.forEach(t => t.classList.remove('active'));
         tabContents.forEach(c => c.classList.remove('active'));
         this.classList.add('active');
-        document.getElementById(tabId).classList.add('active');
+        document.getElementById(this.dataset.tab).classList.add('active');
       });
     });
 
     addProductBtn.addEventListener('click', addProduct);
     addCategoryBtn.addEventListener('click', addCategory);
-
     closeProductModal.addEventListener('click', () => productModal.style.display = 'none');
     closeCategoryModal.addEventListener('click', () => categoryModal.style.display = 'none');
     cancelProductModal.addEventListener('click', () => productModal.style.display = 'none');
     cancelCategoryModal.addEventListener('click', () => categoryModal.style.display = 'none');
+
+    document.getElementById('productImage').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          document.getElementById('previewImg').src = ev.target.result;
+          document.getElementById('imagePreview').style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+      } else {
+        document.getElementById('imagePreview').style.display = 'none';
+      }
+    });
+
+    confirmDelete.addEventListener('click', () => {
+      if (!itemToDelete) return;
+      if (itemToDelete.type === 'product') {
+        productsData.products = productsData.products.filter(p => p.id !== itemToDelete.id);
+        renderProducts();
+        saveData('产品删除成功！');
+      } else if (itemToDelete.type === 'category') {
+        const { name, level, parent1, parent2 } = itemToDelete;
+        if (level === 1) delete productsData.categories[name];
+        else if (level === 2) delete productsData.categories[parent1][name];
+        else if (level === 3) productsData.categories[parent1][parent2] = productsData.categories[parent1][parent2].filter(c => c !== name);
+        renderCategories();
+        populateCategorySelects();
+        saveData('分类删除成功！');
+      }
+      deleteModal.style.display = 'none';
+      document.body.style.overflow = '';
+      itemToDelete = null;
+    });
+
+    cancelDelete.addEventListener('click', () => {
+      deleteModal.style.display = 'none';
+      document.body.style.overflow = '';
+      itemToDelete = null;
+    });
+
+    deleteModal.addEventListener('click', (e) => {
+      if (e.target === deleteModal) {
+        deleteModal.style.display = 'none';
+        document.body.style.overflow = '';
+        itemToDelete = null;
+      }
+    });
 
     productForm.addEventListener('submit', function(e) {
       e.preventDefault();
       const id = parseInt(document.getElementById('productId').value) || Date.now();
       const name = document.getElementById('productName').value;
       const model = document.getElementById('productModel').value;
-      const category1 = document.getElementById('productCategory1').value;
-      const category2 = document.getElementById('productCategory2').value;
-      const category3 = document.getElementById('productCategory3').value;
+      const c1 = document.getElementById('productCategory1').value;
+      const c2 = document.getElementById('productCategory2').value;
+      const c3 = document.getElementById('productCategory3').value;
       const spec = document.getElementById('productSpec').value;
       const moq = document.getElementById('productMoq').value;
-      const description = document.getElementById('productDescription').value;
-      const productImageInput = document.getElementById('productImage');
-      const file = productImageInput.files[0];
+      const desc = document.getElementById('productDescription').value;
+      const fileInput = document.getElementById('productImage');
+      const file = fileInput.files[0];
 
-      // If a file is selected, upload it first
       if (file) {
         const formData = new FormData();
-        formData.append('image', file); // 确保字段名为 'image'，与后端 Multer 配置一致
-
-        fetch(window.location.origin + '/upload', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Server responded with ' + response.status);
-          }
-          return response.json();
-        })
-        .then(data => {
-          if (data.success) {
-            const imagePath = data.imagePath;
-            saveProduct(id, name, model, category1, category2, category3, spec, moq, description, imagePath);
-          } else {
-            showAlert('Error uploading image: ' + data.message, 'error');
-          }
-        })
-        .catch(error => {
-          console.error('Error uploading image:', error);
-          showAlert('Error uploading image: ' + error.message, 'error');
-        });
+        formData.append('image', file);
+        fetch(window.location.origin + '/upload', { method: 'POST', body: formData })
+          .then(r => { if (!r.ok) throw new Error('上传失败: ' + r.status); return r.json(); })
+          .then(data => {
+            if (data.success) saveProductObj(id, name, model, c1, c2, c3, spec, moq, desc, data.imagePath);
+            else showAlert('上传失败: ' + data.message, 'error');
+          })
+          .catch(err => showAlert('上传失败: ' + err.message, 'error'));
       } else {
-        // If no file is selected, use the existing image path if editing
-        const existingProduct = productsData.products.find(p => p.id === id);
-        const imagePath = existingProduct ? existingProduct.imagePath : '';
-        saveProduct(id, name, model, category1, category2, category3, spec, moq, description, imagePath);
+        const existing = productsData.products.find(p => p.id === id);
+        saveProductObj(id, name, model, c1, c2, c3, spec, moq, desc, existing ? existing.imagePath : '');
       }
     });
 
-    // Save product function
-    function saveProduct(id, name, model, category1, category2, category3, spec, moq, description, imagePath) {
-      const product = {
-        id,
-        name,
-        model,
-        category: 'Wholesale', // Default category
-        spec,
-        moq,
-        description,
-        imagePath,
-        category1,
-        category2,
-        category3
-      };
-
-      const existingIndex = productsData.products.findIndex(p => p.id === id);
-      if (existingIndex >= 0) {
-        productsData.products[existingIndex] = product;
-      } else {
-        productsData.products.push(product);
-      }
-
+    function saveProductObj(id, name, model, c1, c2, c3, spec, moq, desc, imagePath) {
+      const tag = document.getElementById('productTag') ? document.getElementById('productTag').value : '';
+      const product = { id, name, model, category: '批发', spec, moq, description: desc, imagePath, category1: c1, category2: c2, category3: c3, tag };
+      const idx = productsData.products.findIndex(p => p.id === id);
+      if (idx >= 0) productsData.products[idx] = product;
+      else productsData.products.push(product);
       renderProducts();
       productModal.style.display = 'none';
       saveData();
@@ -1070,61 +955,204 @@
 
     categoryForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      const id = JSON.parse(document.getElementById('categoryId').value || '{}');
-      const name = document.getElementById('categoryName').value;
-      const level = parseInt(document.getElementById('categoryLevel').value);
-      const parentValue = document.getElementById('parentCategory').value;
+      const id = JSON.parse(document.getElementById('categoryId').value || 'null');
+      const newName = document.getElementById('categoryName').value.trim();
+      const parentVal = categoryParent.value;
 
-      // Delete old category if editing
-      if (id.name) {
-        if (id.level === 1) {
-          delete productsData.categories[id.name];
-        } else if (id.level === 2) {
-          delete productsData.categories[id.parent1][id.name];
-        } else if (id.level === 3) {
-          productsData.categories[id.parent1][id.parent2] = productsData.categories[id.parent1][id.parent2].filter(c => c !== id.name);
-        }
-      }
+      if (!newName) { showAlert('请输入分类名称', 'error'); return; }
 
-      // Add new category
-      if (level === 1) {
-        productsData.categories[name] = {};
-      } else if (level === 2) {
-        if (!productsData.categories[parentValue]) {
-          productsData.categories[parentValue] = {};
+      let targetLevel, targetParent1 = '', targetParent2 = '';
+      if (!parentVal) { targetLevel = 1; }
+      else if (parentVal.startsWith('L1|')) { targetLevel = 2; targetParent1 = parentVal.split('|')[1]; }
+      else if (parentVal.startsWith('L2|')) { targetLevel = 3; const parts = parentVal.split('|'); targetParent1 = parts[1]; targetParent2 = parts[2]; }
+
+      if (id && id.name) {
+        const oldLevel = id.level;
+        const oldParent1 = id.parent1;
+        const oldParent2 = id.parent2;
+        const oldName = id.name;
+
+        let childrenData = null;
+        if (oldLevel === 1) {
+          childrenData = JSON.parse(JSON.stringify(productsData.categories[oldName] || {}));
+          delete productsData.categories[oldName];
+        } else if (oldLevel === 2) {
+          childrenData = productsData.categories[oldParent1] ? productsData.categories[oldParent1][oldName] : [];
+          if (productsData.categories[oldParent1]) delete productsData.categories[oldParent1][oldName];
+        } else if (oldLevel === 3) {
+          if (productsData.categories[oldParent1] && productsData.categories[oldParent1][oldParent2]) {
+            productsData.categories[oldParent1][oldParent2] = productsData.categories[oldParent1][oldParent2].filter(c => c !== oldName);
+          }
         }
-        productsData.categories[parentValue][name] = [];
-      } else if (level === 3) {
-        const [parent1, parent2] = parentValue.split('|');
-        if (!productsData.categories[parent1]) {
-          productsData.categories[parent1] = {};
+
+        if (targetLevel === 1) {
+          productsData.categories[newName] = childrenData || {};
+        } else if (targetLevel === 2) {
+          if (!productsData.categories[targetParent1]) productsData.categories[targetParent1] = {};
+          productsData.categories[targetParent1][newName] = Array.isArray(childrenData) ? childrenData : [];
+        } else if (targetLevel === 3) {
+          if (!productsData.categories[targetParent1]) productsData.categories[targetParent1] = {};
+          if (!productsData.categories[targetParent1][targetParent2]) productsData.categories[targetParent1][targetParent2] = [];
+          productsData.categories[targetParent1][targetParent2].push(newName);
         }
-        if (!productsData.categories[parent1][parent2]) {
-          productsData.categories[parent1][parent2] = [];
+      } else {
+        if (targetLevel === 1) {
+          if (!productsData.categories[newName]) productsData.categories[newName] = {};
+        } else if (targetLevel === 2) {
+          if (!productsData.categories[targetParent1]) productsData.categories[targetParent1] = {};
+          if (!productsData.categories[targetParent1][newName]) productsData.categories[targetParent1][newName] = [];
+        } else if (targetLevel === 3) {
+          if (!productsData.categories[targetParent1]) productsData.categories[targetParent1] = {};
+          if (!productsData.categories[targetParent1][targetParent2]) productsData.categories[targetParent1][targetParent2] = [];
+          if (!productsData.categories[targetParent1][targetParent2].includes(newName)) productsData.categories[targetParent1][targetParent2].push(newName);
         }
-        productsData.categories[parent1][parent2].push(name);
       }
 
       renderCategories();
       populateCategorySelects();
       categoryModal.style.display = 'none';
-      saveData();
+      saveData('分类保存成功！');
     });
 
-    uploadForm.addEventListener('submit', function(e) {
+    let pendingImportData = [];
+
+    const HEADER_MAP = {
+      '产品名称': 'name', 'name': 'name',
+      '型号': 'model', 'model': 'model',
+      '规格': 'spec', 'spec': 'spec',
+      '起订量': 'moq', 'moq': 'moq',
+      '描述': 'description', 'description': 'description',
+      '一级分类': 'category1', 'category1': 'category1',
+      '二级分类': 'category2', 'category2': 'category2',
+      '三级分类': 'category3', 'category3': 'category3',
+      '标签': 'tag', 'tag': 'tag',
+      '图片路径': 'imagePath', 'imagepath': 'imagePath', 'image path': 'imagePath',
+      '图片路径 - 可选': 'imagePath'
+    };
+
+    document.getElementById('downloadTemplateBtn').addEventListener('click', function() {
+      const headers = [
+        '产品名称', '型号', '规格', '起订量', '描述',
+        '一级分类', '二级分类', '三级分类', '标签', '图片路径'
+      ];
+      const ws = XLSX.utils.aoa_to_sheet([headers]);
+      ws['!cols'] = headers.map(() => ({ wch: 20 }));
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Products');
+      XLSX.writeFile(wb, '产品导入模板.xlsx');
+    });
+
+    const dropZone = document.getElementById('dropZone');
+    const excelFileInput = document.getElementById('excelFileInput');
+
+    dropZone.addEventListener('click', () => excelFileInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = 'var(--brand-blue)'; dropZone.style.background = 'rgba(11,60,106,.05)'; });
+    dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = 'var(--line)'; dropZone.style.background = 'var(--bg-muted)'; });
+    dropZone.addEventListener('drop', (e) => {
       e.preventDefault();
-      const fileInput = document.getElementById('imageFile');
-      const file = fileInput.files[0];
-      
-      if (file) {
-        // In a real implementation, you would upload the file to the server
-        // For this demo, we'll just simulate a successful upload
-        showAlert(`Image ${file.name} uploaded successfully!`, 'success');
-        fileInput.value = '';
-      }
+      dropZone.style.borderColor = 'var(--line)';
+      dropZone.style.background = 'var(--bg-muted)';
+      const file = e.dataTransfer.files[0];
+      if (file) handleExcelFile(file);
+    });
+    excelFileInput.addEventListener('change', function() {
+      if (this.files[0]) handleExcelFile(this.files[0]);
+      this.value = '';
     });
 
-    // Initialize
+    function handleExcelFile(file) {
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (!['xlsx', 'xls', 'csv'].includes(ext)) {
+        showAlert('请上传 .xlsx / .xls / .csv 格式的文件', 'error');
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: 'array' });
+          const sheetName = workbook.SheetNames[0];
+          const sheet = workbook.Sheets[sheetName];
+          const json = XLSX.utils.sheet_to_json(sheet, { defval: '' });
+          if (json.length === 0) {
+            showAlert('文件中没有数据行', 'error');
+            return;
+          }
+          const mapped = json.map(row => {
+            const item = {};
+            Object.keys(row).forEach(key => {
+              const normalizedKey = key.trim().toLowerCase();
+              const field = HEADER_MAP[normalizedKey] || HEADER_MAP[key.trim()];
+              if (field) item[field] = String(row[key]).trim();
+            });
+            return item;
+          }).filter(item => item.name);
+          if (mapped.length === 0) {
+            showAlert('未识别到有效数据，请检查表头是否与模板一致', 'error');
+            return;
+          }
+          pendingImportData = mapped;
+          renderPreviewTable(mapped);
+          document.getElementById('uploadPreview').style.display = 'block';
+        } catch (err) {
+          console.error('解析失败:', err);
+          showAlert('文件解析失败，请检查文件格式', 'error');
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    }
+
+    function renderPreviewTable(data) {
+      const wrap = document.getElementById('previewTableWrap');
+      const cols = ['name', 'model', 'spec', 'moq', 'category1', 'category2', 'category3', 'tag'];
+      const colLabels = { name: '名称', model: '型号', spec: '规格', moq: '起订量', category1: '一级分类', category2: '二级分类', category3: '三级分类', tag: '标签' };
+      let html = '<table style="width:100%;border-collapse:collapse;font-size:13px;">';
+      html += '<thead><tr style="background:var(--bg-muted);position:sticky;top:0;">';
+      html += '<th style="padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);">#</th>';
+      cols.forEach(c => { html += '<th style="padding:8px 10px;text-align:left;border-bottom:1px solid var(--line);">' + colLabels[c] + '</th>'; });
+      html += '</tr></thead><tbody>';
+      data.forEach((item, i) => {
+        html += '<tr style="' + (i % 2 ? 'background:var(--bg-muted);' : '') + '">';
+        html += '<td style="padding:6px 10px;border-bottom:1px solid var(--line);">' + (i + 1) + '</td>';
+        cols.forEach(c => { html += '<td style="padding:6px 10px;border-bottom:1px solid var(--line);">' + esc(item[c] || '') + '</td>'; });
+        html += '</tr>';
+      });
+      html += '</tbody></table>';
+      wrap.innerHTML = html;
+    }
+
+    document.getElementById('cancelUploadBtn').addEventListener('click', function() {
+      pendingImportData = [];
+      document.getElementById('uploadPreview').style.display = 'none';
+    });
+
+    document.getElementById('confirmUploadBtn').addEventListener('click', function() {
+      if (pendingImportData.length === 0) return;
+      const baseId = Date.now();
+      pendingImportData.forEach((item, index) => {
+        const product = {
+          id: baseId + index,
+          name: item.name || '',
+          model: item.model || '',
+          category: '批发',
+          spec: item.spec || '',
+          moq: item.moq || '',
+          description: item.description || '',
+          imagePath: item.imagePath || '',
+          category1: item.category1 || '',
+          category2: item.category2 || '',
+          category3: item.category3 || '',
+          tag: item.tag || ''
+        };
+        productsData.products.push(product);
+      });
+      const count = pendingImportData.length;
+      pendingImportData = [];
+      document.getElementById('uploadPreview').style.display = 'none';
+      renderProducts();
+      saveData('成功批量导入 ' + count + ' 条产品！');
+    });
+
     loadData();
   </script>
 </body>
