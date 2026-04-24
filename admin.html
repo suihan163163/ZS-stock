@@ -101,9 +101,14 @@
     <div class="container">
       <div style="display:flex;justify-content:space-between;align-items:center;">
         <h1 style="font-size:20px;font-weight:700;">管理后台 - 产品管理</h1>
-        <a href="index.html" class="btn" style="background:white;color:var(--brand-blue);">
-          <i class="fa-solid fa-arrow-left"></i> 返回网站首页
-        </a>
+        <div style="display:flex;gap:10px;align-items:center;">
+          <a href="index.html" class="btn" style="background:white;color:var(--brand-blue);">
+            <i class="fa-solid fa-arrow-left"></i> 返回网站首页
+          </a>
+          <button id="logoutBtn" class="btn" style="background:var(--brand-red);color:white;border-color:var(--brand-red);" onclick="handleLogout()">
+            <i class="fa-solid fa-right-from-bracket"></i> 退出登录
+          </button>
+        </div>
       </div>
     </div>
   </header>
@@ -272,6 +277,16 @@
   </div>
 
   <script>
+    function handleLogout() {
+      localStorage.removeItem('adminLoggedIn');
+      sessionStorage.clear();
+      window.location.replace('index.html');
+    }
+
+    if (localStorage.getItem('adminLoggedIn') !== 'true') {
+      window.location.replace('index.html');
+    }
+
     let productsData = {
       tags: ["Wholesale", "OEM/ODM", "Hot Sale", "New"],
       categories: {
@@ -1031,15 +1046,12 @@
     };
 
     document.getElementById('downloadTemplateBtn').addEventListener('click', function() {
-      const headers = [
-        '产品名称', '型号', '规格', '起订量', '描述',
-        '一级分类', '二级分类', '三级分类', '标签', '图片路径'
-      ];
-      const ws = XLSX.utils.aoa_to_sheet([headers]);
-      ws['!cols'] = headers.map(() => ({ wch: 20 }));
-      const wb = XLSX.utils.book_new();
-      XLSX.utils.book_append_sheet(wb, ws, 'Products');
-      XLSX.writeFile(wb, '产品导入模板.xlsx');
+      const a = document.createElement('a');
+      a.href = '/api/template';
+      a.download = '产品导入模板.xlsx';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     });
 
     const dropZone = document.getElementById('dropZone');

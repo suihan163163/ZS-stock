@@ -1,4 +1,4 @@
-(function () {
+﻿(function () {
   const $ = (sel, root = document) => root.querySelector(sel);
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
@@ -206,19 +206,39 @@
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
       clearErrors(loginForm);
-      const username = $("#username") ? $("#username").value.trim() : "";
-      const password = $("#password") ? $("#password").value.trim() : "";
+      const usernameInput = $("#username");
+      const passwordInput = $("#password");
+      const username = usernameInput ? usernameInput.value.trim() : "";
+      const password = passwordInput ? passwordInput.value.trim() : "";
       let ok = true;
-      if (!username) { ok = false; setError($("#username"), "请输入用户名。"); }
-      if (!password) { ok = false; setError($("#password"), "请输入密码。"); }
+      if (!username) { ok = false; setError(usernameInput, "请输入用户名。"); }
+      if (!password) { ok = false; setError(passwordInput, "请输入密码。"); }
       if (!ok) return;
       if (login(username, password)) {
-        // success
+        if (passwordInput) passwordInput.value = '';
+        if (usernameInput) usernameInput.value = '';
       } else {
-        const errorDiv = document.createElement('div');
-        errorDiv.className = 'error-text';
-        errorDiv.textContent = '用户名或密码错误，请重试。';
-        loginForm.appendChild(errorDiv);
+        if (passwordInput) passwordInput.value = '';
+        const loginError = document.getElementById('loginError');
+        if (loginError) {
+          loginError.textContent = '用户名或密码错误，请重试。';
+          loginError.style.display = 'block';
+          setTimeout(() => { loginError.style.display = 'none'; }, 3000);
+        }
+      }
+    });
+  }
+
+  const passwordToggle = document.querySelector('.password-toggle');
+  const passwordInput = document.getElementById('password');
+  if (passwordToggle && passwordInput) {
+    passwordToggle.addEventListener('click', () => {
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        passwordToggle.innerHTML = '<i class="fa-solid fa-eye-slash"></i>';
+      } else {
+        passwordInput.type = 'password';
+        passwordToggle.innerHTML = '<i class="fa-solid fa-eye"></i>';
       }
     });
   }

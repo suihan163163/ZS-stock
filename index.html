@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8" />
@@ -573,18 +573,19 @@
           <div id="loginTitle" class="modal-title">管理员登录</div>
           <div class="modal-subtitle">请输入管理员凭据以访问管理后台。</div>
         </div>
-        <button class="icon-btn" type="button" aria-label="关闭" data-close="true"><i class="fa-solid fa-xmark"></i></button>
+        <button class="icon-btn modal-close-btn" type="button" aria-label="关闭" data-close="true"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="modal-body">
         <form id="loginForm" class="form" novalidate>
           <div class="field">
             <label for="username">用户名</label>
-            <input id="username" name="username" type="text" placeholder="请输入用户名" required />
+            <input id="username" name="username" type="text" placeholder="请输入用户名" autocomplete="off" required />
           </div>
           <div class="field">
             <label for="password">密码</label>
-            <input id="password" name="password" type="password" placeholder="请输入密码" required />
+            <div class="password-wrapper"><input id="password" name="password" type="password" placeholder="请输入密码" autocomplete="new-password" required /><button type="button" class="password-toggle" aria-label="切换密码可见性"><i class="fa-solid fa-eye"></i></button></div>
           </div>
+          <p id="loginError" class="login-error" style="display:none;"></p>
           <div class="form-actions">
             <button class="btn btn-primary w-full justify-center" type="submit"><i class="fa-solid fa-right-to-bracket"></i> 登录</button>
           </div>
