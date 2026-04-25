@@ -236,7 +236,20 @@ app.get('/api/template', async (req, res) => {
   }
 });
 
-app.listen(PORT, () => {
-  console.log(`服务器运行在 http://localhost:${PORT}/`);
-  console.log(`管理面板地址: http://localhost:${PORT}/admin.html`);
-});
+function startServer(port) {
+  const server = app.listen(port, () => {
+    console.log(`服务器运行在 http://localhost:${port}/`);
+    console.log(`管理面板地址: http://localhost:${port}/admin.html`);
+  });
+
+  server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+      console.log(`端口 ${port} 已占用，尝试端口 ${port + 1}...`);
+      startServer(port + 1);
+    } else {
+      console.error(err);
+    }
+  });
+}
+
+startServer(PORT);
