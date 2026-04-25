@@ -30,6 +30,7 @@
     .form-group{margin-bottom:16px;}
     label{display:block;margin-bottom:8px;font-weight:600;color:var(--text);}
     input,select,textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:8px;font-size:14px;transition:border-color .15s ease;box-sizing:border-box;}
+    select{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
     input:focus,select:focus,textarea:focus{outline:none;border-color:var(--brand-blue);box-shadow:0 0 0 3px rgba(11,60,106,.1);}
     select:disabled{background-color:#f3f4f6;color:#9ca3af;cursor:not-allowed;}
     .nav-tabs{display:flex;gap:4px;margin-bottom:24px;border-bottom:1px solid var(--line);}
@@ -651,55 +652,78 @@
       if (e.key === 'Enter') { e.preventDefault(); addTag(); }
     });
 
-    function populateCategorySelects() {
+    function renderCategory1Options() {
       productCategory1.innerHTML = '<option value="">请选择一级分类</option>';
       Object.keys(productsData.categories).forEach(c1 => {
         productCategory1.innerHTML += `<option value="${esc(c1)}">${c1}</option>`;
       });
+    }
+
+    function renderCategory2Options(c1) {
+      productCategory2.innerHTML = '';
+      productCategory3.innerHTML = '<option value="">请先选择二级分类</option>';
+      productCategory3.disabled = true;
+      if (c1) {
+        productCategory2.disabled = false;
+        productCategory2.innerHTML = '<option value="">请选择二级分类</option>';
+        const subs = productsData.categories[c1];
+        if (subs && Object.keys(subs).length > 0) {
+          Object.keys(subs).forEach(c2 => { productCategory2.innerHTML += `<option value="${esc(c2)}">${c2}</option>`; });
+        } else {
+          productCategory2.innerHTML = '<option value="">暂无二级分类</option>';
+        }
+      } else {
+        productCategory2.disabled = true;
+        productCategory2.innerHTML = '<option value="">请先选择一级分类</option>';
+      }
+    }
+
+    function renderCategory3Options(c1, c2) {
+      productCategory3.innerHTML = '';
+      if (c1 && c2) {
+        productCategory3.disabled = false;
+        productCategory3.innerHTML = '<option value="">请选择三级分类</option>';
+        const subs = productsData.categories[c1] && productsData.categories[c1][c2];
+        if (subs && subs.length > 0) {
+          subs.forEach(c3 => { productCategory3.innerHTML += `<option value="${esc(c3)}">${c3}</option>`; });
+        } else {
+          productCategory3.innerHTML = '<option value="">暂无三级分类</option>';
+        }
+      } else {
+        productCategory3.disabled = true;
+        productCategory3.innerHTML = '<option value="">请先选择二级分类</option>';
+      }
+    }
+
+    function populateCategorySelects() {
+      renderCategory1Options();
       productCategory2.disabled = true;
       productCategory3.disabled = true;
       productCategory2.innerHTML = '<option value="">请先选择一级分类</option>';
       productCategory3.innerHTML = '<option value="">请先选择二级分类</option>';
+    }
 
-      productCategory1.onchange = function() {
-        const v = this.value;
+    function setCategoryValues(c1, c2, c3) {
+      renderCategory1Options();
+      productCategory1.value = c1 || '';
+      renderCategory2Options(c1 || '');
+      if (c1 && c2) {
+        productCategory2.value = c2;
+        renderCategory3Options(c1, c2);
+        if (c3) productCategory3.value = c3;
+      } else {
         productCategory3.innerHTML = '<option value="">请先选择二级分类</option>';
         productCategory3.disabled = true;
-        productCategory2.innerHTML = '';
-        if (v) {
-          productCategory2.disabled = false;
-          productCategory2.innerHTML = '<option value="">请选择二级分类</option>';
-          const subs = productsData.categories[v];
-          if (subs && Object.keys(subs).length > 0) {
-            Object.keys(subs).forEach(c2 => { productCategory2.innerHTML += `<option value="${esc(c2)}">${c2}</option>`; });
-          } else {
-            productCategory2.innerHTML = '<option value="">暂无二级分类</option>';
-          }
-        } else {
-          productCategory2.disabled = true;
-          productCategory2.innerHTML = '<option value="">请先选择一级分类</option>';
-        }
-      };
-
-      productCategory2.onchange = function() {
-        const c1 = productCategory1.value;
-        const c2 = this.value;
-        productCategory3.innerHTML = '';
-        if (c1 && c2) {
-          productCategory3.disabled = false;
-          productCategory3.innerHTML = '<option value="">请选择三级分类</option>';
-          const subs = productsData.categories[c1] && productsData.categories[c1][c2];
-          if (subs && subs.length > 0) {
-            subs.forEach(c3 => { productCategory3.innerHTML += `<option value="${esc(c3)}">${c3}</option>`; });
-          } else {
-            productCategory3.innerHTML = '<option value="">暂无三级分类</option>';
-          }
-        } else {
-          productCategory3.disabled = true;
-          productCategory3.innerHTML = '<option value="">请先选择二级分类</option>';
-        }
-      };
+      }
     }
+
+    productCategory1.addEventListener('change', function() {
+      renderCategory2Options(this.value);
+    });
+
+    productCategory2.addEventListener('change', function() {
+      renderCategory3Options(productCategory1.value, this.value);
+    });
 
     function populateParentSelect(editingName, editingLevel, editingParent1, editingParent2) {
       categoryParent.innerHTML = '<option value="">无（设为顶级分类）</option>';
@@ -788,14 +812,7 @@
       document.getElementById('productId').value = product.id;
       document.getElementById('productName').value = product.name;
       document.getElementById('productModel').value = product.model;
-      populateCategorySelects();
-      document.getElementById('productCategory1').value = product.category1;
-      productCategory1.dispatchEvent(new Event('change'));
-      setTimeout(() => {
-        document.getElementById('productCategory2').value = product.category2;
-        productCategory2.dispatchEvent(new Event('change'));
-        setTimeout(() => { document.getElementById('productCategory3').value = product.category3; }, 100);
-      }, 100);
+      setCategoryValues(product.category1, product.category2, product.category3);
       document.getElementById('productSpec').value = product.spec;
       document.getElementById('productMoq').value = product.moq;
       document.getElementById('productDescription').value = product.description;
