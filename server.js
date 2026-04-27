@@ -3,6 +3,7 @@ const multer = require('multer');
 const fs = require('fs');
 const path = require('path');
 const ExcelJS = require('exceljs');
+const axios = require('axios');
 
 const app = express();
 const PORT = process.env.PORT || 8092;
@@ -66,6 +67,81 @@ app.post('/products.json', (req, res) => {
   }
 });
 
+app.post('/api/fetch-image', async (req, res) => {
+  const { url } = req.body;
+  if (!url) {
+    return res.status(400).json({ success: false, message: '缺少图片路径' });
+  }
+
+  const imagesDir = path.join(__dirname, 'images');
+  if (!fs.existsSync(imagesDir)) {
+    fs.mkdirSync(imagesDir, { recursive: true });
+  }
+
+  const isHttp = /^https?:\/\//i.test(url);
+  const isLocal = /^file:\/\/\//i.test(url) || /^[A-Za-z]:[\\\/]/.test(url);
+
+  if (isHttp) {
+    try {
+      const response = await axios.get(url, {
+        responseType: 'arraybuffer',
+        timeout: 15000,
+        maxContentLength: 10 * 1024 * 1024,
+        headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36' }
+      });
+
+      const contentType = response.headers['content-type'] || '';
+      const extMap = {
+        'image/jpeg': '.jpg', 'image/jpg': '.jpg', 'image/png': '.png',
+        'image/gif': '.gif', 'image/webp': '.webp', 'image/bmp': '.bmp'
+      };
+      const ext = extMap[contentType.split(';')[0].trim().toLowerCase()] || '.jpg';
+
+      const filename = `upload_${Date.now()}${ext}`;
+      const filePath = path.join(imagesDir, filename);
+      fs.writeFileSync(filePath, response.data);
+
+      res.status(200).json({ success: true, imagePath: `/images/${filename}` });
+    } catch (error) {
+      console.warn(`[fetch-image] 网络下载失败: ${url} - ${error.message}`);
+      res.status(200).json({ success: false, imagePath: '/images/default.jpg' });
+    }
+  } else if (isLocal) {
+    try {
+      let localPath = url;
+      if (/^file:\/\/\//i.test(localPath)) {
+        localPath = localPath.replace(/^file:\/\/\//i, '');
+        localPath = decodeURIComponent(localPath);
+        localPath = localPath.replace(/\//g, path.sep);
+        if (/^[A-Za-z]\//.test(localPath)) {
+          localPath = localPath[0] + ':' + localPath.slice(1);
+        }
+      }
+
+      if (!fs.existsSync(localPath)) {
+        console.warn(`[fetch-image] 本地文件不存在: ${localPath}`);
+        return res.status(200).json({ success: false, imagePath: '/images/default.jpg' });
+      }
+
+      const extMap = { '.jpg': '.jpg', '.jpeg': '.jpg', '.png': '.png', '.gif': '.gif', '.webp': '.webp', '.bmp': '.bmp', '.svg': '.svg' };
+      const originalExt = path.extname(localPath).toLowerCase();
+      const ext = extMap[originalExt] || '.jpg';
+
+      const filename = `upload_${Date.now()}${ext}`;
+      const destPath = path.join(imagesDir, filename);
+      fs.copyFileSync(localPath, destPath);
+
+      console.log(`[fetch-image] 本地拷贝成功: ${localPath} -> ${destPath}`);
+      res.status(200).json({ success: true, imagePath: `/images/${filename}` });
+    } catch (error) {
+      console.warn(`[fetch-image] 本地拷贝失败: ${url} - ${error.message}`);
+      res.status(200).json({ success: false, imagePath: '/images/default.jpg' });
+    }
+  } else {
+    res.status(400).json({ success: false, message: '无法识别的图片路径格式' });
+  }
+});
+
 app.get('/api/template', async (req, res) => {
   try {
     let categories = {};
@@ -83,22 +159,7 @@ app.get('/api/template', async (req, res) => {
       }
     }
 
-    const category1List = Object.keys(categories);
-    const category2Map = {};
-    const category3Map = {};
-    for (const [c1, subs] of Object.entries(categories)) {
-      if (subs && typeof subs === 'object') {
-        category2Map[c1] = Object.keys(subs);
-        for (const [c2, l3] of Object.entries(subs)) {
-          if (Array.isArray(l3) && l3.length > 0) {
-            category3Map[`${c1}|${c2}`] = l3;
-          }
-        }
-      }
-    }
-
-    const allCategory2 = [...new Set(Object.values(category2Map).flat())];
-    const allCategory3 = [...new Set(Object.values(category3Map).flat())];
+    const c1List = Object.keys(categories);
 
     const workbook = new ExcelJS.Workbook();
     workbook.creator = 'WZSP Admin';
@@ -137,34 +198,95 @@ app.get('/api/template', async (req, res) => {
       });
     }
 
+    // --- RefData hidden sheet for cascading dropdowns ---
+    const refWs = workbook.addWorksheet('RefData');
+    refWs.state = 'veryHidden';
+
+    // Column A: all level-1 categories (source for level-1 dropdown)
+    refWs.getCell(1, 1).value = '一级分类';
+    c1List.forEach((c1, i) => {
+      refWs.getCell(i + 2, 1).value = c1;
+    });
+    refWs.getColumn(1).width = 28;
+
+    let colIdx = 2;
+
+    // For each level-1 category: a column with its level-2 children
+    // Named range name = category name with spaces replaced by underscores
+    for (const c1 of c1List) {
+      const c2List = Object.keys(categories[c1] || {});
+      const c1Name = c1.replace(/ /g, '_');
+      const col = colIdx;
+      refWs.getCell(1, col).value = c1Name;
+
+      if (c2List.length > 0) {
+        c2List.forEach((c2, i) => {
+          refWs.getCell(i + 2, col).value = c2;
+        });
+        workbook.definedNames.add(`RefData!$${colLetter(col)}$2:$${colLetter(col)}$${c2List.length + 1}`, c1Name);
+      } else {
+        workbook.definedNames.add(`RefData!$${colLetter(col)}$2:$${colLetter(col)}$2`, c1Name);
+      }
+      refWs.getColumn(col).width = 22;
+      colIdx++;
+    }
+
+    // For each level-2 category: a column with its level-3 children
+    // Named range name = category name with spaces replaced by underscores
+    for (const c1 of c1List) {
+      const c2List = Object.keys(categories[c1] || {});
+      for (const c2 of c2List) {
+        const c3List = categories[c1][c2] || [];
+        const c2Name = c2.replace(/ /g, '_');
+        const col = colIdx;
+        refWs.getCell(1, col).value = c2Name;
+
+        if (c3List.length > 0) {
+          c3List.forEach((c3, i) => {
+            refWs.getCell(i + 2, col).value = c3;
+          });
+          workbook.definedNames.add(`RefData!$${colLetter(col)}$2:$${colLetter(col)}$${c3List.length + 1}`, c2Name);
+        } else {
+          workbook.definedNames.add(`RefData!$${colLetter(col)}$2:$${colLetter(col)}$2`, c2Name);
+        }
+        refWs.getColumn(col).width = 22;
+        colIdx++;
+      }
+    }
+
+    // --- Data Validation with cascading INDIRECT logic ---
     for (let i = 2; i <= maxRows + 1; i++) {
+      // F column: level-1 category - direct reference to RefData column A
       ws.getCell(`F${i}`).dataValidation = {
         type: 'list',
         allowBlank: true,
-        formulae: [`"${category1List.join(',')}"`],
+        formulae: [`RefData!$A$2:$A$${c1List.length + 1}`],
         showErrorMessage: true,
         errorTitle: '分类错误',
         error: '请从下拉列表中选择一级分类'
       };
 
+      // G column: level-2 category - INDIRECT based on level-1 selection
       ws.getCell(`G${i}`).dataValidation = {
         type: 'list',
         allowBlank: true,
-        formulae: [`"${allCategory2.join(',')}"`],
+        formulae: [`INDIRECT(SUBSTITUTE($F${i}," ","_"))`],
         showErrorMessage: true,
         errorTitle: '分类错误',
-        error: '请从下拉列表中选择二级分类'
+        error: '请先选择一级分类'
       };
 
+      // H column: level-3 category - INDIRECT based on level-2 selection
       ws.getCell(`H${i}`).dataValidation = {
         type: 'list',
         allowBlank: true,
-        formulae: [`"${allCategory3.join(',')}"`],
+        formulae: [`INDIRECT(SUBSTITUTE($G${i}," ","_"))`],
         showErrorMessage: true,
         errorTitle: '分类错误',
-        error: '请从下拉列表中选择三级分类'
+        error: '请先选择二级分类'
       };
 
+      // I column: tags
       if (tags.length > 0) {
         ws.getCell(`I${i}`).dataValidation = {
           type: 'list',
@@ -177,48 +299,14 @@ app.get('/api/template', async (req, res) => {
       }
     }
 
-    const refSheet = workbook.addWorksheet('分类参考', {
-      properties: { tabColor: { argb: 'FF0B3C6A' } }
-    });
-
-    refSheet.addRow(['一级分类', '二级分类', '三级分类']);
-    refSheet.getRow(1).font = { bold: true, size: 11 };
-    let refRow = 2;
-    for (const [c1, subs] of Object.entries(categories)) {
-      if (subs && typeof subs === 'object') {
-        const c2Keys = Object.keys(subs);
-        if (c2Keys.length === 0) {
-          refSheet.addRow([c1, '', '']);
-          refRow++;
-        } else {
-          for (const c2 of c2Keys) {
-            const l3 = subs[c2];
-            if (Array.isArray(l3) && l3.length > 0) {
-              for (const c3 of l3) {
-                refSheet.addRow([c1, c2, c3]);
-                refRow++;
-              }
-            } else {
-              refSheet.addRow([c1, c2, '']);
-              refRow++;
-            }
-          }
-        }
-      } else {
-        refSheet.addRow([c1, '', '']);
-        refRow++;
-      }
-    }
-
-    refSheet.getColumn(1).width = 28;
-    refSheet.getColumn(2).width = 22;
-    refSheet.getColumn(3).width = 22;
-
     ws.getColumn(1).width = 22;
-    ws.getColumn(2).width = 18;
-    ws.getColumn(3).width = 15;
-    ws.getColumn(4).width = 12;
+    ws.getColumn(2).width = 20;
+    ws.getColumn(3).width = 20;
+    ws.getColumn(4).width = 20;
     ws.getColumn(5).width = 35;
+    ws.getColumn(5).eachCell({ includeEmpty: true }, function(cell) {
+      cell.alignment = { wrapText: true };
+    });
     ws.getColumn(6).width = 22;
     ws.getColumn(7).width = 22;
     ws.getColumn(8).width = 22;
@@ -235,6 +323,16 @@ app.get('/api/template', async (req, res) => {
     res.status(500).json({ success: false, message: '生成模板失败: ' + error.message });
   }
 });
+
+function colLetter(idx) {
+  let letter = '';
+  while (idx > 0) {
+    const mod = (idx - 1) % 26;
+    letter = String.fromCharCode(65 + mod) + letter;
+    idx = Math.floor((idx - 1) / 26);
+  }
+  return letter;
+}
 
 function startServer(port) {
   const server = app.listen(port, () => {

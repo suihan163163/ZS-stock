@@ -1155,30 +1155,56 @@
       document.getElementById('uploadPreview').style.display = 'none';
     });
 
-    document.getElementById('confirmUploadBtn').addEventListener('click', function() {
+    document.getElementById('confirmUploadBtn').addEventListener('click', async function() {
       if (pendingImportData.length === 0) return;
+      const btn = this;
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> 导入中...';
+
       const baseId = Date.now();
-      pendingImportData.forEach((item, index) => {
-        const product = {
-          id: baseId + index,
-          name: item.name || '',
-          model: item.model || '',
-          category: '批发',
-          spec: item.spec || '',
-          moq: item.moq || '',
-          description: item.description || '',
-          imagePath: item.imagePath || '',
-          category1: item.category1 || '',
-          category2: item.category2 || '',
-          category3: item.category3 || '',
-          tag: item.tag || ''
-        };
-        productsData.products.push(product);
+      const fetchPromises = pendingImportData.map((item, index) => {
+        return (async () => {
+          let imagePath = item.imagePath || '';
+          if (/^(https?:\/\/|file:\/\/\/|[A-Za-z]:[\\\/])/i.test(imagePath)) {
+            try {
+              const resp = await fetch('/api/fetch-image', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ url: imagePath })
+              });
+              const result = await resp.json();
+              imagePath = result.imagePath || '/images/default.jpg';
+            } catch (e) {
+              console.warn('外链图片下载失败:', imagePath, e);
+              imagePath = '/images/default.jpg';
+            }
+          }
+          return {
+            id: baseId + index,
+            name: item.name || '',
+            model: item.model || '',
+            category: '批发',
+            spec: item.spec || '',
+            moq: item.moq || '',
+            description: item.description || '',
+            imagePath: imagePath,
+            category1: item.category1 || '',
+            category2: item.category2 || '',
+            category3: item.category3 || '',
+            tag: item.tag || ''
+          };
+        })();
       });
+
+      const products = await Promise.all(fetchPromises);
+      products.forEach(p => productsData.products.push(p));
+
       const count = pendingImportData.length;
       pendingImportData = [];
       document.getElementById('uploadPreview').style.display = 'none';
       renderProducts();
+      btn.disabled = false;
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> 确认导入';
       saveData('成功批量导入 ' + count + ' 条产品！');
     });
 
