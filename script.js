@@ -478,6 +478,16 @@ document.addEventListener("DOMContentLoaded", async () => {
               <i class="fa-solid fa-paper-plane"></i>
               立即询价
             </button>
+            <button
+              class="add-to-cart-btn"
+              type="button"
+              data-product-id="${product.id}"
+              data-product-name="${product.name}"
+              data-product-model="${product.model}"
+              data-product-image="${imagePath}"
+            >
+              <i class="fa-solid fa-cart-shopping"></i>
+            </button>
           </div>
         </article>
       `;
@@ -588,6 +598,26 @@ document.addEventListener("DOMContentLoaded", async () => {
           const headerH = document.querySelector(".site-header")?.getBoundingClientRect().height || 0;
           const top = window.scrollY + contactSection.getBoundingClientRect().top - headerH - 10;
           window.scrollTo({ top, behavior: "smooth" });
+        }
+      });
+    });
+
+    productsGrid.querySelectorAll(".add-to-cart-btn").forEach((button) => {
+      button.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        const id = parseInt(button.getAttribute("data-product-id"));
+        const name = button.getAttribute("data-product-name") || "";
+        const model = button.getAttribute("data-product-model") || "";
+        const image = button.getAttribute("data-product-image") || "";
+        if (window.CartManager) {
+          CartManager.addToCart({ id, name, model, price: 0, image }, e);
+          button.classList.add("added");
+          button.innerHTML = '<i class="fa-solid fa-check"></i>';
+          setTimeout(() => {
+            button.classList.remove("added");
+            button.innerHTML = '<i class="fa-solid fa-cart-shopping"></i>';
+          }, 1500);
         }
       });
     });

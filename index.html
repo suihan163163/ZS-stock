@@ -60,6 +60,10 @@
           <button id="loginBtn" class="header-action-btn mobile-hide" type="button" aria-label="登录">
             <i class="fa-solid fa-user"></i> 登录
           </button>
+          <button class="cart-toggle-btn" type="button" aria-label="购物车">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="cart-badge">0</span>
+          </button>
           <a id="adminBtn" class="header-action-btn primary mobile-hide" href="admin.html" style="display:none;">
             <i class="fa-solid fa-cog"></i> 管理
           </a>
@@ -595,5 +599,31 @@
   </div>
 
   <script src="./script.js"></script>
+  <script src="./cart.js"></script>
+
+  <!-- Cart Overlay -->
+  <div id="cartOverlay" class="cart-overlay"></div>
+
+  <!-- Cart Slide-over Panel -->
+  <div id="cartPanel" class="cart-panel">
+    <div class="cart-header">
+      <h3><i class="fa-solid fa-cart-shopping"></i> 购物车</h3>
+      <button id="cartCloseBtn" class="cart-close-btn" type="button" aria-label="关闭购物车"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cart-items-list"></div>
+    <div class="cart-empty" style="display:flex;">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <p>购物车为空</p>
+    </div>
+    <div class="cart-footer" style="display:none;">
+      <div class="cart-total-row">
+        <span class="cart-total-label">合计</span>
+        <span class="cart-total-value">$0.00</span>
+      </div>
+      <button class="cart-checkout-btn" type="button" onclick="CartManager.closeCartPanel(); document.getElementById('contact')?.scrollIntoView({behavior:'smooth'});">
+        <i class="fa-solid fa-paper-plane"></i> 提交询价
+      </button>
+    </div>
+  </div>
 </body>
 </html>

@@ -40,6 +40,10 @@
         <div class="header-actions">
           <a class="header-action-btn" href="index.html#contact"><i class="fa-solid fa-phone"></i> 联系我们</a>
           <a class="header-action-btn primary mobile-hide" href="index.html#contact"><i class="fa-solid fa-file-lines"></i> 询价单</a>
+          <button class="cart-toggle-btn" type="button" aria-label="购物车">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span class="cart-badge">0</span>
+          </button>
           <button id="menuBtn" class="icon-btn" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="mobileMenu" style="display:none;"><i class="fa-solid fa-bars"></i></button>
         </div>
       </div>
@@ -169,6 +173,33 @@
   </footer>
 
   <script src="./script.js"></script>
+  <script src="./cart.js"></script>
+
+  <!-- Cart Overlay -->
+  <div id="cartOverlay" class="cart-overlay"></div>
+
+  <!-- Cart Slide-over Panel -->
+  <div id="cartPanel" class="cart-panel">
+    <div class="cart-header">
+      <h3><i class="fa-solid fa-cart-shopping"></i> 购物车</h3>
+      <button id="cartCloseBtn" class="cart-close-btn" type="button" aria-label="关闭购物车"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="cart-items-list"></div>
+    <div class="cart-empty" style="display:flex;">
+      <i class="fa-solid fa-cart-shopping"></i>
+      <p>购物车为空</p>
+    </div>
+    <div class="cart-footer" style="display:none;">
+      <div class="cart-total-row">
+        <span class="cart-total-label">合计</span>
+        <span class="cart-total-value">$0.00</span>
+      </div>
+      <button class="cart-checkout-btn" type="button" onclick="CartManager.closeCartPanel(); window.location.href='index.html#contact';">
+        <i class="fa-solid fa-paper-plane"></i> 提交询价
+      </button>
+    </div>
+  </div>
+
   <script>
     document.addEventListener("DOMContentLoaded", async () => {
       const productDetail = document.getElementById('productDetail');
@@ -226,6 +257,7 @@
               </div>
               <div class="product-actions">
                 <a class="btn btn-primary" href="index.html#contact" data-inquire="${product.model}"><i class="fa-solid fa-paper-plane"></i> 立即询价</a>
+                <button class="btn btn-outline add-to-cart-btn-detail" type="button" data-product-id="${product.id}" data-product-name="${product.name}" data-product-model="${product.model}" data-product-image=".${product.imagePath}"><i class="fa-solid fa-cart-plus"></i> 加入购物车</button>
                 <a class="btn btn-outline" href="products.html"><i class="fa-solid fa-arrow-left"></i> 返回产品列表</a>
               </div>
             </div>
@@ -255,6 +287,9 @@
                 <button class="inquiry-btn" type="button" data-inquire="${p.model}">
                   <i class="fa-solid fa-paper-plane"></i> 立即询价
                 </button>
+                <button class="add-to-cart-btn" type="button" data-product-id="${p.id}" data-product-name="${p.name}" data-product-model="${p.model}" data-product-image=".${p.imagePath}">
+                  <i class="fa-solid fa-cart-shopping"></i>
+                </button>
               </div>
             </article>
           `;
@@ -266,6 +301,36 @@
       } catch (error) {
         productDetail.innerHTML = '<div class="error-state"><i class="fa-solid fa-circle-exclamation"></i><h3>产品加载失败</h3><p>加载产品详情时出现问题，请稍后重试。</p><a href="products.html" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i> 返回产品列表</a></div>';
       }
+
+      function bindAddToCartButtons() {
+        document.querySelectorAll('.add-to-cart-btn, .add-to-cart-btn-detail').forEach(function(btn) {
+          btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var id = parseInt(this.getAttribute('data-product-id'));
+            var name = this.getAttribute('data-product-name') || '';
+            var model = this.getAttribute('data-product-model') || '';
+            var image = this.getAttribute('data-product-image') || '';
+            if (window.CartManager) {
+              CartManager.addToCart({ id: id, name: name, model: model, price: 0, image: image }, e);
+              this.classList.add('added');
+              var origHTML = this.innerHTML;
+              // 如果是详情页的按钮，保留文字；如果是卡片的按钮，只保留图标
+              if (this.classList.contains('add-to-cart-btn-detail')) {
+                this.innerHTML = '<i class="fa-solid fa-check"></i> 已加入';
+              } else {
+                this.innerHTML = '<i class="fa-solid fa-check"></i>';
+              }
+              var self = this;
+              setTimeout(function() {
+                self.classList.remove('added');
+                self.innerHTML = origHTML;
+              }, 1500);
+            }
+          });
+        });
+      }
+      bindAddToCartButtons();
     });
   </script>
 </body>
