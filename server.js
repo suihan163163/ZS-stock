@@ -1,3 +1,6 @@
+/* ============================================================
+ * 依赖引入 & 初始化
+ * ============================================================ */
 const express = require('express');
 const multer = require('multer');
 const fs = require('fs');
@@ -8,10 +11,16 @@ const axios = require('axios');
 const app = express();
 const PORT = process.env.PORT || 8092;
 
+/* ============================================================
+ * 中间件配置
+ * ============================================================ */
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(__dirname));
 
+/* ============================================================
+ * 图片上传配置 (multer)
+ * ============================================================ */
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     const imagesDir = path.join(__dirname, 'images');
@@ -41,6 +50,9 @@ const upload = multer({
   }
 });
 
+/* ============================================================
+ * API 路由 — 图片上传
+ * ============================================================ */
 app.post('/upload', upload.single('image'), (req, res) => {
   try {
     if (!req.file) {
@@ -57,6 +69,9 @@ app.post('/upload', upload.single('image'), (req, res) => {
   }
 });
 
+/* ============================================================
+ * API 路由 — 产品数据保存
+ * ============================================================ */
 app.post('/products.json', (req, res) => {
   try {
     fs.writeFileSync('./products.json', JSON.stringify(req.body, null, 2), 'utf8');
@@ -67,6 +82,9 @@ app.post('/products.json', (req, res) => {
   }
 });
 
+/* ============================================================
+ * API 路由 — 外链图片下载转存
+ * ============================================================ */
 app.post('/api/fetch-image', async (req, res) => {
   const { url } = req.body;
   if (!url) {
@@ -142,6 +160,9 @@ app.post('/api/fetch-image', async (req, res) => {
   }
 });
 
+/* ============================================================
+ * API 路由 — 批量上传 Excel 模板下载（含级联下拉）
+ * ============================================================ */
 app.get('/api/template', async (req, res) => {
   try {
     let categories = {};
@@ -334,6 +355,9 @@ function colLetter(idx) {
   return letter;
 }
 
+/* ============================================================
+ * 服务器启动（自动处理端口占用）
+ * ============================================================ */
 function startServer(port) {
   const server = app.listen(port, () => {
     console.log(`服务器运行在 http://localhost:${port}/`);
