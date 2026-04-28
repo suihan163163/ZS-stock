@@ -246,8 +246,8 @@
       if (!email) { if (regErr) { regErr.textContent = '请输入邮箱。'; regErr.style.display = 'block'; } return; }
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { if (regErr) { regErr.textContent = '邮箱格式不正确。'; regErr.style.display = 'block'; } return; }
       if (!phone) { if (regErr) { regErr.textContent = '请输入手机号。'; regErr.style.display = 'block'; } return; }
-      if (!securityQuestion) { if (regErr) { regErr.textContent = '请选择密保问题。'; regErr.style.display = 'block'; } return; }
-      if (!securityAnswer) { if (regErr) { regErr.textContent = '请输入密保答案。'; regErr.style.display = 'block'; } return; }
+      if (!securityQuestion) { if (regErr) { regErr.textContent = 'Please select a security question.'; regErr.style.display = 'block'; } return; }
+      if (!securityAnswer) { if (regErr) { regErr.textContent = 'Please provide your security answer.'; regErr.style.display = 'block'; } return; }
       if (!password) { if (regErr) { regErr.textContent = '请设置密码。'; regErr.style.display = 'block'; } return; }
       if (password.length < 6) { if (regErr) { regErr.textContent = '密码长度至少为6位。'; regErr.style.display = 'block'; return; } }
       fetch('/api/register', {

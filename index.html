@@ -52,8 +52,8 @@
           <a class="header-action-btn mobile-hide flex items-center justify-center h-10 bg-blue-900 text-white rounded px-5" href="#contact">
             <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg> 询价单
           </a>
-          <button id="loginBtn" class="header-action-btn mobile-hide flex items-center justify-center h-10 border border-blue-900 text-blue-900 rounded px-4" type="button" aria-label="登录/注册">
-            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 登录
+          <button id="loginBtn" class="header-action-btn mobile-hide flex items-center justify-center h-10 px-4 border border-blue-900 text-blue-900 bg-white rounded text-sm font-medium hover:bg-blue-50 transition" type="button" aria-label="登录/注册">
+            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 登录/注册
           </button>
           <a class="header-action-btn mobile-hide flex items-center justify-center h-10 text-gray-600 hover:text-blue-900 px-3" href="#contact">
             <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> 联系我们
@@ -735,19 +735,18 @@
             <p class="phone-hint">For consultation purposes, no SMS verification needed.</p>
           </div>
           <div class="field">
-            <label for="regSecurityQuestion">密保问题</label>
-            <select id="regSecurityQuestion" name="securityQuestion" required>
-              <option value="">请选择密保问题</option>
-              <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
-              <option value="What was the name of your first pet?">What was the name of your first pet?</option>
-              <option value="What city were you born in?">What city were you born in?</option>
-              <option value="What is your favorite book?">What is your favorite book?</option>
-              <option value="What was your childhood nickname?">What was your childhood nickname?</option>
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="regSecurityQuestion">Security Question</label>
+            <select id="regSecurityQuestion" name="securityQuestion" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900 outline-none transition text-sm text-gray-800 bg-white">
+              <option value="">Choose a security question</option>
+              <option value="What is your favorite motorcycle or car brand?">What is your favorite motorcycle or car brand?</option>
+              <option value="What is your dream travel destination?">What is your dream travel destination?</option>
+              <option value="What is the title of your favorite movie or book?">What is the title of your favorite movie or book?</option>
+              <option value="What is your favorite food or dish?">What is your favorite food or dish?</option>
             </select>
           </div>
           <div class="field">
-            <label for="regSecurityAnswer">密保答案</label>
-            <input id="regSecurityAnswer" name="securityAnswer" type="text" placeholder="请输入密保答案" autocomplete="off" />
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="regSecurityAnswer">Security Answer</label>
+            <input id="regSecurityAnswer" name="securityAnswer" type="text" placeholder="Your answer" autocomplete="off" class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900 outline-none transition text-sm text-gray-800 bg-white" />
           </div>
           <div class="field">
             <label for="regPassword">密码</label>
@@ -792,12 +791,12 @@
             <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0;">Please answer your security question to verify your identity.</p>
           </div>
           <div class="field">
-            <label for="forgotQuestionDisplay">密保问题</label>
-            <input id="forgotQuestionDisplay" type="text" readonly style="background:var(--bg);color:var(--muted);cursor:default;" />
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="forgotQuestionDisplay">Security Question</label>
+            <input id="forgotQuestionDisplay" type="text" readonly class="w-full px-4 py-3 border border-gray-200 rounded-lg text-sm text-gray-500 bg-gray-50 cursor-default outline-none" />
           </div>
           <div class="field">
-            <label for="forgotQuestionAnswer">密保答案</label>
-            <input id="forgotQuestionAnswer" name="answer" type="text" placeholder="请输入密保答案" autocomplete="off" required />
+            <label class="block text-sm font-medium text-gray-700 mb-1" for="forgotQuestionAnswer">Security Answer</label>
+            <input id="forgotQuestionAnswer" name="answer" type="text" placeholder="Your answer" autocomplete="off" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900 outline-none transition text-sm text-gray-800 bg-white" />
           </div>
           <p id="forgotQuestionError" class="auth-error" style="display:none;"></p>
           <div class="form-actions">
