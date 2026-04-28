@@ -16,7 +16,13 @@
     mobileMenu.hidden = !open;
     menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
     var icon = menuBtn.querySelector("i");
-    if (icon) { icon.classList.toggle("fa-bars", !open); icon.classList.toggle("fa-xmark", open); }
+    if (icon) {
+      if (open) {
+        icon.outerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+      } else {
+        icon.outerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>';
+      }
+    }
   }
 
   if (menuBtn && mobileMenu) {
@@ -172,8 +178,8 @@
       var wrapper = this.closest('.password-wrapper') || this.parentElement;
       var input = wrapper ? wrapper.querySelector('input') : null;
       if (!input) return;
-      if (input.type === 'password') { input.type = 'text'; this.innerHTML = '<i class="fa-solid fa-eye-slash"></i>'; }
-      else { input.type = 'password'; this.innerHTML = '<i class="fa-solid fa-eye"></i>'; }
+      if (input.type === 'password') { input.type = 'text'; this.innerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>'; }
+      else { input.type = 'password'; this.innerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>'; }
     });
   });
 
@@ -563,7 +569,7 @@
           '</div>' +
         '</div>' +
         '<button class="cart-item-remove" data-id="' + item.id + '" type="button" aria-label="移除">' +
-          '<i class="fa-solid fa-trash-can"></i>' +
+          '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><line x1="10" x2="10" y1="11" y2="17"/><line x1="14" x2="14" y1="11" y2="17"/></svg>' +
         '</button>' +
       '</div>';
     }
@@ -669,13 +675,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       renderSidebar();
       filterAndRender();
     } catch (err) {
-      productsGrid.innerHTML = '<div class="note"><i class="fa-solid fa-circle-exclamation"></i><span>暂时无法加载产品，请稍后重试。</span></div>';
+      productsGrid.innerHTML = '<div class="note"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg><span>暂时无法加载产品，请稍后重试。</span></div>';
     }
   }
 
   function renderSidebar() {
     var catKeys = Object.keys(categoriesData).filter(function (k) { return k.trim() !== ""; });
-    if (catKeys.length === 0) { sidebarCategories.innerHTML = '<div class="note"><i class="fa-solid fa-circle-info"></i><span>暂无分类数据。</span></div>'; return; }
+    if (catKeys.length === 0) { sidebarCategories.innerHTML = '<div class="note"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg><span>暂无分类数据。</span></div>'; return; }
 
     var html = '<button class="cat-item cat-all' + (!activeCat1 ? ' active' : '') + '" data-cat1="">全部产品</button>';
 
@@ -687,7 +693,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
       html += '<div class="cat-group' + (isActive1 ? ' open' : '') + '">';
       html += '<button class="cat-item cat-l1' + (isActive1 ? ' active' : '') + '" data-cat1="' + cat1 + '">';
-      html += '<span class="cat-arrow">' + (hasSub ? '<i class="fa-solid fa-chevron-right"></i>' : '') + '</span>';
+      html += '<span class="cat-arrow">' + (hasSub ? '<svg class="inline-icon" style="width:10px;height:10px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>' : '') + '</span>';
       html += '<span class="cat-label">' + cat1 + '</span>';
       html += '</button>';
 
@@ -700,7 +706,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
           html += '<div class="cat-sub-group' + (isActive2 ? ' open' : '') + '">';
           html += '<button class="cat-item cat-l2' + (isActive2 ? ' active' : '') + '" data-cat1="' + cat1 + '" data-cat2="' + cat2 + '">';
-          html += '<span class="cat-arrow">' + (hasL3 ? '<i class="fa-solid fa-chevron-right"></i>' : '') + '</span>';
+          html += '<span class="cat-arrow">' + (hasL3 ? '<svg class="inline-icon" style="width:10px;height:10px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>' : '') + '</span>';
           html += '<span class="cat-label">' + cat2 + '</span>';
           html += '</button>';
 
@@ -787,7 +793,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       if (activeCat3) parts.push(activeCat3);
       toolbarTitle.textContent = parts.join(" / ");
       activeFilterTag.style.display = "inline-flex";
-      activeFilterTag.innerHTML = '<i class="fa-solid fa-filter" style="font-size:11px;"></i> ' + parts.join(" / ") + ' <button class="tag-remove" id="tagRemove" type="button"><i class="fa-solid fa-xmark"></i></button>';
+      activeFilterTag.innerHTML = '<svg class="inline-icon" style="width:11px;height:11px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> ' + parts.join(" / ") + ' <button class="tag-remove" id="tagRemove" type="button"><svg class="inline-icon" style="width:12px;height:12px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg></button>';
       clearAllBtn.style.display = "inline-flex";
       document.getElementById("tagRemove")?.addEventListener("click", clearFilters);
     } else {
@@ -808,24 +814,24 @@ document.addEventListener("DOMContentLoaded", async function () {
   if (clearAllBtn) clearAllBtn.addEventListener("click", clearFilters);
 
   function renderProducts(products) {
-    if (products.length === 0) { productsGrid.innerHTML = '<div class="note" style="grid-column:1/-1;"><i class="fa-solid fa-box-open"></i><span>暂无该分类产品，请尝试其他筛选条件。</span></div>'; return; }
+    if (products.length === 0) { productsGrid.innerHTML = '<div class="note" style="grid-column:1/-1;"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H8a4 4 0 0 1-4-4c0 2.21 1.79 4 4 4H12"/><path d="M20 20H4a2 2 0 0 1-2-2v-4"/></svg><span>暂无该分类产品，请尝试其他筛选条件。</span></div>'; return; }
     productsGrid.innerHTML = products.map(function (product) {
       var tagHtml = product.tag ? '<div class="product-tag">' + product.tag + '</div>' : '';
       return '<article class="product-card">' +
         '<a href="product-detail.html?id=' + product.id + '" class="product-link">' +
         '<div class="product-media">' + tagHtml +
         '<img src="' + product.imagePath + '" alt="' + product.name + '" loading="lazy" onerror="this.closest(\'.product-media\').classList.add(\'img-missing\'); this.style.display=\'none\';" />' +
-        '<div class="img-fallback" aria-hidden="true"><i class="fa-solid fa-box"></i><div><div class="fallback-title">产品图片</div></div></div>' +
+        '<div class="img-fallback" aria-hidden="true"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H8a4 4 0 0 1-4-4c0 2.21 1.79 4 4 4H12"/><path d="M20 20H4a2 2 0 0 1-2-2v-4"/></svg><div><div class="fallback-title">产品图片</div></div></div>' +
         '</div>' +
         '<div class="product-body">' +
         '<h3 class="product-title">' + product.name + '</h3>' +
-        '<div class="product-sku"><i class="fa-solid fa-hashtag" style="font-size:11px;margin-right:4px;color:var(--muted-2);"></i> 型号：<strong>' + product.model + '</strong></div>' +
-        '<div class="product-moq"><i class="fa-solid fa-box-open" style="font-size:11px;margin-right:4px;color:var(--muted-2);"></i> 起订量：' + product.moq + '</div>' +
+        '<div class="product-sku"><svg class="inline-icon" style="font-size:11px;margin-right:4px;color:var(--muted-2);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-8.54-5.7a2 2 0 0 0-1.08-.3L5 16l10-13"/></svg> 型号：<strong>' + product.model + '</strong></div>' +
+        '<div class="product-moq"><svg class="inline-icon" style="font-size:11px;margin-right:4px;color:var(--muted-2);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H8a4 4 0 0 1-4-4c0 2.21 1.79 4 4 4H12"/><path d="M20 20H4a2 2 0 0 1-2-2v-4"/></svg> 起订量：' + product.moq + '</div>' +
         '<p class="product-desc">' + product.description + '</p>' +
         '</div></a>' +
         '<div class="product-actions">' +
-        '<button class="inquiry-btn" type="button" data-inquire="' + product.model + '"><i class="fa-solid fa-paper-plane"></i> 立即询价</button>' +
-        '<button class="add-to-cart-btn" type="button" data-product-id="' + product.id + '" data-product-name="' + product.name + '" data-product-model="' + product.model + '" data-product-image="' + product.imagePath + '"><i class="fa-solid fa-cart-shopping"></i></button>' +
+        '<button class="inquiry-btn" type="button" data-inquire="' + product.model + '"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg> 立即询价</button>' +
+        '<button class="add-to-cart-btn" type="button" data-product-id="' + product.id + '" data-product-name="' + product.name + '" data-product-model="' + product.model + '" data-product-image="' + product.imagePath + '"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></button>' +
         '</div></article>';
     }).join("");
     bindInquiryButtons();
@@ -845,7 +851,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (window.CartManager) {
           CartManager.addToCart({ id: id, name: name, model: model, price: 0, image: image }, e);
           this.classList.add("added");
-          var origHTML = this.innerHTML; this.innerHTML = '<i class="fa-solid fa-check"></i>';
+          var origHTML = this.innerHTML; this.innerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
           var self = this; setTimeout(function () { self.classList.remove("added"); self.innerHTML = origHTML; }, 1500);
         }
       });
@@ -875,7 +881,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     if (!Array.isArray(data.products)) throw new Error("产品数据格式无效。");
     allProducts = data.products;
   } catch (error) {
-    productsGrid.innerHTML = '<div class="note"><i class="fa-solid fa-circle-exclamation"></i><span>暂时无法加载产品，请稍后重试。</span></div>';
+    productsGrid.innerHTML = '<div class="note"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg><span>暂时无法加载产品，请稍后重试。</span></div>';
     return;
   }
 
@@ -892,9 +898,9 @@ document.addEventListener("DOMContentLoaded", async function () {
     var parts = []; if (activeCategory1) parts.push(activeCategory1); if (activeCategory2) parts.push(activeCategory2); if (activeCategory3) parts.push(activeCategory3);
     div.innerHTML = '<span style="font-size:13px;color:var(--muted-2);">当前筛选：</span>' +
       '<span style="display:inline-flex;align-items:center;gap:6px;padding:4px 12px;background:rgba(11,60,106,.06);border:1px solid var(--line);border-radius:2px;font-size:13px;font-weight:700;color:var(--brand-blue);">' +
-      '<i class="fa-solid fa-filter" style="font-size:11px;"></i> ' + parts.join(' / ') + '</span>' +
+      '<svg class="inline-icon" style="width:11px;height:11px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg> ' + parts.join(' / ') + '</span>' +
       '<button id="clearFilter" type="button" style="display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border:1px solid var(--line);border-radius:2px;background:var(--bg);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;">' +
-      '<i class="fa-solid fa-xmark" style="font-size:10px;"></i> 清除筛选</button>';
+      '<svg class="inline-icon" style="width:10px;height:10px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg> 清除筛选</button>';
     sectionHead.appendChild(div);
     document.getElementById("clearFilter")?.addEventListener("click", function () {
       activeCategory1 = null; activeCategory2 = null; activeCategory3 = null;
@@ -913,7 +919,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   }
 
   function renderProducts(products) {
-    if (products.length === 0) { productsGrid.innerHTML = '<div class="note"><i class="fa-solid fa-circle-info"></i><span>该分类下暂无产品。</span></div>'; return; }
+    if (products.length === 0) { productsGrid.innerHTML = '<div class="note"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg><span>该分类下暂无产品。</span></div>'; return; }
     productsGrid.innerHTML = products.map(function (product) {
       var imagePath = product.imagePath;
       var tagHtml = product.tag ? '<div class="product-tag">' + product.tag + '</div>' : '';
@@ -921,19 +927,19 @@ document.addEventListener("DOMContentLoaded", async function () {
         '<a href="product-detail.html?id=' + product.id + '" class="product-link">' +
         '<div class="product-media">' + tagHtml +
         '<img src="' + imagePath + '" alt="' + product.name + '" loading="lazy" onerror="this.closest(\'.product-media\').classList.add(\'img-missing\'); this.style.display=\'none\';" />' +
-        '<div class="img-fallback" aria-hidden="true"><i class="fa-solid fa-box"></i><div><div class="fallback-title">产品图片</div></div></div>' +
+        '<div class="img-fallback" aria-hidden="true"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H8a4 4 0 0 1-4-4c0 2.21 1.79 4 4 4H12"/><path d="M20 20H4a2 2 0 0 1-2-2v-4"/></svg><div><div class="fallback-title">产品图片</div></div></div>' +
         '</div>' +
         '<div class="product-body">' +
         '<h3 class="product-title">' + product.name + '</h3>' +
-        '<div class="product-sku"><i class="fa-solid fa-hashtag" style="font-size:11px;margin-right:4px;color:var(--muted-2);"></i> 型号：<strong>' + product.model + '</strong></div>' +
-        '<div class="product-moq"><i class="fa-solid fa-box-open" style="font-size:11px;margin-right:4px;color:var(--muted-2);"></i> 起订量：' + product.moq + '</div>' +
+        '<div class="product-sku"><svg class="inline-icon" style="font-size:11px;margin-right:4px;color:var(--muted-2);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m19 21-8.54-5.7a2 2 0 0 0-1.08-.3L5 16l10-13"/></svg> 型号：<strong>' + product.model + '</strong></div>' +
+        '<div class="product-moq"><svg class="inline-icon" style="font-size:11px;margin-right:4px;color:var(--muted-2);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H8a4 4 0 0 1-4-4c0 2.21 1.79 4 4 4H12"/><path d="M20 20H4a2 2 0 0 1-2-2v-4"/></svg> 起订量：' + product.moq + '</div>' +
         '<p class="product-desc">' + product.description + '</p>' +
         '</div></a>' +
         '<div class="product-actions">' +
         '<button class="inquiry-btn" type="button" data-product-name="' + product.name + '" data-inquire="' + product.model + '">' +
-        '<i class="fa-solid fa-paper-plane"></i> 立即询价</button>' +
+        '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg> 立即询价</button>' +
         '<button class="add-to-cart-btn" type="button" data-product-id="' + product.id + '" data-product-name="' + product.name + '" data-product-model="' + product.model + '" data-product-image="' + imagePath + '">' +
-        '<i class="fa-solid fa-cart-shopping"></i></button>' +
+        '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg></button>' +
         '</div></article>';
     }).join("");
     bindInquiryButtons();
@@ -1019,8 +1025,8 @@ document.addEventListener("DOMContentLoaded", async function () {
         var image = button.getAttribute("data-product-image") || "";
         if (window.CartManager) {
           CartManager.addToCart({ id: id, name: name, model: model, price: 0, image: image }, e);
-          button.classList.add("added"); button.innerHTML = '<i class="fa-solid fa-check"></i>';
-          setTimeout(function () { button.classList.remove("added"); button.innerHTML = '<i class="fa-solid fa-cart-shopping"></i>'; }, 1500);
+          button.classList.add("added"); button.innerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
+          setTimeout(function () { button.classList.remove("added"); button.innerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>'; }, 1500);
         }
       });
     });
@@ -1038,7 +1044,7 @@ document.addEventListener("DOMContentLoaded", async function () {
   var urlParams = new URLSearchParams(window.location.search);
   var productId = parseInt(urlParams.get('id'));
 
-  if (!productId) { productDetail.innerHTML = '<div class="error-state"><i class="fa-solid fa-circle-exclamation"></i><h3>产品未找到</h3><p>您查看的产品不存在或已被删除。</p><a href="products.html" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i> 返回产品列表</a></div>'; return; }
+  if (!productId) { productDetail.innerHTML = '<div class="error-state"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><h3>产品未找到</h3><p>您查看的产品不存在或已被删除。</p><a href="products.html" class="btn btn-primary"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回产品列表</a></div>'; return; }
 
   try {
     var response = await fetch('products.json');
@@ -1055,7 +1061,7 @@ document.addEventListener("DOMContentLoaded", async function () {
       '<div class="product-detail-grid">' +
       '<div class="product-images"><div class="main-image">' +
       '<img src=".' + product.imagePath + '" alt="' + product.name + '" onerror="this.closest(\'.main-image\').classList.add(\'img-missing\'); this.style.display=\'none\';" />' +
-      '<div class="img-fallback" aria-hidden="true"><i class="fa-solid fa-box"></i><div><div class="fallback-title">产品图片</div></div></div>' +
+      '<div class="img-fallback" aria-hidden="true"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg><div><div class="fallback-title">产品图片</div></div></div>' +
       '</div></div>' +
       '<div class="product-info">' +
       (product.tag ? '<div class="product-category">' + product.tag + '</div>' : '') +
@@ -1071,9 +1077,9 @@ document.addEventListener("DOMContentLoaded", async function () {
       '</span></div></div>' +
       '<div class="product-description"><h3>产品描述</h3><p>' + product.description + '</p></div>' +
       '<div class="product-actions">' +
-      '<a class="btn btn-primary" href="index.html#contact" data-inquire="' + product.model + '"><i class="fa-solid fa-paper-plane"></i> 立即询价</a>' +
-      '<button class="btn btn-outline add-to-cart-btn-detail" type="button" data-product-id="' + product.id + '" data-product-name="' + product.name + '" data-product-model="' + product.model + '" data-product-image=".' + product.imagePath + '"><i class="fa-solid fa-cart-plus"></i> 加入购物车</button>' +
-      '<a class="btn btn-outline" href="products.html"><i class="fa-solid fa-arrow-left"></i> 返回产品列表</a>' +
+      '<a class="btn btn-primary" href="index.html#contact" data-inquire="' + product.model + '"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> 立即询价</a>' +
+      '<button class="btn btn-outline add-to-cart-btn-detail" type="button" data-product-id="' + product.id + '" data-product-name="' + product.name + '" data-product-model="' + product.model + '" data-product-image=".' + product.imagePath + '"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path><line x1="1" y1="1" x2="6" y2="6"></line><line x1="6" y1="1" x2="1" y2="6"></line></svg> 加入购物车</button>' +
+      '<a class="btn btn-outline" href="products.html"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回产品列表</a>' +
       '</div></div></div>';
 
     var related = products.filter(function (p) { return p.id !== productId && p.category1 === product.category1; });
@@ -1084,21 +1090,21 @@ document.addEventListener("DOMContentLoaded", async function () {
           '<a href="product-detail.html?id=' + p.id + '" class="product-link">' +
           '<div class="product-media">' + tagHtml +
           '<img src=".' + p.imagePath + '" alt="' + p.name + '" loading="lazy" onerror="this.closest(\'.product-media\').classList.add(\'img-missing\'); this.style.display=\'none\';" />' +
-          '<div class="img-fallback" aria-hidden="true"><i class="fa-solid fa-box"></i><div><div class="fallback-title">产品图片</div></div></div>' +
+          '<div class="img-fallback" aria-hidden="true"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg><div><div class="fallback-title">产品图片</div></div></div>' +
           '</div>' +
           '<div class="product-body">' +
           '<h3 class="product-title">' + p.name + '</h3>' +
-          '<div class="product-sku"><i class="fa-solid fa-hashtag" style="font-size:11px;margin-right:4px;color:var(--muted-2);"></i> 型号：<strong>' + p.model + '</strong></div>' +
-          '<div class="product-moq"><i class="fa-solid fa-box-open" style="font-size:11px;margin-right:4px;color:var(--muted-2);"></i> 起订量：' + p.moq + '</div>' +
+          '<div class="product-sku"><svg style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px;color:var(--muted-2);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg> 型号：<strong>' + p.model + '</strong></div>' +
+          '<div class="product-moq"><svg style="width:11px;height:11px;display:inline-block;vertical-align:middle;margin-right:4px;color:var(--muted-2);" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line><polyline points="7.5 9 12 11.5 16.5 9"></polyline></svg> 起订量：' + p.moq + '</div>' +
           '<p class="product-desc">' + p.description + '</p>' +
           '</div></a>' +
           '<div class="product-actions">' +
-          '<button class="inquiry-btn" type="button" data-inquire="' + p.model + '"><i class="fa-solid fa-paper-plane"></i> 立即询价</button>' +
-          '<button class="add-to-cart-btn" type="button" data-product-id="' + p.id + '" data-product-name="' + p.name + '" data-product-model="' + p.model + '" data-product-image=".' + p.imagePath + '"><i class="fa-solid fa-cart-shopping"></i></button>' +
+          '<button class="inquiry-btn" type="button" data-inquire="' + p.model + '"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg> 立即询价</button>' +
+          '<button class="add-to-cart-btn" type="button" data-product-id="' + p.id + '" data-product-name="' + p.name + '" data-product-model="' + p.model + '" data-product-image=".' + p.imagePath + '"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg></button>' +
           '</div></article>';
       }).join('');
-    } else { relatedProducts.innerHTML = '<div class="note"><i class="fa-solid fa-circle-info"></i><span>该分类下暂无相关产品。</span></div>'; }
-  } catch (error) { productDetail.innerHTML = '<div class="error-state"><i class="fa-solid fa-circle-exclamation"></i><h3>产品加载失败</h3><p>加载产品详情时出现问题，请稍后重试。</p><a href="products.html" class="btn btn-primary"><i class="fa-solid fa-arrow-left"></i> 返回产品列表</a></div>'; }
+    } else { relatedProducts.innerHTML = '<div class="note"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg><span>该分类下暂无相关产品。</span></div>'; }
+  } catch (error) { productDetail.innerHTML = '<div class="error-state"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg><h3>产品加载失败</h3><p>加载产品详情时出现问题，请稍后重试。</p><a href="products.html" class="btn btn-primary"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg> 返回产品列表</a></div>'; }
 
   function bindAddToCartButtons() {
     document.querySelectorAll('.add-to-cart-btn, .add-to-cart-btn-detail').forEach(function (btn) {
@@ -1112,7 +1118,7 @@ document.addEventListener("DOMContentLoaded", async function () {
           CartManager.addToCart({ id: id, name: name, model: model, price: 0, image: image }, e);
           this.classList.add('added');
           var origHTML = this.innerHTML;
-          this.innerHTML = this.classList.contains('add-to-cart-btn-detail') ? '<i class="fa-solid fa-check"></i> 已加入' : '<i class="fa-solid fa-check"></i>';
+          this.innerHTML = this.classList.contains('add-to-cart-btn-detail') ? '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg> 已加入' : '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>';
           var self = this; setTimeout(function () { self.classList.remove('added'); self.innerHTML = origHTML; }, 1500);
         }
       });
