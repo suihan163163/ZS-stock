@@ -92,55 +92,234 @@
     document.addEventListener("keydown", function (e) { if (!modal.hidden && e.key === "Escape") closeModal(); });
   }
 
-  /* ========== 登录 ========== */
+  /* ========== 登录 / 注册 / 忘记密码 ========== */
   var loginBtn = $("#loginBtn");
   var adminBtn = $("#adminBtn");
   var loginModal = $("#loginModal");
   var loginForm = $("#loginForm");
+  var registerForm = $("#registerForm");
+  var forgotEmailForm = $("#forgotEmailForm");
+  var forgotQuestionForm = $("#forgotQuestionForm");
+  var authTabsBar = $("#authTabsBar");
+
+  var forgotPasswordEmail = '';
+
+  function switchAuthTab(tab) {
+    if (!loginModal) return;
+    if (authTabsBar) authTabsBar.style.display = '';
+    loginModal.querySelectorAll('.auth-tab').forEach(function(t) { t.classList.toggle('active', t.dataset.tab === tab); });
+    loginModal.querySelectorAll('.auth-form').forEach(function(f) { f.classList.remove('auth-form-active'); });
+    var formId = tab === 'login' ? 'loginForm' : 'registerForm';
+    var targetForm = loginModal.querySelector('#' + formId);
+    if (targetForm) targetForm.classList.add('auth-form-active');
+    clearAllAuthErrors();
+  }
+
+  function showForgotView(view) {
+    if (authTabsBar) authTabsBar.style.display = 'none';
+    loginModal.querySelectorAll('.auth-form').forEach(function(f) { f.classList.remove('auth-form-active'); });
+    clearAllAuthErrors();
+    if (view === 'email') {
+      forgotEmailForm.classList.add('auth-form-active');
+      setTimeout(function() { var e = $("#forgotEmail"); if (e) e.focus(); }, 100);
+    } else if (view === 'question') {
+      forgotQuestionForm.classList.add('auth-form-active');
+      setTimeout(function() { var a = $("#forgotQuestionAnswer"); if (a) a.focus(); }, 100);
+    }
+  }
+
+  function clearAllAuthErrors() {
+    var ids = ['loginError', 'registerError', 'forgotEmailError', 'forgotEmailSuccess', 'forgotQuestionError'];
+    for (var i = 0; i < ids.length; i++) {
+      var el = document.getElementById(ids[i]);
+      if (el) { el.style.display = 'none'; el.textContent = ''; }
+    }
+  }
 
   function openLoginModal() {
     if (!loginModal) return;
     loginModal.hidden = false; loginModal.setAttribute("aria-hidden", "false");
     document.documentElement.style.overflow = "hidden"; document.body.style.overflow = "hidden";
-    var u = $("#username"); if (u) u.focus();
+    switchAuthTab('login');
+    setTimeout(function() { var e = $("#loginEmail"); if (e) e.focus(); }, 100);
   }
   function closeLoginModal() {
     if (!loginModal) return;
     loginModal.hidden = true; loginModal.setAttribute("aria-hidden", "true");
     document.documentElement.style.overflow = ""; document.body.style.overflow = "";
+    clearAllAuthErrors();
   }
+
   function checkLoginStatus() {
-    var logged = localStorage.getItem('adminLoggedIn') === 'true';
-    if (loginBtn && adminBtn) { loginBtn.style.display = logged ? 'none' : 'inline-flex'; adminBtn.style.display = logged ? 'inline-flex' : 'none'; }
+    var token = localStorage.getItem('authToken');
+    var adminLogged = localStorage.getItem('adminLoggedIn') === 'true';
+    if (loginBtn && adminBtn) {
+      if (token || adminLogged) { loginBtn.style.display = 'none'; adminBtn.style.display = 'inline-flex'; }
+      else { loginBtn.style.display = 'inline-flex'; adminBtn.style.display = 'none'; }
+    }
   }
   checkLoginStatus();
   if (loginBtn) loginBtn.addEventListener('click', openLoginModal);
   if (loginModal) {
+    loginModal.querySelectorAll('.auth-tab').forEach(function(tab) {
+      tab.addEventListener('click', function() { switchAuthTab(this.dataset.tab); });
+    });
     loginModal.addEventListener("click", function (e) { var t = e.target; if (t instanceof HTMLElement && t.getAttribute("data-close") === "true") closeLoginModal(); });
     document.addEventListener("keydown", function (e) { if (loginModal && !loginModal.hidden && e.key === "Escape") closeLoginModal(); });
   }
+  document.querySelectorAll('.password-toggle').forEach(function(toggle) {
+    toggle.addEventListener('click', function() {
+      var wrapper = this.closest('.password-wrapper') || this.parentElement;
+      var input = wrapper ? wrapper.querySelector('input') : null;
+      if (!input) return;
+      if (input.type === 'password') { input.type = 'text'; this.innerHTML = '<i class="fa-solid fa-eye-slash"></i>'; }
+      else { input.type = 'password'; this.innerHTML = '<i class="fa-solid fa-eye"></i>'; }
+    });
+  });
+
+  var forgotPasswordLink = $("#forgotPasswordLink");
+  if (forgotPasswordLink) {
+    forgotPasswordLink.addEventListener('click', function() { showForgotView('email'); });
+  }
+
+  var backToLoginFromForgot = $("#backToLoginFromForgot");
+  if (backToLoginFromForgot) {
+    backToLoginFromForgot.addEventListener('click', function() { switchAuthTab('login'); });
+  }
+
+  var backToForgotEmail = $("#backToForgotEmail");
+  if (backToForgotEmail) {
+    backToForgotEmail.addEventListener('click', function() { showForgotView('email'); });
+  }
+
   if (loginForm) {
     loginForm.addEventListener('submit', function (e) {
-      e.preventDefault(); clearErrors(loginForm);
-      var u = $("#username") ? $("#username").value.trim() : "";
-      var p = $("#password") ? $("#password").value.trim() : "";
-      if (!u || !p) { if (!u) setError($("#username"), "请输入用户名。"); if (!p) setError($("#password"), "请输入密码。"); return; }
-      if (u === 'admin' && p === 'zsadmin414') {
-        localStorage.setItem('adminLoggedIn', 'true'); checkLoginStatus(); closeLoginModal();
-        if ($("#password")) $("#password").value = ''; if ($("#username")) $("#username").value = '';
-      } else {
-        if ($("#password")) $("#password").value = '';
-        var le = document.getElementById('loginError');
-        if (le) { le.textContent = '用户名或密码错误，请重试。'; le.style.display = 'block'; setTimeout(function () { le.style.display = 'none'; }, 3000); }
+      e.preventDefault();
+      var loginErr = document.getElementById('loginError');
+      if (loginErr) { loginErr.style.display = 'none'; loginErr.textContent = ''; }
+      var email = $("#loginEmail") ? $("#loginEmail").value.trim() : "";
+      var password = $("#loginPassword") ? $("#loginPassword").value.trim() : "";
+      if (!email) { if (loginErr) { loginErr.textContent = '请输入邮箱。'; loginErr.style.display = 'block'; } return; }
+      if (!password) { if (loginErr) { loginErr.textContent = '请输入密码。'; loginErr.style.display = 'block'; } return; }
+      if (email === 'admin' && password === 'zsadmin414') {
+        localStorage.setItem('adminLoggedIn', 'true');
+        checkLoginStatus(); closeLoginModal();
+        if ($("#loginEmail")) $("#loginEmail").value = ''; if ($("#loginPassword")) $("#loginPassword").value = '';
+        return;
       }
+      fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, password: password })
+      }).then(function(res) { return res.json(); }).then(function(data) {
+        if (data.success) {
+          localStorage.setItem('authToken', data.token);
+          localStorage.setItem('authUser', JSON.stringify(data.user));
+          checkLoginStatus(); closeLoginModal();
+          if ($("#loginEmail")) $("#loginEmail").value = ''; if ($("#loginPassword")) $("#loginPassword").value = '';
+        } else {
+          if (loginErr) { loginErr.textContent = data.message || '登录失败'; loginErr.style.display = 'block'; setTimeout(function() { loginErr.style.display = 'none'; }, 3000); }
+        }
+      }).catch(function() {
+        if (loginErr) { loginErr.textContent = '网络错误，请稍后重试。'; loginErr.style.display = 'block'; setTimeout(function() { loginErr.style.display = 'none'; }, 3000); }
+      });
     });
   }
-  var pwToggle = document.querySelector('.password-toggle');
-  var pwInput = document.getElementById('password');
-  if (pwToggle && pwInput) {
-    pwToggle.addEventListener('click', function () {
-      if (pwInput.type === 'password') { pwInput.type = 'text'; pwToggle.innerHTML = '<i class="fa-solid fa-eye-slash"></i>'; }
-      else { pwInput.type = 'password'; pwToggle.innerHTML = '<i class="fa-solid fa-eye"></i>'; }
+
+  if (registerForm) {
+    registerForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var regErr = document.getElementById('registerError');
+      if (regErr) { regErr.style.display = 'none'; regErr.textContent = ''; }
+      var email = $("#regEmail") ? $("#regEmail").value.trim() : "";
+      var countryCode = $("#regCountryCode") ? $("#regCountryCode").value : "+86";
+      var phone = $("#regPhone") ? $("#regPhone").value.trim() : "";
+      var securityQuestion = $("#regSecurityQuestion") ? $("#regSecurityQuestion").value : "";
+      var securityAnswer = $("#regSecurityAnswer") ? $("#regSecurityAnswer").value.trim() : "";
+      var password = $("#regPassword") ? $("#regPassword").value.trim() : "";
+      if (!email) { if (regErr) { regErr.textContent = '请输入邮箱。'; regErr.style.display = 'block'; } return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { if (regErr) { regErr.textContent = '邮箱格式不正确。'; regErr.style.display = 'block'; } return; }
+      if (!phone) { if (regErr) { regErr.textContent = '请输入手机号。'; regErr.style.display = 'block'; } return; }
+      if (!securityQuestion) { if (regErr) { regErr.textContent = '请选择密保问题。'; regErr.style.display = 'block'; } return; }
+      if (!securityAnswer) { if (regErr) { regErr.textContent = '请输入密保答案。'; regErr.style.display = 'block'; } return; }
+      if (!password) { if (regErr) { regErr.textContent = '请设置密码。'; regErr.style.display = 'block'; } return; }
+      if (password.length < 6) { if (regErr) { regErr.textContent = '密码长度至少为6位。'; regErr.style.display = 'block'; return; } }
+      fetch('/api/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email, phone: phone, countryCode: countryCode, password: password, securityQuestion: securityQuestion, securityAnswer: securityAnswer })
+      }).then(function(res) { return res.json(); }).then(function(data) {
+        if (data.success) {
+          localStorage.setItem('authToken', data.token);
+          localStorage.setItem('authUser', JSON.stringify(data.user));
+          checkLoginStatus(); closeLoginModal();
+          if ($("#regEmail")) $("#regEmail").value = ''; if ($("#regPhone")) $("#regPhone").value = '';
+          if ($("#regSecurityQuestion")) $("#regSecurityQuestion").value = ''; if ($("#regSecurityAnswer")) $("#regSecurityAnswer").value = '';
+          if ($("#regPassword")) $("#regPassword").value = '';
+        } else {
+          if (regErr) { regErr.textContent = data.message || '注册失败'; regErr.style.display = 'block'; setTimeout(function() { regErr.style.display = 'none'; }, 3000); }
+        }
+      }).catch(function() {
+        if (regErr) { regErr.textContent = '网络错误，请稍后重试。'; regErr.style.display = 'block'; setTimeout(function() { regErr.style.display = 'none'; }, 3000); }
+      });
+    });
+  }
+
+  if (forgotEmailForm) {
+    forgotEmailForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var errEl = document.getElementById('forgotEmailError');
+      var succEl = document.getElementById('forgotEmailSuccess');
+      if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+      if (succEl) { succEl.style.display = 'none'; succEl.textContent = ''; }
+      var email = $("#forgotEmail") ? $("#forgotEmail").value.trim() : "";
+      if (!email) { if (errEl) { errEl.textContent = '请输入邮箱地址。'; errEl.style.display = 'block'; } return; }
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { if (errEl) { errEl.textContent = '邮箱格式不正确。'; errEl.style.display = 'block'; } return; }
+      forgotPasswordEmail = email;
+      fetch('/api/get-security-question', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: email })
+      }).then(function(res) { return res.json(); }).then(function(data) {
+        if (data.success) {
+          var qDisp = $("#forgotQuestionDisplay");
+          if (qDisp) qDisp.value = data.securityQuestion;
+          showForgotView('question');
+        } else {
+          if (errEl) { errEl.textContent = data.message || '获取密保问题失败'; errEl.style.display = 'block'; }
+        }
+      }).catch(function() {
+        if (errEl) { errEl.textContent = '网络错误，请稍后重试。'; errEl.style.display = 'block'; }
+      });
+    });
+  }
+
+  if (forgotQuestionForm) {
+    forgotQuestionForm.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var errEl = document.getElementById('forgotQuestionError');
+      if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+      var answer = $("#forgotQuestionAnswer") ? $("#forgotQuestionAnswer").value.trim() : "";
+      if (!answer) { if (errEl) { errEl.textContent = '请输入密保答案。'; errEl.style.display = 'block'; } return; }
+      fetch('/api/forgot-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: forgotPasswordEmail, securityAnswer: answer })
+      }).then(function(res) { return res.json(); }).then(function(data) {
+        if (data.success) {
+          showForgotView('email');
+          var succEl = document.getElementById('forgotEmailSuccess');
+          if (succEl) {
+            succEl.textContent = data.message || '重置链接已发送到您的邮箱';
+            succEl.style.display = 'block';
+          }
+          if ($("#forgotQuestionAnswer")) $("#forgotQuestionAnswer").value = '';
+        } else {
+          if (errEl) { errEl.textContent = data.message || '验证失败，请重试'; errEl.style.display = 'block'; }
+        }
+      }).catch(function() {
+        if (errEl) { errEl.textContent = '网络错误，请稍后重试。'; errEl.style.display = 'block'; }
+      });
     });
   }
 
@@ -202,6 +381,256 @@
     carouselContainer.addEventListener('mouseleave', function () { autoSlideInterval = setInterval(function () { goToSlide((currentIndex + 1) % itemCount); }, 5000); });
   }
   document.addEventListener('DOMContentLoaded', initCarousel);
+})();
+
+/* ============================================================
+ * 购物车管理器 (CartManager) — 含抛物线飞入动画
+ * ============================================================ */
+(function() {
+  var CART_KEY = 'wzsp_cart';
+
+  function getCart() {
+    try {
+      var data = localStorage.getItem(CART_KEY);
+      return data ? JSON.parse(data) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveCart(cart) {
+    try {
+      localStorage.setItem(CART_KEY, JSON.stringify(cart));
+    } catch (e) {
+    }
+    updateBadge();
+  }
+
+  function addToCart(product, event) {
+    if (!product || !product.id) return;
+    var cart = getCart();
+    var existing = cart.find(function(item) { return item.id === product.id; });
+    if (existing) {
+      existing.quantity += 1;
+    } else {
+      cart.push({
+        id: product.id,
+        name: product.name || '',
+        model: product.model || '',
+        price: product.price || 0,
+        quantity: 1,
+        image: product.image || ''
+      });
+    }
+    saveCart(cart);
+    if (event) {
+      performFlyAnimation(event, product.image);
+    }
+    renderCartPanel();
+  }
+
+  function performFlyAnimation(event, imageUrl) {
+    try {
+      var btn = event.currentTarget || event.target;
+      var productCard = btn.closest('.product-card') || btn.closest('article');
+      var imgContainer = productCard ? productCard.querySelector('img') : null;
+      if (!imgContainer && imageUrl) {
+        var tmp = document.createElement('img');
+        tmp.src = imageUrl;
+        imgContainer = tmp;
+      }
+      var cartIcon = document.getElementById('cart-icon');
+      if (!imgContainer || !cartIcon) return;
+
+      var startRect = imgContainer.getBoundingClientRect();
+      var endRect = cartIcon.getBoundingClientRect();
+
+      var flyingElement = document.createElement('img');
+      flyingElement.src = imgContainer.src || imageUrl;
+      flyingElement.classList.add('flying-img');
+      flyingElement.style.top = startRect.top + 'px';
+      flyingElement.style.left = startRect.left + 'px';
+      flyingElement.style.width = startRect.width + 'px';
+      flyingElement.style.height = startRect.height + 'px';
+      document.body.appendChild(flyingElement);
+
+      var targetCenterX = endRect.left + endRect.width / 2;
+      var targetCenterY = endRect.top + endRect.height / 2;
+      var finalLeft = targetCenterX - startRect.width / 2;
+      var finalTop = targetCenterY - startRect.height / 2;
+
+      requestAnimationFrame(function() {
+        requestAnimationFrame(function() {
+          flyingElement.style.top = finalTop + 'px';
+          flyingElement.style.left = finalLeft + 'px';
+          flyingElement.style.transform = 'scale(0.1)';
+        });
+      });
+
+      setTimeout(function() {
+        if (flyingElement.parentNode) flyingElement.parentNode.removeChild(flyingElement);
+        cartIcon.classList.remove('animate-cart-bounce');
+        void cartIcon.offsetWidth;
+        cartIcon.classList.add('animate-cart-bounce');
+      }, 800);
+    } catch (e) {
+    }
+  }
+
+  function updateQuantity(id, delta) {
+    var cart = getCart();
+    var item = cart.find(function(i) { return i.id === id; });
+    if (!item) return;
+    item.quantity = Math.max(1, item.quantity + delta);
+    saveCart(cart);
+    renderCartPanel();
+  }
+
+  function removeFromCart(id) {
+    var cart = getCart().filter(function(i) { return i.id !== id; });
+    saveCart(cart);
+    renderCartPanel();
+  }
+
+  function calculateTotal() {
+    var cart = getCart();
+    var total = 0;
+    for (var i = 0; i < cart.length; i++) {
+      total += (cart[i].price || 0) * (cart[i].quantity || 1);
+    }
+    return total;
+  }
+
+  function getTotalCount() {
+    var cart = getCart();
+    var count = 0;
+    for (var i = 0; i < cart.length; i++) {
+      count += cart[i].quantity || 1;
+    }
+    return count;
+  }
+
+  function updateBadge() {
+    var badges = document.querySelectorAll('.cart-badge');
+    var count = getTotalCount();
+    for (var i = 0; i < badges.length; i++) {
+      badges[i].textContent = count;
+      badges[i].style.display = count > 0 ? 'flex' : 'none';
+    }
+  }
+
+  function renderCartPanel() {
+    var panel = document.getElementById('cartPanel');
+    if (!panel) return;
+    var cart = getCart();
+    var listEl = panel.querySelector('.cart-items-list');
+    var totalEl = panel.querySelector('.cart-total-value');
+    var emptyEl = panel.querySelector('.cart-empty');
+    var footerEl = panel.querySelector('.cart-footer');
+
+    if (!listEl) return;
+
+    if (cart.length === 0) {
+      listEl.innerHTML = '';
+      if (emptyEl) emptyEl.style.display = 'flex';
+      if (footerEl) footerEl.style.display = 'none';
+      if (totalEl) totalEl.textContent = '$0.00';
+      return;
+    }
+
+    if (emptyEl) emptyEl.style.display = 'none';
+    if (footerEl) footerEl.style.display = 'block';
+
+    var html = '';
+    for (var i = 0; i < cart.length; i++) {
+      var item = cart[i];
+      var subtotal = ((item.price || 0) * (item.quantity || 1)).toFixed(2);
+      html += '<div class="cart-item" data-id="' + item.id + '">' +
+        '<div class="cart-item-image">' +
+          '<img src="' + (item.image || '') + '" alt="' + (item.name || '') + '" onerror="this.style.display=\'none\';">' +
+        '</div>' +
+        '<div class="cart-item-info">' +
+          '<div class="cart-item-name">' + (item.name || '') + '</div>' +
+          '<div class="cart-item-model">' + (item.model || '') + '</div>' +
+          '<div class="cart-item-price-row">' +
+            '<span class="cart-item-price">' + (item.price > 0 ? '$' + (item.price || 0).toFixed(2) : '询价') + '</span>' +
+            '<span class="cart-item-subtotal">' + (item.price > 0 ? '$' + subtotal : '') + '</span>' +
+          '</div>' +
+          '<div class="cart-item-qty">' +
+            '<button class="cart-qty-btn cart-qty-minus" data-id="' + item.id + '" type="button">−</button>' +
+            '<span class="cart-qty-value">' + item.quantity + '</span>' +
+            '<button class="cart-qty-btn cart-qty-plus" data-id="' + item.id + '" type="button">+</button>' +
+          '</div>' +
+        '</div>' +
+        '<button class="cart-item-remove" data-id="' + item.id + '" type="button" aria-label="移除">' +
+          '<i class="fa-solid fa-trash-can"></i>' +
+        '</button>' +
+      '</div>';
+    }
+    listEl.innerHTML = html;
+
+    var total = calculateTotal();
+    if (totalEl) totalEl.textContent = total > 0 ? '$' + total.toFixed(2) : '询价';
+
+    listEl.querySelectorAll('.cart-qty-minus').forEach(function(btn) {
+      btn.addEventListener('click', function() { updateQuantity(parseInt(this.dataset.id), -1); });
+    });
+    listEl.querySelectorAll('.cart-qty-plus').forEach(function(btn) {
+      btn.addEventListener('click', function() { updateQuantity(parseInt(this.dataset.id), 1); });
+    });
+    listEl.querySelectorAll('.cart-item-remove').forEach(function(btn) {
+      btn.addEventListener('click', function() { removeFromCart(parseInt(this.dataset.id)); });
+    });
+  }
+
+  function openCartPanel() {
+    var panel = document.getElementById('cartPanel');
+    var overlay = document.getElementById('cartOverlay');
+    if (panel) panel.classList.add('open');
+    if (overlay) overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    renderCartPanel();
+  }
+
+  function closeCartPanel() {
+    var panel = document.getElementById('cartPanel');
+    var overlay = document.getElementById('cartOverlay');
+    if (panel) panel.classList.remove('open');
+    if (overlay) overlay.classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  function initCartUI() {
+    document.querySelectorAll('.cart-toggle-btn').forEach(function(btn) {
+      btn.addEventListener('click', function(e) { e.preventDefault(); openCartPanel(); });
+    });
+    var closeBtn = document.getElementById('cartCloseBtn');
+    if (closeBtn) closeBtn.addEventListener('click', closeCartPanel);
+    var overlay = document.getElementById('cartOverlay');
+    if (overlay) overlay.addEventListener('click', closeCartPanel);
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeCartPanel(); });
+    updateBadge();
+  }
+
+  window.CartManager = {
+    getCart: getCart,
+    addToCart: addToCart,
+    updateQuantity: updateQuantity,
+    removeFromCart: removeFromCart,
+    calculateTotal: calculateTotal,
+    getTotalCount: getTotalCount,
+    updateBadge: updateBadge,
+    renderCartPanel: renderCartPanel,
+    openCartPanel: openCartPanel,
+    closeCartPanel: closeCartPanel,
+    initCartUI: initCartUI
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initCartUI);
+  } else {
+    initCartUI();
+  }
 })();
 
 /* ========== PRODUCTS PAGE ========== */

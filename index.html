@@ -50,16 +50,16 @@
         </div>
 
         <div class="header-actions">
-          <a class="header-action-btn" href="#contact">
+          <a class="header-action-btn ghost" href="#contact">
             <i class="fa-solid fa-phone"></i> 联系我们
           </a>
+          <button id="loginBtn" class="header-action-btn outline mobile-hide" type="button" aria-label="登录/注册">
+            <i class="fa-solid fa-user"></i> 登录/注册
+          </button>
           <a class="header-action-btn primary mobile-hide" href="#contact">
             <i class="fa-solid fa-file-lines"></i> 询价单
           </a>
-          <button id="loginBtn" class="header-action-btn mobile-hide" type="button" aria-label="登录">
-            <i class="fa-solid fa-user"></i> 登录
-          </button>
-          <button class="cart-toggle-btn" type="button" aria-label="购物车">
+          <button id="cart-icon" class="cart-toggle-btn" type="button" aria-label="购物车">
             <i class="fa-solid fa-cart-shopping"></i>
             <span class="cart-badge">0</span>
           </button>
@@ -566,31 +566,244 @@
     </div>
   </div>
 
-  <!-- Login Modal -->
-  <div id="loginModal" class="modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+  <!-- Login / Register Modal -->
+  <div id="loginModal" class="modal" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="authTitle">
     <div class="modal-backdrop" data-close="true"></div>
     <div class="modal-panel" role="document">
       <div class="modal-head">
-        <div class="modal-icon"><i class="fa-solid fa-lock"></i></div>
+        <div class="modal-icon"><i class="fa-solid fa-user-circle"></i></div>
         <div>
-          <div id="loginTitle" class="modal-title">管理员登录</div>
-          <div class="modal-subtitle">请输入管理员凭据以访问管理后台。</div>
+          <div id="authTitle" class="modal-title">登录 / 注册</div>
+          <div id="authSubtitle" class="modal-subtitle">欢迎回来，请登录您的账户或注册新账号。</div>
         </div>
         <button class="icon-btn modal-close-btn" type="button" aria-label="关闭" data-close="true"><i class="fa-solid fa-xmark"></i></button>
       </div>
+
+      <!-- Tab 切换 -->
+      <div id="authTabsBar" class="auth-tabs">
+        <button type="button" class="auth-tab active" data-tab="login"><i class="fa-solid fa-right-to-bracket"></i> 登录</button>
+        <button type="button" class="auth-tab" data-tab="register"><i class="fa-solid fa-user-plus"></i> 注册</button>
+      </div>
+
       <div class="modal-body">
-        <form id="loginForm" class="form" novalidate>
+        <!-- 登录表单 -->
+        <form id="loginForm" class="auth-form auth-form-active" novalidate>
           <div class="field">
-            <label for="username">用户名</label>
-            <input id="username" name="username" type="text" placeholder="请输入用户名" autocomplete="off" required />
+            <label for="loginEmail">邮箱</label>
+            <input id="loginEmail" name="email" type="email" placeholder="请输入邮箱地址" autocomplete="email" required />
           </div>
           <div class="field">
-            <label for="password">密码</label>
-            <div class="password-wrapper"><input id="password" name="password" type="password" placeholder="请输入密码" autocomplete="new-password" required /><button type="button" class="password-toggle" aria-label="切换密码可见性"><i class="fa-solid fa-eye"></i></button></div>
+            <label for="loginPassword">密码</label>
+            <div class="password-wrapper"><input id="loginPassword" name="password" type="password" placeholder="请输入密码" autocomplete="current-password" required /><button type="button" class="password-toggle" aria-label="切换密码可见性"><i class="fa-solid fa-eye"></i></button></div>
           </div>
-          <p id="loginError" class="login-error" style="display:none;"></p>
+          <div style="text-align:right;margin-top:-8px;margin-bottom:12px;">
+            <button type="button" id="forgotPasswordLink" style="background:none;border:none;color:var(--brand-blue);cursor:pointer;font-size:13px;font-weight:600;padding:0;">Forgot Password?</button>
+          </div>
+          <p id="loginError" class="auth-error" style="display:none;"></p>
           <div class="form-actions">
             <button class="btn btn-primary w-full justify-center" type="submit"><i class="fa-solid fa-right-to-bracket"></i> 登录</button>
+          </div>
+        </form>
+
+        <!-- 注册表单 -->
+        <form id="registerForm" class="auth-form" novalidate>
+          <div class="field">
+            <label for="regEmail">邮箱</label>
+            <input id="regEmail" name="email" type="email" placeholder="请输入邮箱地址" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="regPhone">手机号</label>
+            <div class="phone-wrapper">
+              <select id="regCountryCode" name="countryCode" class="phone-select">
+                <option value="+86">🇨🇳 +86</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+44">🇬🇧 +44</option>
+                <option value="+81">🇯🇵 +81</option>
+                <option value="+82">🇰🇷 +82</option>
+                <option value="+61">🇦🇺 +61</option>
+                <option value="+65">🇸🇬 +65</option>
+                <option value="+60">🇲🇾 +60</option>
+                <option value="+234">🇳🇬 +234</option>
+                <option value="+91">🇮🇳 +91</option>
+                <option value="+49">🇩🇪 +49</option>
+                <option value="+33">🇫🇷 +33</option>
+                <option value="+55">🇧🇷 +55</option>
+                <option value="+7">🇷🇺 +7</option>
+                <option value="+971">🇦🇪 +971</option>
+                <option value="+27">🇿🇦 +27</option>
+                <option value="+880">🇧🇩 +880</option>
+                <option value="+92">🇵🇰 +92</option>
+                <option value="+62">🇮🇩 +62</option>
+                <option value="+52">🇲🇽 +52</option>
+                <option value="+98">🇮🇷 +98</option>
+                <option value="+63">🇵🇭 +63</option>
+                <option value="+20">🇪🇬 +20</option>
+                <option value="+84">🇻🇳 +84</option>
+                <option value="+90">🇹🇷 +90</option>
+                <option value="+251">🇪🇹 +251</option>
+                <option value="+66">🇹🇭 +66</option>
+                <option value="+243">🇨🇩 +243</option>
+                <option value="+48">🇵🇱 +48</option>
+                <option value="+34">🇪🇸 +34</option>
+                <option value="+54">🇦🇷 +54</option>
+                <option value="+213">🇩🇿 +213</option>
+                <option value="+233">🇬🇭 +233</option>
+                <option value="+94">🇱🇰 +94</option>
+                <option value="+886">🇹🇼 +886</option>
+                <option value="+380">🇺🇦 +380</option>
+                <option value="+254">🇰🇪 +254</option>
+                <option value="+39">🇮🇹 +39</option>
+                <option value="+964">🇮🇶 +964</option>
+                <option value="+58">🇻🇪 +58</option>
+                <option value="+33">🇫🇷 +33</option>
+                <option value="+27">🇿🇦 +27</option>
+                <option value="+30">🇬🇷 +30</option>
+                <option value="+420">🇨🇿 +420</option>
+                <option value="+40">🇷🇴 +40</option>
+                <option value="+32">🇧🇪 +32</option>
+                <option value="+31">🇳🇱 +31</option>
+                <option value="+36">🇭🇺 +36</option>
+                <option value="+46">🇸🇪 +46</option>
+                <option value="+43">🇦🇹 +43</option>
+                <option value="+47">🇳🇴 +47</option>
+                <option value="+41">🇨🇭 +41</option>
+                <option value="+45">🇩🇰 +45</option>
+                <option value="+358">🇫🇮 +358</option>
+                <option value="+351">🇵🇹 +351</option>
+                <option value="+353">🇮🇪 +353</option>
+                <option value="+64">🇳🇿 +64</option>
+                <option value="+56">🇨🇱 +56</option>
+                <option value="+57">🇨🇴 +57</option>
+                <option value="+51">🇵🇪 +51</option>
+                <option value="+593">🇪🇨 +593</option>
+                <option value="+212">🇲🇦 +212</option>
+                <option value="+256">🇺🇬 +256</option>
+                <option value="+255">🇹🇿 +255</option>
+                <option value="+963">🇸🇾 +963</option>
+                <option value="+961">🇱🇧 +961</option>
+                <option value="+962">🇯🇴 +962</option>
+                <option value="+966">🇸🇦 +966</option>
+                <option value="+965">🇰🇼 +965</option>
+                <option value="+968">🇴🇲 +968</option>
+                <option value="+973">🇧🇭 +973</option>
+                <option value="+974">🇶🇦 +974</option>
+                <option value="+216">🇹🇳 +216</option>
+                <option value="+218">🇱🇾 +218</option>
+                <option value="+220">🇬🇲 +220</option>
+                <option value="+221">🇸🇳 +221</option>
+                <option value="+224">🇬🇳 +224</option>
+                <option value="+225">🇨🇮 +225</option>
+                <option value="+226">🇧🇫 +226</option>
+                <option value="+227">🇳🇪 +227</option>
+                <option value="+228">🇹🇬 +228</option>
+                <option value="+229">🇧🇯 +229</option>
+                <option value="+230">🇲🇺 +230</option>
+                <option value="+231">🇱🇷 +231</option>
+                <option value="+232">🇸🇱 +232</option>
+                <option value="+235">🇹🇩 +235</option>
+                <option value="+236">🇨🇫 +236</option>
+                <option value="+237">🇨🇲 +237</option>
+                <option value="+238">🇨🇻 +238</option>
+                <option value="+239">🇸🇹 +239</option>
+                <option value="+240">🇬🇶 +240</option>
+                <option value="+241">🇬🇦 +241</option>
+                <option value="+242">🇨🇬 +242</option>
+                <option value="+244">🇦🇴 +244</option>
+                <option value="+245">🇬🇼 +245</option>
+                <option value="+246">�� +246</option>
+                <option value="+248">🇨 +248</option>
+                <option value="+249">�� +249</option>
+                <option value="+250">�� +250</option>
+                <option value="+252">�� +252</option>
+                <option value="+253">�� +253</option>
+                <option value="+257">�� +257</option>
+                <option value="+258">🇲� +258</option>
+                <option value="+260">�� +260</option>
+                <option value="+261">�� +261</option>
+                <option value="+262">�🇪 +262</option>
+                <option value="+263">�� +263</option>
+                <option value="+264">🇳🇦 +264</option>
+                <option value="+265">�� +265</option>
+                <option value="+266">�� +266</option>
+                <option value="+267">�� +267</option>
+                <option value="+268">��� +268</option>
+                <option value="+269">🇰� +269</option>
+              </select>
+              <input id="regPhone" name="phone" type="tel" placeholder="请输入手机号" autocomplete="tel" required />
+            </div>
+            <p class="phone-hint">For consultation purposes, no SMS verification needed.</p>
+          </div>
+          <div class="field">
+            <label for="regSecurityQuestion">密保问题</label>
+            <select id="regSecurityQuestion" name="securityQuestion" required>
+              <option value="">请选择密保问题</option>
+              <option value="What is your mother's maiden name?">What is your mother's maiden name?</option>
+              <option value="What was the name of your first pet?">What was the name of your first pet?</option>
+              <option value="What city were you born in?">What city were you born in?</option>
+              <option value="What is your favorite book?">What is your favorite book?</option>
+              <option value="What was your childhood nickname?">What was your childhood nickname?</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="regSecurityAnswer">密保答案</label>
+            <input id="regSecurityAnswer" name="securityAnswer" type="text" placeholder="请输入密保答案" autocomplete="off" />
+          </div>
+          <div class="field">
+            <label for="regPassword">密码</label>
+            <div class="password-wrapper"><input id="regPassword" name="password" type="password" placeholder="请设置密码（至少6位）" autocomplete="new-password" required /><button type="button" class="password-toggle" aria-label="切换密码可见性"><i class="fa-solid fa-eye"></i></button></div>
+          </div>
+          <p id="registerError" class="auth-error" style="display:none;"></p>
+          <div class="form-actions">
+            <button class="btn btn-primary w-full justify-center" type="submit"><i class="fa-solid fa-user-plus"></i> 注册并登录</button>
+          </div>
+        </form>
+
+        <!-- 忘记密码视图：输入邮箱 -->
+        <form id="forgotEmailForm" class="auth-form" novalidate>
+          <div style="text-align:center;margin-bottom:16px;">
+            <div style="width:56px;height:56px;border-radius:50%;background:rgba(11,60,106,.08);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+              <i class="fa-solid fa-lock" style="font-size:24px;color:var(--brand-blue);"></i>
+            </div>
+            <h3 style="font-size:18px;font-weight:700;color:var(--text);margin:0 0 6px;">Reset Password</h3>
+            <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0;">Enter your registered email and we'll send you a reset link.</p>
+          </div>
+          <div class="field">
+            <label for="forgotEmail">邮箱</label>
+            <input id="forgotEmail" name="email" type="email" placeholder="请输入注册邮箱" autocomplete="email" required />
+          </div>
+          <p id="forgotEmailError" class="auth-error" style="display:none;"></p>
+          <p id="forgotEmailSuccess" class="auth-success" style="display:none;"></p>
+          <div class="form-actions">
+            <button class="btn btn-primary w-full justify-center" type="submit"><i class="fa-solid fa-paper-plane"></i> Send Reset Link</button>
+          </div>
+          <div style="text-align:center;margin-top:12px;">
+            <button type="button" id="backToLoginFromForgot" style="background:none;border:none;color:var(--brand-blue);cursor:pointer;font-size:13px;font-weight:600;padding:0;"><i class="fa-solid fa-arrow-left" style="margin-right:4px;"></i> Back to Login</button>
+          </div>
+        </form>
+
+        <!-- 忘记密码视图：密保验证 -->
+        <form id="forgotQuestionForm" class="auth-form" novalidate>
+          <div style="text-align:center;margin-bottom:16px;">
+            <div style="width:56px;height:56px;border-radius:50%;background:rgba(11,60,106,.08);display:inline-flex;align-items:center;justify-content:center;margin-bottom:12px;">
+              <i class="fa-solid fa-shield-halved" style="font-size:24px;color:var(--brand-blue);"></i>
+            </div>
+            <h3 style="font-size:18px;font-weight:700;color:var(--text);margin:0 0 6px;">Security Verification</h3>
+            <p style="font-size:13px;color:var(--muted);line-height:1.5;margin:0;">Please answer your security question to verify your identity.</p>
+          </div>
+          <div class="field">
+            <label for="forgotQuestionDisplay">密保问题</label>
+            <input id="forgotQuestionDisplay" type="text" readonly style="background:var(--bg);color:var(--muted);cursor:default;" />
+          </div>
+          <div class="field">
+            <label for="forgotQuestionAnswer">密保答案</label>
+            <input id="forgotQuestionAnswer" name="answer" type="text" placeholder="请输入密保答案" autocomplete="off" required />
+          </div>
+          <p id="forgotQuestionError" class="auth-error" style="display:none;"></p>
+          <div class="form-actions">
+            <button class="btn btn-primary w-full justify-center" type="submit"><i class="fa-solid fa-check"></i> Verify & Send Reset Link</button>
+          </div>
+          <div style="text-align:center;margin-top:12px;">
+            <button type="button" id="backToForgotEmail" style="background:none;border:none;color:var(--brand-blue);cursor:pointer;font-size:13px;font-weight:600;padding:0;"><i class="fa-solid fa-arrow-left" style="margin-right:4px;"></i> Back</button>
           </div>
         </form>
       </div>
