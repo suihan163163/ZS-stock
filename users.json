@@ -1,4 +1,31 @@
 {
-  "users": [],
-  "nextId": 1
+  "users": [
+    {
+      "id": 1,
+      "email": "admin@zhuoshi.com",
+      "phone": "00000000000",
+      "countryCode": "+86",
+      "password": "$2b$12$2a1oT1JU.jlmanQWp9kIPORMaGMcy6P4k4sIT6wdyvL1mfUn6yTcO",
+      "securityQuestion": "",
+      "securityAnswer": "",
+      "role": "admin",
+      "resetToken": null,
+      "resetTokenExpiry": null,
+      "createdAt": "2026-04-29T00:00:00.000Z"
+    },
+    {
+      "id": 2,
+      "email": "suihan163163@163.com",
+      "phone": "15050045080",
+      "countryCode": "+86",
+      "password": "$2b$12$2a1oT1JU.jlmanQWp9kIPORMaGMcy6P4k4sIT6wdyvL1mfUn6yTcO",
+      "securityQuestion": "What is your favorite food or dish?",
+      "securityAnswer": "佛跳墙",
+      "role": "user",
+      "resetToken": null,
+      "resetTokenExpiry": null,
+      "createdAt": "2026-04-29T07:52:42.610Z"
+    }
+  ],
+  "nextId": 3
 }

@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>我的账户 | WENZHOU ZHUOSHI SPARE PARTS CO., LTD.</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <link rel="stylesheet" href="./tailwind.css" />
+  <style>
+    .page-container{ max-width:960px; margin:0 auto; padding:40px 20px; }
+    .account-header{ margin-bottom:40px; }
+    .account-title{ font-size:28px; font-weight:700; color:#1f2937; margin:0 0 4px; }
+    .account-subtitle{ font-size:14px; color:#6b7280; }
+    .info-card{ background:#fff; border:1px solid #e5e7eb; border-radius:12px; padding:24px; margin-bottom:24px; }
+    .info-card-title{ font-size:16px; font-weight:600; color:#1f2937; margin:0 0 16px; display:flex; align-items:center; gap:8px; }
+    .info-row{ display:flex; padding:10px 0; border-bottom:1px solid #f3f4f6; font-size:14px; }
+    .info-row:last-child{ border-bottom:none; }
+    .info-label{ width:120px; color:#6b7280; flex-shrink:0; }
+    .info-value{ color:#1f2937; font-weight:500; }
+    .order-card{ background:#fff; border:1px solid #e5e7eb; border-radius:12px; margin-bottom:16px; overflow:hidden; }
+    .order-head{ display:flex; align-items:center; justify-content:space-between; padding:16px 20px; cursor:pointer; user-select:none; }
+    .order-head:hover{ background:#f9fafb; }
+    .order-id{ font-weight:600; color:#0B3C6A; font-size:14px; }
+    .order-date{ font-size:13px; color:#9ca3af; }
+    .order-status{ font-size:12px; padding:4px 12px; border-radius:999px; font-weight:600; }
+    .order-status-pending{ background:#fef3c7; color:#92400e; }
+    .order-status-confirmed{ background:#d1fae5; color:#065f46; }
+    .order-status-shipped{ background:#dbeafe; color:#1e40af; }
+    .order-body{ display:none; padding:16px 20px 20px; border-top:1px solid #e5e7eb; }
+    .order-body.open{ display:block; }
+    .order-item{ display:flex; align-items:center; gap:14px; padding:10px 0; border-bottom:1px solid #f3f4f6; }
+    .order-item:last-child{ border-bottom:none; }
+    .order-item-img{ width:56px; height:56px; border-radius:8px; object-fit:cover; background:#f3f4f6; flex-shrink:0; }
+    .order-item-img[src=""], .order-item-img[src*="undefined"]{ display:none; }
+    .order-item-name{ font-size:14px; font-weight:500; color:#1f2937; }
+    .order-item-model{ font-size:12px; color:#9ca3af; }
+    .order-item-qty{ font-size:13px; color:#0B3C6A; font-weight:600; margin-left:auto; white-space:nowrap; }
+    .empty-state{ text-align:center; padding:60px 20px; color:#9ca3af; }
+    .empty-state svg{ width:48px; height:48px; margin-bottom:16px; opacity:.4; }
+    .empty-state h3{ font-size:16px; font-weight:600; color:#6b7280; margin:0 0 8px; }
+    .empty-state p{ font-size:14px; margin:0 0 20px; }
+    .btn-go{ display:inline-block; padding:10px 24px; background:#0B3C6A; color:#fff; text-decoration:none; border-radius:8px; font-size:14px; font-weight:600; }
+    .btn-go:hover{ background:#0a3258; }
+    .chevron-icon{ width:20px; height:20px; color:#9ca3af; transition:transform .2s; flex-shrink:0; }
+    .chevron-icon.open{ transform:rotate(180deg); }
+    .logout-btn{ font-size:13px; color:#ef4444; background:none; border:none; cursor:pointer; padding:8px 16px; border-radius:6px; }
+    .logout-btn:hover{ background:#fef2f2; }
+    .top-header{ display:flex; align-items:center; justify-content:space-between; }
+    @media(max-width:640px){
+      .info-label{ width:80px; font-size:12px; }
+      .info-value{ font-size:13px; }
+      .account-title{ font-size:22px; }
+      .page-container{ padding:20px 12px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main" style="position:absolute;top:-9999px;left:-9999px;width:1px;height:1px;overflow:hidden;background:#fff;color:#0B3C6A;padding:8px 16px;z-index:100000;font-size:14px;font-weight:600;">跳转到主要内容</a>
+
+  <header class="site-header">
+    <div class="top-bar">
+      <div class="container">
+        <div class="top-bar-left">
+          <span><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg> 全球配送</span>
+          <span><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-6 6-6-6-6 6V8"/><path d="M17 14V2"/><path d="M22 20H2"/></svg> 工厂直供</span>
+          <span><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3.85 8.62a4 4 0 0 1 4.78-4.77 4 4 0 0 1 6.74 0 4 4 0 0 1 4.78 4.78 4 4 0 0 1 0 6.74 4 4 0 0 1-4.78 4.78 4 4 0 0 1-6.74 0 4 4 0 0 1-4.78-4.78z"/><path d="m9 12 2 2 4-4"/></svg> OEM/ODM 定制</span>
+        </div>
+        <div class="top-bar-right">
+          <a href="https://wa.me/2349052483707" target="_blank" rel="noopener noreferrer"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> +234 905 248 3707</a>
+          <a href="mailto:19519313121@163.com"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> 19519313121@163.com</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="middle-bar">
+      <div class="container">
+        <a href="index.html" class="brand" aria-label="返回首页">
+          <img class="brand-logo" src="./images/logo.png" alt="公司标志" />
+          <div class="brand-text">
+            <div class="brand-name">WENZHOU ZHUOSHI SPARE PARTS CO., LTD.</div>
+            <div class="brand-sub">OEM/ODM · 批发 · 出口美国</div>
+          </div>
+        </a>
+        <div class="search-box">
+          <input type="text" placeholder="搜索型号、产品名称..." aria-label="搜索产品" />
+          <button type="button" aria-label="搜索"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
+        </div>
+        <div class="header-actions flex items-center space-x-4">
+          <a class="header-action-btn mobile-hide" href="index.html#contact" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-left:16px;padding-right:16px;background:#0B3C6A;color:#fff;border-radius:0.25rem;">
+            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg> 询价单
+          </a>
+          <a class="header-action-btn mobile-hide" href="index.html" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-left:16px;padding-right:16px;border:1px solid #0B3C6A;color:#0B3C6A;background:#fff;border-radius:0.25rem;font-size:0.875rem;font-weight:500;">
+            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 首页
+          </a>
+          <a class="header-action-btn mobile-hide" href="index.html#contact" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-left:12px;padding-right:12px;color:#4b5563;">
+            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> 联系我们
+          </a>
+          <div style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;">
+            <button id="cart-icon" class="cart-toggle-btn" type="button" aria-label="购物车">
+              <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
+              <span class="cart-badge">0</span>
+            </button>
+          </div>
+          <a id="adminBtn" class="header-action-btn primary mobile-hide" href="admin.html" style="display:none;">
+            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> 管理
+          </a>
+          <button id="menuBtn" class="icon-btn" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="mobileMenu" style="display:none;">
+            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="mobileMenu" class="mobile-menu">
+      <div class="mobile-menu-inner">
+        <a href="index.html">首页</a>
+        <a href="products.html">产品中心</a>
+        <a href="index.html#about">关于我们</a>
+        <a href="index.html#contact">联系我们</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ========== CART PANEL ========== -->
+  <div id="cartOverlay" class="cart-overlay" onclick="CartManager.closeCartPanel();"></div>
+  <aside id="cartPanel" class="cart-panel">
+    <div class="cart-head">
+      <h3>
+        <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg> 购物车
+      </h3>
+      <button class="icon-btn" type="button" aria-label="关闭购物车" onclick="CartManager.closeCartPanel();">
+        <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+      </button>
+    </div>
+    <div id="cartList" class="cart-body"><div class="note"><span>购物车为空</span></div></div>
+    <div class="cart-foot">
+      <div class="cart-total">
+        <span>预计总价</span>
+        <span class="cart-total-value">$0.00</span>
+      </div>
+      <button class="cart-checkout-btn" type="button" onclick="CartManager.submitInquiry();">
+        <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg> 提交询价
+      </button>
+    </div>
+  </aside>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main id="main" class="site-main">
+    <div class="page-container">
+      <div class="account-header">
+        <div class="top-header">
+          <div>
+            <h1 class="account-title">我的账户</h1>
+            <p class="account-subtitle">管理您的个人信息和询价单</p>
+          </div>
+          <button class="logout-btn" onclick="doLogout();">
+            <svg class="inline-icon" style="vertical-align:middle;margin-right:4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> 退出登录
+          </button>
+        </div>
+      </div>
+
+      <!-- 个人信息区 -->
+      <div class="info-card">
+        <h2 class="info-card-title">
+          <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 个人信息
+        </h2>
+        <div id="userInfo">
+          <div style="text-align:center;padding:20px;color:#9ca3af;font-size:14px;">加载中...</div>
+        </div>
+      </div>
+
+      <!-- 我的询价单 -->
+      <div class="info-card" style="padding:0;overflow:hidden;">
+        <div style="padding:24px 24px 0;">
+          <h2 class="info-card-title">
+            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg> 我的询价单
+          </h2>
+        </div>
+        <div id="inquiryList" style="padding:16px 24px 24px;"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="footer-brand">
+            <img class="footer-logo" src="./images/logo.png" alt="公司标志" />
+            <div>
+              <div class="brand-name">WENZHOU ZHUOSHI SPARE PARTS CO., LTD.</div>
+              <div class="brand-sub">面向 B2B 采购商的工业级制造。</div>
+            </div>
+          </div>
+          <p class="footer-note">中国温州摩托车配件制造商——批发供应、OEM/ODM 开发、质检保障。</p>
+        </div>
+        <div class="footer-links">
+          <div class="footer-col">
+            <div class="footer-title">联系方式</div>
+            <a class="footer-link" href="https://wa.me/2349052483707" target="_blank" rel="noopener noreferrer"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> WhatsApp: +234 905 248 3707</a>
+            <a class="footer-link" href="mailto:19519313121@163.com"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> 19519313121@163.com</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 WENZHOU ZHUOSHI SPARE PARTS CO., LTD. 保留所有权利。</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ========== WHATSAPP FLOAT ========== -->
+  <a class="whatsapp-float" href="https://wa.me/2349052483707" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp 在线咨询">
+    <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+  </a>
+
+  <script src="./main.js"></script>
+  <script>
+    (function () {
+      function getAuth() {
+        try { return JSON.parse(localStorage.getItem('authUser') || 'null'); } catch (e) { return null; }
+      }
+      function getToken() { return localStorage.getItem('authToken'); }
+
+      function doLogout() {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('authUser');
+        window.location.href = 'index.html';
+      }
+      window.doLogout = doLogout;
+
+      /* 检查登录，未登录跳回首页 */
+      var token = getToken();
+      var user = getAuth();
+      if (!token || !user) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      /* 渲染个人信息 */
+      function renderUserInfo() {
+        var el = document.getElementById('userInfo');
+        if (!el) return;
+        var roleText = (user.role === 'admin') ? '管理员' : '普通用户';
+        el.innerHTML =
+          '<div class="info-row"><span class="info-label">邮箱</span><span class="info-value">' + (user.email || '-') + '</span></div>' +
+          '<div class="info-row"><span class="info-label">手机号</span><span class="info-value">' + (user.countryCode || '+86') + ' ' + (user.phone || '-') + '</span></div>' +
+          '<div class="info-row"><span class="info-label">角色</span><span class="info-value">' + roleText + '</span></div>';
+      }
+
+      /* 渲染询价单列表 */
+      function renderInquiries(data) {
+        var el = document.getElementById('inquiryList');
+        if (!el) return;
+        if (!data || data.length === 0) {
+          el.innerHTML = '<div class="empty-state">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/></svg>' +
+            '<h3>暂无询价单</h3><p>去首页添加商品并提交询价吧！</p>' +
+            '<a class="btn-go" href="index.html">去选购</a></div>';
+          return;
+        }
+
+        var html = '';
+        var statusMap = { pending: '待处理', confirmed: '已确认', shipped: '已发货', completed: '已完成' };
+        var statusClass = { pending: 'pending', confirmed: 'confirmed', shipped: 'shipped', completed: 'confirmed' };
+
+        data.slice().reverse().forEach(function (order) {
+          var st = statusMap[order.status] || order.status;
+          var sc = statusClass[order.status] || 'pending';
+          var itemsHtml = '';
+          if (order.items && order.items.length) {
+            order.items.forEach(function (item) {
+              itemsHtml += '<div class="order-item">' +
+                '<img class="order-item-img" src="' + (item.image || '') + '" alt="" onerror="this.style.display=\'none\'" />' +
+                '<div><div class="order-item-name">' + (item.name || '-') + '</div>' +
+                '<div class="order-item-model">型号：' + (item.model || '-') + '</div></div>' +
+                '<div class="order-item-qty">×' + (item.quantity || 1) + '</div>' +
+                '</div>';
+            });
+          }
+          html += '<div class="order-card">' +
+            '<div class="order-head" onclick="toggleOrder(this);">' +
+            '<div style="display:flex;align-items:center;gap:12px;">' +
+            '<span class="order-id">订单 #' + order.id + '</span>' +
+            '<span class="order-date">' + (order.createdAt ? new Date(order.createdAt).toLocaleDateString('zh-CN') : '-') + '</span>' +
+            '</div>' +
+            '<div style="display:flex;align-items:center;gap:8px;">' +
+            '<span class="order-status order-status-' + sc + '">' + st + '</span>' +
+            '<svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
+            '</div></div>' +
+            '<div class="order-body">' + itemsHtml + '</div></div>';
+        });
+        el.innerHTML = html;
+      }
+
+      /* 切换展开/收起 */
+      window.toggleOrder = function (head) {
+        var body = head.nextElementSibling;
+        var chev = head.querySelector('.chevron-icon');
+        if (body && chev) {
+          body.classList.toggle('open');
+          chev.classList.toggle('open');
+        }
+      };
+
+      /* 加载询价单 */
+      function loadInquiries() {
+        var el = document.getElementById('inquiryList');
+        if (el) el.innerHTML = '<div style="text-align:center;padding:20px;color:#9ca3af;font-size:14px;">加载中...</div>';
+        fetch('/api/inquiries', {
+          method: 'GET',
+          headers: { 'Authorization': 'Bearer ' + token }
+        }).then(function (res) { return res.json(); }).then(function (data) {
+          if (data.success) renderInquiries(data.data);
+          else { if (el) el.innerHTML = '<div style="text-align:center;padding:20px;color:#ef4444;font-size:14px;">加载失败：' + (data.message || '未知错误') + '</div>'; }
+        }).catch(function () {
+          if (el) el.innerHTML = '<div style="text-align:center;padding:20px;color:#ef4444;font-size:14px;">网络错误</div>';
+        });
+      }
+
+      /* 更新购物车徽标 */
+      if (window.CartManager) {
+        CartManager.updateBadge();
+        CartManager.renderCartPanel();
+      }
+
+      /* 初始化 */
+      renderUserInfo();
+      loadInquiries();
+    })();
+  </script>
+</body>
+</html>

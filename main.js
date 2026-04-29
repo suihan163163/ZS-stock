@@ -223,6 +223,9 @@
           localStorage.setItem('authUser', JSON.stringify(data.user));
           checkLoginStatus(); closeLoginModal();
           if ($("#loginEmail")) $("#loginEmail").value = ''; if ($("#loginPassword")) $("#loginPassword").value = '';
+          var role = data.user && data.user.role;
+          if (role === 'admin') window.location.href = 'admin.html';
+          else if (role === 'user') window.location.href = 'account.html';
         } else {
           if (loginErr) { loginErr.textContent = data.message || '登录失败'; loginErr.style.display = 'block'; setTimeout(function() { loginErr.style.display = 'none'; }, 3000); }
         }
@@ -262,6 +265,8 @@
           if ($("#regEmail")) $("#regEmail").value = ''; if ($("#regPhone")) $("#regPhone").value = '';
           if ($("#regSecurityQuestion")) $("#regSecurityQuestion").value = ''; if ($("#regSecurityAnswer")) $("#regSecurityAnswer").value = '';
           if ($("#regPassword")) $("#regPassword").value = '';
+          var role = data.user && data.user.role;
+          if (role === 'user') window.location.href = 'account.html';
         } else {
           if (regErr) { regErr.textContent = data.message || '注册失败'; regErr.style.display = 'block'; setTimeout(function() { regErr.style.display = 'none'; }, 3000); }
         }
@@ -409,7 +414,6 @@
       localStorage.setItem(CART_KEY, JSON.stringify(cart));
     } catch (e) {
     }
-    updateBadge();
   }
 
   function addToCart(product, event) {
@@ -431,6 +435,8 @@
     saveCart(cart);
     if (event) {
       performFlyAnimation(event, product.image);
+    } else {
+      updateBadge();
     }
     renderCartPanel();
   }
@@ -446,7 +452,7 @@
         imgContainer = tmp;
       }
       var cartIcon = document.getElementById('cart-icon');
-      if (!imgContainer || !cartIcon) return;
+      if (!imgContainer || !cartIcon) { updateBadge(); return; }
 
       var startRect = imgContainer.getBoundingClientRect();
       var endRect = cartIcon.getBoundingClientRect();
@@ -478,6 +484,7 @@
         cartIcon.classList.remove('animate-cart-bounce');
         void cartIcon.offsetWidth;
         cartIcon.classList.add('animate-cart-bounce');
+        updateBadge();
       }, 800);
     } catch (e) {
     }
@@ -489,12 +496,14 @@
     if (!item) return;
     item.quantity = Math.max(1, item.quantity + delta);
     saveCart(cart);
+    updateBadge();
     renderCartPanel();
   }
 
   function removeFromCart(id) {
     var cart = getCart().filter(function(i) { return i.id !== id; });
     saveCart(cart);
+    updateBadge();
     renderCartPanel();
   }
 
@@ -606,6 +615,55 @@
     document.body.style.overflow = '';
   }
 
+  function submitInquiry() {
+    var token = localStorage.getItem('authToken');
+    if (!token) {
+      closeCartPanel();
+      if (window.openLoginModal) window.openLoginModal();
+      else {
+        var loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) loginBtn.click();
+      }
+      return;
+    }
+    var cart = getCart();
+    if (cart.length === 0) return;
+    var items = cart.map(function(item) {
+      return { id: item.id, name: item.name, model: item.model, image: item.image, quantity: item.quantity };
+    });
+    fetch('/api/inquiries', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+      body: JSON.stringify({ items: items })
+    }).then(function(res) { return res.json(); }).then(function(data) {
+      if (data.success) {
+        try { localStorage.removeItem('wzsp_cart'); } catch (e) {}
+        updateBadge();
+        closeCartPanel();
+        showInquirySuccess();
+      } else {
+        alert('提交失败：' + (data.message || '未知错误'));
+      }
+    }).catch(function() {
+      alert('网络错误，请稍后重试');
+    });
+  }
+
+  function showInquirySuccess() {
+    var overlay = document.createElement('div');
+    overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:99999;display:flex;align-items:center;justify-content:center;';
+    overlay.onclick = function() { document.body.removeChild(overlay); };
+    overlay.innerHTML = '<div style="background:#fff;border-radius:16px;padding:40px 36px;text-align:center;max-width:420px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,.15);animation:modalIn .25s ease;" onclick="event.stopPropagation();">' +
+      '<div style="width:64px;height:64px;border-radius:50%;background:rgba(11,60,106,.08);display:inline-flex;align-items:center;justify-content:center;margin-bottom:20px;">' +
+      '<svg style="width:32px;height:32px;color:#0B3C6A;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>' +
+      '</div>' +
+      '<h3 style="font-size:20px;font-weight:700;color:#1f2937;margin:0 0 8px;">询价单已提交</h3>' +
+      '<p style="font-size:14px;color:#6b7280;line-height:1.6;margin:0 0 28px;">您的询价单已成功提交，我们的团队将尽快与您联系。</p>' +
+      '<a href="account.html" style="display:inline-block;padding:12px 32px;background:#0B3C6A;color:#fff;text-decoration:none;border-radius:8px;font-weight:600;font-size:14px;">查看我的询价单</a>' +
+      '</div>';
+    document.body.appendChild(overlay);
+  }
+
   function initCartUI() {
     document.querySelectorAll('.cart-toggle-btn').forEach(function(btn) {
       btn.addEventListener('click', function(e) { e.preventDefault(); openCartPanel(); });
@@ -629,7 +687,8 @@
     renderCartPanel: renderCartPanel,
     openCartPanel: openCartPanel,
     closeCartPanel: closeCartPanel,
-    initCartUI: initCartUI
+    initCartUI: initCartUI,
+    submitInquiry: submitInquiry
   };
 
   if (document.readyState === 'loading') {

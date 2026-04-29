@@ -94,6 +94,25 @@
     .sortable-chosen .tree-row{box-shadow:0 8px 24px rgba(11,60,106,.12);}
     @keyframes slideDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
     @keyframes slideUp{from{opacity:1;transform:translateY(0);}to{opacity:0;transform:translateY(-20px);}}
+    .data-table{width:100%;border-collapse:collapse;font-size:14px;}
+    .data-table th{padding:12px 16px;text-align:left;border-bottom:2px solid var(--line);font-weight:600;color:var(--text);background:var(--bg-muted);white-space:nowrap;}
+    .data-table td{padding:12px 16px;border-bottom:1px solid var(--line);color:var(--text);}
+    .data-table tr:hover td{background:rgba(11,60,106,.02);}
+    .inquiry-card{background:#fff;border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden;transition:box-shadow .15s ease;}
+    .inquiry-card:hover{box-shadow:0 4px 16px rgba(11,60,106,.08);}
+    .inquiry-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;cursor:pointer;}
+    .inquiry-head:hover{background:rgba(11,60,106,.02);}
+    .inquiry-body{display:none;padding:0 20px 20px;border-top:1px solid var(--line);}
+    .inquiry-body.open{display:block;}
+    .inquiry-item{display:flex;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid #f3f4f6;}
+    .inquiry-item:last-child{border-bottom:none;}
+    .inquiry-item-img{width:48px;height:48px;border-radius:8px;object-fit:cover;background:#f3f4f6;flex-shrink:0;}
+    .status-badge{padding:4px 12px;border-radius:999px;font-size:12px;font-weight:600;}
+    .status-pending{background:#fef3c7;color:#92400e;}
+    .status-confirmed{background:#d1fae5;color:#065f46;}
+    .status-shipped{background:#dbeafe;color:#1e40af;}
+    .chevron-icon{width:20px;height:20px;color:#9ca3af;transition:transform .2s;flex-shrink:0;}
+    .chevron-icon.open{transform:rotate(180deg);}
   </style>
 </head>
 <body>
@@ -116,11 +135,13 @@
   <main style="padding:40px 0;">
     <div class="container">
       <div class="nav-tabs">
-        <div class="nav-tab active" data-tab="products">产品管理</div>
-        <div class="nav-tab" data-tab="categories">分类管理</div>
-        <div class="nav-tab" data-tab="tags">标签管理</div>
-        <div class="nav-tab" data-tab="upload">批量上传</div>
-      </div>
+          <div class="nav-tab active" data-tab="products">产品管理</div>
+          <div class="nav-tab" data-tab="categories">分类管理</div>
+          <div class="nav-tab" data-tab="tags">标签管理</div>
+          <div class="nav-tab" data-tab="upload">批量上传</div>
+          <div class="nav-tab" data-tab="users">客户列表</div>
+          <div class="nav-tab" data-tab="inquiries">询价单管理</div>
+        </div>
 
       <div class="tab-content active" id="products">
         <div class="card">
@@ -194,6 +215,33 @@
           <div id="uploadStatus" style="margin-top:20px;"></div>
         </div>
       </div>
+
+      <div class="tab-content" id="users">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div>
+              <h2 style="font-size:18px;font-weight:700;">客户列表</h2>
+              <p style="color:var(--muted);font-size:13px;margin-top:4px;">管理所有注册用户信息</p>
+            </div>
+            <button class="btn" onclick="loadUsers()"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12h9"/><path d="M18 3v4"/><path d="M21 12h-4"/></svg> 刷新</button>
+          </div>
+          <div id="usersList"></div>
+        </div>
+      </div>
+
+      <div class="tab-content" id="inquiries">
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+            <div>
+              <h2 style="font-size:18px;font-weight:700;">询价单管理</h2>
+              <p style="color:var(--muted);font-size:13px;margin-top:4px;">处理所有客户提交的询价请求</p>
+            </div>
+            <button class="btn" onclick="loadInquiries()"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12h9"/><path d="M18 3v4"/><path d="M21 12h-4"/></svg> 刷新</button>
+          </div>
+          <div id="inquiriesList"></div>
+        </div>
+      </div>
+
     </div>
   </main>
 
@@ -277,15 +325,22 @@
   </div>
 
   <script>
+    function getToken() { return localStorage.getItem('authToken'); }
+    function getUser() { try { return JSON.parse(localStorage.getItem('authUser') || 'null'); } catch (e) { return null; } }
+
     function handleLogout() {
-      localStorage.removeItem('adminLoggedIn');
-      sessionStorage.clear();
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('authUser');
       window.location.replace('index.html');
     }
 
-    if (localStorage.getItem('adminLoggedIn') !== 'true') {
-      window.location.replace('index.html');
-    }
+    (function () {
+      var token = getToken();
+      var user = getUser();
+      if (!token || !user || user.role !== 'admin') {
+        window.location.replace('index.html');
+      }
+    })();
 
     let productsData = {
       tags: ["Wholesale", "OEM/ODM", "Hot Sale", "New"],
@@ -885,6 +940,8 @@
         tabContents.forEach(c => c.classList.remove('active'));
         this.classList.add('active');
         document.getElementById(this.dataset.tab).classList.add('active');
+        if (this.dataset.tab === 'users' && document.getElementById('usersList').innerHTML.trim() === '') loadUsers();
+        if (this.dataset.tab === 'inquiries' && document.getElementById('inquiriesList').innerHTML.trim() === '') loadInquiries();
       });
     });
 
@@ -1208,6 +1265,88 @@
     });
 
     loadData();
+
+    /* ========================================
+     * 新增：客户列表 + 询价单管理
+     * ======================================== */
+
+    window.loadUsers = function() {
+      var el = document.getElementById('usersList');
+      if (!el) return;
+      el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:14px;">加载中...</div>';
+      var token = getToken();
+      fetch('/api/users', { method: 'GET', headers: { 'Authorization': 'Bearer ' + token } })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (!data.success) { el.innerHTML = '<div style="text-align:center;padding:20px;color:#dc2626;font-size:14px;">加载失败：' + (data.message || '未知错误') + '</div>'; return; }
+          var users = data.data;
+          if (!users || users.length === 0) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-size:14px;">暂无注册用户</div>'; return; }
+          var html = '<table class="data-table"><thead><tr><th>#</th><th>注册时间</th><th>邮箱</th><th>手机号</th><th>角色</th></tr></thead><tbody>';
+          users.forEach(function(u, i) {
+            var date = u.createdAt ? new Date(u.createdAt).toLocaleDateString('zh-CN') : '-';
+            var phone = (u.countryCode || '+86') + ' ' + (u.phone || '-');
+            var role = u.role === 'admin' ? '<span class="status-badge" style="background:#dbeafe;color:#1e40af;">管理员</span>' : '<span class="status-badge" style="background:#f3f4f6;color:#374151;">普通用户</span>';
+            html += '<tr><td>' + (i + 1) + '</td><td style="white-space:nowrap;">' + date + '</td><td>' + (u.email || '-') + '</td><td style="white-space:nowrap;">' + phone + '</td><td>' + role + '</td></tr>';
+          });
+          html += '</tbody></table>';
+          el.innerHTML = html;
+        })
+        .catch(function() { el.innerHTML = '<div style="text-align:center;padding:20px;color:#dc2626;font-size:14px;">网络错误</div>'; });
+    };
+
+    window.toggleInquiry = function(head) {
+      var body = head.nextElementSibling;
+      var chev = head.querySelector('.chevron-icon');
+      if (body && chev) { body.classList.toggle('open'); chev.classList.toggle('open'); }
+    };
+
+    window.loadInquiries = function() {
+      var el = document.getElementById('inquiriesList');
+      if (!el) return;
+      el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--muted);font-size:14px;">加载中...</div>';
+      var token = getToken();
+      fetch('/api/inquiries', { method: 'GET', headers: { 'Authorization': 'Bearer ' + token } })
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+          if (!data.success) { el.innerHTML = '<div style="text-align:center;padding:20px;color:#dc2626;font-size:14px;">加载失败：' + (data.message || '未知错误') + '</div>'; return; }
+          var orders = data.data;
+          if (!orders || orders.length === 0) { el.innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted);font-size:14px;">暂无询价单</div>'; return; }
+          var html = '';
+          var statusMap = { pending: '待处理', confirmed: '已确认', shipped: '已发货', completed: '已完成' };
+          var statusClass = { pending: 'pending', confirmed: 'confirmed', shipped: 'shipped', completed: 'confirmed' };
+
+          orders.slice().reverse().forEach(function(order) {
+            var st = statusMap[order.status] || order.status;
+            var sc = statusClass[order.status] || 'pending';
+            var date = order.createdAt ? new Date(order.createdAt).toLocaleDateString('zh-CN') : '-';
+            var itemsHtml = '';
+            if (order.items && order.items.length) {
+              order.items.forEach(function(item) {
+                itemsHtml += '<div class="inquiry-item">' +
+                  '<img class="inquiry-item-img" src="' + (item.image || '') + '" alt="" onerror="this.style.display=\'none\'" />' +
+                  '<div style="flex:1;min-width:0;"><div style="font-size:14px;font-weight:500;color:var(--text);">' + (item.name || '-') + '</div>' +
+                  '<div style="font-size:12px;color:var(--muted);">型号：' + (item.model || '-') + '</div></div>' +
+                  '<div style="font-size:13px;color:var(--brand-blue);font-weight:600;white-space:nowrap;">数量：' + (item.quantity || 1) + '</div>' +
+                  '</div>';
+              });
+            }
+            html += '<div class="inquiry-card">' +
+              '<div class="inquiry-head" onclick="toggleInquiry(this);">' +
+              '<div style="display:flex;align-items:center;gap:16px;">' +
+              '<span style="font-weight:600;color:var(--brand-blue);font-size:14px;">订单 #' + order.id + '</span>' +
+              '<span style="font-size:13px;color:var(--muted);">' + (order.userEmail || 'ID:' + order.userId) + '</span>' +
+              '<span style="font-size:13px;color:#9ca3af;">' + date + '</span>' +
+              '</div>' +
+              '<div style="display:flex;align-items:center;gap:8px;">' +
+              '<span class="status-badge status-' + sc + '">' + st + '</span>' +
+              '<svg class="chevron-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>' +
+              '</div></div>' +
+              '<div class="inquiry-body">' + itemsHtml + '</div></div>';
+          });
+          el.innerHTML = html;
+        })
+        .catch(function() { el.innerHTML = '<div style="text-align:center;padding:20px;color:#dc2626;font-size:14px;">网络错误</div>'; });
+    };
   </script>
 </body>
 </html>

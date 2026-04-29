@@ -25,7 +25,34 @@ app.use(express.static(__dirname));
 /* ============================================================
  * 用户数据辅助函数 (users.json)
  * ============================================================ */
+/* ============================================================
+ * 数据文件路径
+ * ============================================================ */
 const USERS_FILE = path.join(__dirname, 'users.json');
+const ORDERS_FILE = path.join(__dirname, 'orders.json');
+
+/* ============================================================
+ * 初始化 orders.json
+ * ============================================================ */
+function initOrdersFile() {
+  if (!fs.existsSync(ORDERS_FILE)) {
+    fs.writeFileSync(ORDERS_FILE, JSON.stringify({ orders: [], nextId: 1 }, null, 2), 'utf8');
+  }
+}
+initOrdersFile();
+
+function loadOrders() {
+  try {
+    const raw = fs.readFileSync(ORDERS_FILE, 'utf8');
+    return JSON.parse(raw);
+  } catch (e) {
+    return { orders: [], nextId: 1 };
+  }
+}
+
+function saveOrders(data) {
+  fs.writeFileSync(ORDERS_FILE, JSON.stringify(data, null, 2), 'utf8');
+}
 
 function loadUsers() {
   try {
@@ -358,6 +385,118 @@ app.post('/api/reset-password', async (req, res) => {
   } catch (error) {
     console.error('重置密码失败:', error);
     res.status(500).json({ success: false, message: '重置失败，请稍后重试' });
+  }
+});
+
+/* ============================================================
+ * JWT 认证中间件
+ * ============================================================ */
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.startsWith('Bearer ') ? authHeader.slice(7) : req.query.token;
+  if (!token) {
+    return res.status(401).json({ success: false, message: '请先登录' });
+  }
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    req.user = decoded;
+    next();
+  } catch (e) {
+    return res.status(403).json({ success: false, message: 'Token 无效或已过期' });
+  }
+}
+
+/* ============================================================
+ * 业务接口 — 询价单 / 订单系统
+ * ============================================================ */
+
+/* POST /api/inquiries — 提交询价单（需登录） */
+app.post('/api/inquiries', authenticateToken, (req, res) => {
+  try {
+    const { items } = req.body;
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ success: false, message: '请至少添加一件商品到询价单' });
+    }
+
+    const ordersData = loadOrders();
+    const newOrder = {
+      id: ordersData.nextId,
+      userId: req.user.id,
+      userEmail: req.user.email,
+      userPhone: req.user.phone || '',
+      items: items,
+      status: 'pending',
+      createdAt: new Date().toISOString()
+    };
+    ordersData.orders.push(newOrder);
+    ordersData.nextId += 1;
+    saveOrders(ordersData);
+
+    res.status(201).json({
+      success: true,
+      message: '询价单已提交',
+      order: newOrder
+    });
+  } catch (error) {
+    console.error('提交询价单失败:', error);
+    res.status(500).json({ success: false, message: '提交失败，请稍后重试' });
+  }
+});
+
+/* GET /api/inquiries — 获取询价单列表（需登录） */
+app.get('/api/inquiries', authenticateToken, (req, res) => {
+  try {
+    const ordersData = loadOrders();
+
+    if (req.user.role === 'admin') {
+      /* 管理员查看所有询价单 */
+      return res.status(200).json({
+        success: true,
+        data: ordersData.orders,
+        total: ordersData.orders.length
+      });
+    } else {
+      /* 普通用户仅查看自己的询价单 */
+      const userOrders = ordersData.orders.filter(o => o.userId === req.user.id);
+      return res.status(200).json({
+        success: true,
+        data: userOrders,
+        total: userOrders.length
+      });
+    }
+  } catch (error) {
+    console.error('获取询价单失败:', error);
+    res.status(500).json({ success: false, message: '获取失败，请稍后重试' });
+  }
+});
+
+/* GET /api/users — 获取用户列表（仅管理员） */
+app.get('/api/users', authenticateToken, (req, res) => {
+  try {
+    if (req.user.role !== 'admin') {
+      return res.status(403).json({ success: false, message: '无权访问此接口' });
+    }
+
+    const usersData = loadUsers();
+    /* 过滤掉敏感信息 */
+    const safeUsers = usersData.users.map(u => ({
+      id: u.id,
+      email: u.email,
+      phone: u.phone || '',
+      countryCode: u.countryCode || '+86',
+      role: u.role || 'user',
+      createdAt: u.createdAt || '',
+      securityQuestion: u.securityQuestion || ''
+    }));
+
+    res.status(200).json({
+      success: true,
+      data: safeUsers,
+      total: safeUsers.length
+    });
+  } catch (error) {
+    console.error('获取用户列表失败:', error);
+    res.status(500).json({ success: false, message: '获取失败，请稍后重试' });
   }
 });
 
