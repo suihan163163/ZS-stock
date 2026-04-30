@@ -46,6 +46,47 @@
     .logout-btn{ font-size:13px; color:#ef4444; background:none; border:none; cursor:pointer; padding:8px 16px; border-radius:6px; }
     .logout-btn:hover{ background:#fef2f2; }
     .top-header{ display:flex; align-items:center; justify-content:space-between; }
+
+    /* ===== 退出登录按钮（Header 区域 - 大厂风格） ===== */
+    .logout-btn-header{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:6px;
+      height:40px;
+      padding:0 16px;
+      box-sizing:border-box;
+      background:transparent;
+      border:1px solid #e5e7eb;
+      border-radius:8px;
+      font-size:14px;
+      font-weight:500;
+      color:#6b7280;
+      cursor:pointer;
+      white-space:nowrap;
+      transition:all .2s ease;
+    }
+    .logout-btn-header:hover{
+      color:#dc2626;
+      border-color:#fecaca;
+      background:#fff5f5;
+    }
+    .logout-btn-header:active{
+      background:#fee2e2;
+      transform:scale(.97);
+    }
+    .logout-icon-svg{
+      width:16px;
+      height:16px;
+      flex-shrink:0;
+      transition:transform .2s ease, color .2s ease;
+    }
+    .logout-btn-header:hover .logout-icon-svg{
+      transform:translateX(2px);
+    }
+    .logout-text{
+      line-height:1;
+    }
     @media(max-width:640px){
       .info-label{ width:80px; font-size:12px; }
       .info-value{ font-size:13px; }
@@ -86,24 +127,25 @@
           <button type="button" aria-label="搜索"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg></button>
         </div>
         <div class="header-actions flex items-center space-x-4">
-          <a class="header-action-btn mobile-hide" href="index.html#contact" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-left:16px;padding-right:16px;background:#0B3C6A;color:#fff;border-radius:0.25rem;">
-            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg> 询价单
+          <a id="inquiryManageBtn" class="header-action-btn primary mobile-hide" href="account.html" style="display:none;height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;background:#0B3C6A;color:#fff;border-radius:0.25rem;font-size:0.875rem;font-weight:500;text-decoration:none;white-space:nowrap;">
+            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg> 询价管理
           </a>
-          <a class="header-action-btn mobile-hide" href="index.html" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-left:16px;padding-right:16px;border:1px solid #0B3C6A;color:#0B3C6A;background:#fff;border-radius:0.25rem;font-size:0.875rem;font-weight:500;">
-            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 首页
-          </a>
-          <a class="header-action-btn mobile-hide" href="index.html#contact" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-left:12px;padding-right:12px;color:#4b5563;">
+          <a class="header-action-btn mobile-hide" href="index.html#contact" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;color:#4b5563;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.875rem;font-weight:500;text-decoration:none;white-space:nowrap;background:#fff;">
             <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> 联系我们
           </a>
-          <div style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;">
+          <div style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0;">
             <button id="cart-icon" class="cart-toggle-btn" type="button" aria-label="购物车">
               <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
               <span class="cart-badge">0</span>
             </button>
           </div>
-          <a id="adminBtn" class="header-action-btn primary mobile-hide" href="admin.html" style="display:none;">
-            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> 管理
-          </a>
+          <button id="logoutBtn" class="logout-btn-header mobile-hide" type="button" aria-label="退出登录">
+            <svg class="logout-icon-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+            <span class="logout-text">退出登录</span>
+          </button>
+          <button id="loginBtn" class="header-action-btn mobile-hide" type="button" aria-label="登录/注册" style="display:none;height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;border:1px solid #0B3C6A;color:#0B3C6A;background:#fff;border-radius:0.25rem;font-size:0.875rem;font-weight:500;white-space:nowrap;">
+            <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 登录/注册
+          </button>
           <button id="menuBtn" class="icon-btn" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="mobileMenu" style="display:none;">
             <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" x2="20" y1="12" y2="12"/><line x1="4" x2="20" y1="6" y2="6"/><line x1="4" x2="20" y1="18" y2="18"/></svg>
           </button>
@@ -111,12 +153,75 @@
       </div>
     </div>
 
-    <div id="mobileMenu" class="mobile-menu">
-      <div class="mobile-menu-inner">
-        <a href="index.html">首页</a>
-        <a href="products.html">产品中心</a>
-        <a href="index.html#about">关于我们</a>
-        <a href="index.html#contact">联系我们</a>
+    <div class="nav-bar">
+      <div class="container">
+        <a class="nav-link" href="index.html">首页</a>
+        <div class="mega-dropdown">
+          <a class="nav-link" href="products.html">产品中心 <svg class="inline-icon" style="width:10px;height:10px;margin-left:4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></svg></a>
+          <div class="mega-menu">
+            <div class="mega-menu-inner">
+              <div>
+                <h4 class="mega-heading">骑士摩托车</h4>
+                <a class="mega-link" href="products.html?category1=Knight motorcycle&category2=BAJAJ">BAJAJ</a>
+                <a class="mega-link" href="products.html?category1=Knight motorcycle&category2=CG">CG</a>
+                <a class="mega-link" href="products.html?category1=Knight motorcycle&category2=CD">CD</a>
+                <a class="mega-link" href="products.html?category1=Knight motorcycle&category2=CB">CB</a>
+                <a class="mega-link" href="products.html?category1=Knight motorcycle&category2=RS">RS</a>
+                <a class="mega-link" href="products.html?category1=Knight motorcycle&category2=YB">YB</a>
+                <a class="mega-link" href="products.html?category1=Knight motorcycle&category2=AX">AX</a>
+                <a class="mega-link" href="products.html?category1=Knight motorcycle&category2=GN">GN</a>
+                <a class="mega-link" href="products.html?category1=Knight motorcycle&category2=TVS">TVS</a>
+              </div>
+              <div>
+                <h4 class="mega-heading">踏板摩托车</h4>
+                <a class="mega-link" href="products.html?category1=Scooter motorcycle&category2=GY6">GY6</a>
+              </div>
+              <div>
+                <h4 class="mega-heading">全地形车</h4>
+                <a class="mega-link" href="products.html?category1=ATV&category2=Honda">Honda</a>
+              </div>
+              <div>
+                <h4 class="mega-heading">其他车型</h4>
+                <a class="mega-link" href="products.html?category1=Tricycle">三轮车</a>
+                <a class="mega-link" href="products.html?category1=Curved beam motorcycle">弯梁摩托车</a>
+                <a class="mega-link" href="products.html?category1=Fuel tricycle">燃油三轮车</a>
+                <a class="mega-link" href="products.html?category1=Off-road Motorcycle">越野摩托车</a>
+                <a class="mega-link" href="products.html?category1=Motorcycles in South America">南美摩托车</a>
+              </div>
+              <div>
+                <h4 class="mega-heading">改装配件</h4>
+                <a class="mega-link" href="products.html?category1=Modification parts&category2=shock absorber">减震器</a>
+                <a class="mega-link" href="products.html?category1=Modification parts&category2=handle">车把</a>
+              </div>
+              <div>
+                <h4 class="mega-heading">其他</h4>
+                <a class="mega-link" href="products.html?category1=Passenger Cars">乘用车</a>
+                <a class="mega-link" href="products.html?category1=Commercial Vehicles">商用车</a>
+                <a class="mega-link" href="products.html?category1=excavator">挖掘机</a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a class="nav-link" href="index.html#about">关于我们</a>
+        <a class="nav-link" href="index.html#factory">工厂展示</a>
+        <a class="nav-link" href="index.html#contact">联系我们</a>
+      </div>
+    </div>
+
+    <div id="mobileMenu" class="mobile-menu" hidden>
+      <div class="container">
+        <div class="mobile-card">
+          <a class="mobile-link" href="index.html">首页</a>
+          <a class="mobile-link" href="products.html">产品中心</a>
+          <a class="mobile-link" href="index.html#about">关于我们</a>
+          <a class="mobile-link" href="index.html#factory">工厂展示</a>
+          <a class="mobile-link" href="index.html#contact">联系我们</a>
+          <div class="mobile-cta">
+            <a class="btn btn-primary w-full justify-center" href="index.html#contact">
+              <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg> 立即询价
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   </header>
@@ -153,9 +258,6 @@
             <h1 class="account-title">我的账户</h1>
             <p class="account-subtitle">管理您的个人信息和询价单</p>
           </div>
-          <button class="logout-btn" onclick="doLogout();">
-            <svg class="inline-icon" style="vertical-align:middle;margin-right:4px;" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg> 退出登录
-          </button>
         </div>
       </div>
 
@@ -196,10 +298,10 @@
           <p class="footer-note">中国温州摩托车配件制造商——批发供应、OEM/ODM 开发、质检保障。</p>
         </div>
         <div class="footer-links">
-          <div class="footer-col">
+          <div class="footer-col" style="flex-direction:row;gap:24px;flex-wrap:wrap;">
             <div class="footer-title">联系方式</div>
-            <a class="footer-link" href="https://wa.me/2349052483707" target="_blank" rel="noopener noreferrer"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> WhatsApp: +234 905 248 3707</a>
-            <a class="footer-link" href="mailto:19519313121@163.com"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> 19519313121@163.com</a>
+            <a class="footer-link" href="https://wa.me/2349052483707" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> +234 905 248 3707</a>
+            <a class="footer-link" href="mailto:19519313121@163.com" style="white-space:nowrap;"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> 19519313121@163.com</a>
           </div>
         </div>
       </div>
@@ -241,11 +343,9 @@
       function renderUserInfo() {
         var el = document.getElementById('userInfo');
         if (!el) return;
-        var roleText = (user.role === 'admin') ? '管理员' : '普通用户';
         el.innerHTML =
           '<div class="info-row"><span class="info-label">邮箱</span><span class="info-value">' + (user.email || '-') + '</span></div>' +
-          '<div class="info-row"><span class="info-label">手机号</span><span class="info-value">' + (user.countryCode || '+86') + ' ' + (user.phone || '-') + '</span></div>' +
-          '<div class="info-row"><span class="info-label">角色</span><span class="info-value">' + roleText + '</span></div>';
+          '<div class="info-row"><span class="info-label">手机号</span><span class="info-value">' + (user.countryCode || '+86') + ' ' + (user.phone || '-') + '</span></div>';
       }
 
       /* 渲染询价单列表 */
@@ -323,6 +423,21 @@
         CartManager.updateBadge();
         CartManager.renderCartPanel();
       }
+
+      /* Header 按钮状态：已登录显示询价管理+退出登录，隐藏登录按钮 */
+      var inquiryManageBtn = document.getElementById('inquiryManageBtn');
+      var logoutBtnEl = document.getElementById('logoutBtn');
+      var loginBtnEl = document.getElementById('loginBtn');
+      if (user.role === 'admin') {
+        if (inquiryManageBtn) { inquiryManageBtn.href = 'admin.html'; inquiryManageBtn.style.display = 'inline-flex'; }
+      } else {
+        if (inquiryManageBtn) { inquiryManageBtn.href = 'account.html'; inquiryManageBtn.style.display = 'inline-flex'; }
+      }
+      if (logoutBtnEl) {
+        logoutBtnEl.style.display = 'inline-flex';
+        logoutBtnEl.addEventListener('click', function(e) { e.preventDefault(); doLogout(); });
+      }
+      if (loginBtnEl) loginBtnEl.style.display = 'none';
 
       /* 初始化 */
       renderUserInfo();

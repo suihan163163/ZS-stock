@@ -11,6 +11,16 @@
   <meta property="og:description" content="温州摩托车配件制造商，OEM/ODM、质检实验室、出口北美就绪。" />
   <meta property="og:type" content="website" />
   <link rel="stylesheet" href="./tailwind.css" />
+  <style>
+    .input-clear-wrap{position:relative;display:flex;align-items:center;border:1.5px solid #e2e8f0;border-radius:10px;overflow:hidden;transition:all .2s ease;background:#fff;}
+    .input-clear-wrap:focus-within{border-color:var(--brand-blue);box-shadow:0 0 0 3px rgba(11,60,106,.1);}
+    .input-clear-wrap input{flex:1;padding:12px 38px 12px 14px;border:none;background:transparent;font-size:14px;font-family:inherit;color:var(--text);outline:none;letter-spacing:.3px;}
+    .input-clear-wrap input::placeholder{color:#cbd5e1;}
+    .input-clear-btn{position:absolute;right:2px;top:2px;bottom:2px;width:34px;display:none;align-items:center;justify-content:center;background:transparent;border:none;color:#94a3b8;cursor:pointer;transition:color .15s;border-radius:0 8px 8px 0;}
+    .input-clear-btn svg{width:16px;height:16px;}
+    .input-clear-btn:hover{color:#dc2626;}
+    .input-clear-wrap input:not(:placeholder-shown)~.input-clear-btn{display:flex;}
+  </style>
 </head>
 <body>
   <a class="skip-link" href="#main">跳转到主要内容</a>
@@ -49,22 +59,22 @@
         </div>
 
         <div class="header-actions flex items-center space-x-4">
-          <a class="header-action-btn mobile-hide" href="#contact" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-left:16px;padding-right:16px;background:#0B3C6A;color:#fff;border-radius:0.25rem;">
+          <a class="header-action-btn mobile-hide" href="#contact" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;background:#0B3C6A;color:#fff;border-radius:0.25rem;font-size:0.875rem;font-weight:500;text-decoration:none;white-space:nowrap;">
             <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 9H8"/><path d="M16 13H8"/><path d="M16 17H8"/></svg> 询价单
           </a>
-          <button id="loginBtn" class="header-action-btn mobile-hide" type="button" aria-label="登录/注册" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-left:16px;padding-right:16px;border:1px solid #0B3C6A;color:#0B3C6A;background:#fff;border-radius:0.25rem;text-size:0.875rem;font-weight:500;">
+          <button id="loginBtn" class="header-action-btn mobile-hide" type="button" aria-label="登录/注册" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;border:1px solid #0B3C6A;color:#0B3C6A;background:#fff;border-radius:0.25rem;font-size:0.875rem;font-weight:500;white-space:nowrap;">
             <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> 登录/注册
           </button>
-          <a class="header-action-btn mobile-hide" href="#contact" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;padding-left:12px;padding-right:12px;color:#4b5563;">
+          <a class="header-action-btn mobile-hide" href="#contact" style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;color:#4b5563;border:1px solid #d1d5db;border-radius:0.25rem;font-size:0.875rem;font-weight:500;text-decoration:none;white-space:nowrap;background:#fff;">
             <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg> 联系我们
           </a>
-          <div style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding-top:0;padding-bottom:0;">
+          <div style="height:40px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;padding:0;">
             <button id="cart-icon" class="cart-toggle-btn" type="button" aria-label="购物车">
               <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/></svg>
               <span class="cart-badge">0</span>
             </button>
           </div>
-          <a id="adminBtn" class="header-action-btn primary mobile-hide" href="admin.html" style="display:none;">
+          <a id="adminBtn" class="header-action-btn primary mobile-hide" href="admin.html" style="display:none;height:40px;align-items:center;justify-content:center;box-sizing:border-box;padding:0 16px;background:#0B3C6A;color:#fff;border-radius:0.25rem;font-size:0.875rem;font-weight:500;text-decoration:none;white-space:nowrap;">
             <svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> 管理
           </a>
           <button id="menuBtn" class="icon-btn" type="button" aria-label="打开菜单" aria-expanded="false" aria-controls="mobileMenu" style="display:none;">
@@ -513,24 +523,10 @@
           <p class="footer-note">中国温州摩托车配件制造商——批发供应、OEM/ODM 开发、质检保障。</p>
         </div>
         <div class="footer-links">
-          <div class="footer-col">
-            <div class="footer-title">网站导航</div>
-            <a class="footer-link" href="#home">首页</a>
-            <a class="footer-link" href="#products">产品中心</a>
-            <a class="footer-link" href="#about">关于我们</a>
-            <a class="footer-link" href="#factory">工厂展示</a>
-            <a class="footer-link" href="#contact">联系我们</a>
-          </div>
-          <div class="footer-col">
-            <div class="footer-title">合规信息</div>
-            <a class="footer-link" href="#privacy">隐私政策</a>
-            <a class="footer-link" href="#terms">服务条款</a>
-          </div>
-          <div class="footer-col">
-            <div class="footer-title">社交媒体</div>
-            <a class="footer-link" href="#" target="_blank" rel="noopener noreferrer"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z"/></svg> Facebook</a>
-            <a class="footer-link" href="#" target="_blank" rel="noopener noreferrer"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15.2a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.73a8.19 8.19 0 0 0 4.76 1.52V6.79a4.84 4.84 0 0 1-1-.1z"/></svg> TikTok</a>
-            <a class="footer-link" href="#" target="_blank" rel="noopener noreferrer"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22 16 2"/><path d="M3.47 12.53 5 14l1.53-1.47a8.84 8.84 0 0 1 12.44 0A8.84 8.84 0 0 1 20.53 18L19 19.53l-1.53-1.53a6.54 6.54 0 0 0-9.19 0L5 21"/></svg> Jumia</a>
+          <div class="footer-col" style="flex-direction:row;gap:24px;flex-wrap:wrap;">
+            <div class="footer-title">联系方式</div>
+            <a class="footer-link" href="https://wa.me/2349052483707" target="_blank" rel="noopener noreferrer" style="white-space:nowrap;"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> +234 905 248 3707</a>
+            <a class="footer-link" href="mailto:19519313121@163.com" style="white-space:nowrap;"><svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg> 19519313121@163.com</a>
           </div>
         </div>
       </div>
@@ -591,7 +587,7 @@
         <form id="loginForm" class="auth-form auth-form-active" novalidate>
           <div class="field">
             <label for="loginEmail">邮箱</label>
-            <input id="loginEmail" name="email" type="email" placeholder="请输入邮箱地址" autocomplete="email" required />
+            <div class="input-clear-wrap"><input id="loginEmail" name="email" type="email" placeholder="请输入邮箱地址" autocomplete="email" required /><button type="button" class="input-clear-btn" data-target="loginEmail" aria-label="清空"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg></button></div>
           </div>
           <div class="field">
             <label for="loginPassword">密码</label>
@@ -735,13 +731,13 @@
             <p class="phone-hint">For consultation purposes, no SMS verification needed.</p>
           </div>
           <div class="field">
-            <label class="block text-sm font-medium text-gray-700 mb-1" for="regSecurityQuestion">Security Question</label>
-            <select id="regSecurityQuestion" name="securityQuestion" required class="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-900/20 focus:border-blue-900 outline-none transition text-sm text-gray-800 bg-white">
-              <option value="">Choose a security question</option>
-              <option value="What is your favorite motorcycle or car brand?">What is your favorite motorcycle or car brand?</option>
-              <option value="What is your dream travel destination?">What is your dream travel destination?</option>
-              <option value="What is the title of your favorite movie or book?">What is the title of your favorite movie or book?</option>
-              <option value="What is your favorite food or dish?">What is your favorite food or dish?</option>
+            <label for="regSecurityQuestion" style="display:block;font-size:15px;font-weight:600;margin-bottom:8px;">Security Question</label>
+            <select id="regSecurityQuestion" name="securityQuestion" required style="width:100%;padding:13px 14px;border:1px solid #E5E7EB;border-radius:4px;font-size:14px;font-weight:500;color:#1f2937;background:#fff;outline:none;cursor:pointer;-webkit-appearance:none;-moz-appearance:none;appearance:none;background-image:url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%236b7280%22 stroke-width=%222%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22><path d=%22m6 9 6 6 6-6%22/></svg>');background-repeat:no-repeat;background-position:right 14px center;background-size:18px;transition:border-color .15s,box-shadow .15s;" onfocus="this.style.borderColor='var(--brand-blue)';this.style.boxShadow='0 0 0 3px rgba(11,60,106,.10)';" onblur="this.style.borderColor='#E5E7EB';this.style.boxShadow='none';">
+              <option value="" disabled selected hidden>Choose a security question</option>
+              <option value="What is your favorite motorcycle or car brand?" style="padding:8px 14px;font-size:14px;line-height:1.6;">What is your favorite motorcycle or car brand?</option>
+              <option value="What is your dream travel destination?" style="padding:8px 14px;font-size:14px;line-height:1.6;">What is your dream travel destination?</option>
+              <option value="What is the title of your favorite movie or book?" style="padding:8px 14px;font-size:14px;line-height:1.6;">What is the title of your favorite movie or book?</option>
+              <option value="What is your favorite food or dish?" style="padding:8px 14px;font-size:14px;line-height:1.6;">What is your favorite food or dish?</option>
             </select>
           </div>
           <div class="field">

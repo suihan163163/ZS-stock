@@ -158,13 +158,61 @@
 
   function checkLoginStatus() {
     var token = localStorage.getItem('authToken');
-    var adminLogged = localStorage.getItem('adminLoggedIn') === 'true';
+    var user;
+    try { user = JSON.parse(localStorage.getItem('authUser') || 'null'); } catch (e) { user = null; }
     if (loginBtn && adminBtn) {
-      if (token || adminLogged) { loginBtn.style.display = 'none'; adminBtn.style.display = 'inline-flex'; }
-      else { loginBtn.style.display = 'inline-flex'; adminBtn.style.display = 'none'; }
+      if (token && user) {
+        loginBtn.style.display = 'none';
+        adminBtn.style.display = 'inline-flex';
+        if (user.role === 'admin') {
+          adminBtn.href = 'admin.html';
+          adminBtn.innerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> 管理';
+        } else {
+          adminBtn.href = 'account.html';
+          adminBtn.innerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg> 询价管理';
+        }
+      } else {
+        loginBtn.style.display = 'inline-flex';
+        adminBtn.style.display = 'none';
+      }
     }
   }
   checkLoginStatus();
+  /* 兼容 account.html / products.html 的 inquiryManageBtn + logoutBtn */
+  (function(){
+    function doLogout(){
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('authUser');
+      window.location.href = 'index.html';
+    }
+    window.doLogout = doLogout;
+    var token = localStorage.getItem('authToken');
+    var user;
+    try { user = JSON.parse(localStorage.getItem('authUser') || 'null'); } catch(e) { user = null; }
+    var imb = document.getElementById('inquiryManageBtn');
+    var lo = document.getElementById('logoutBtn');
+    var lb = document.getElementById('loginBtn');
+    if(token && user){
+      if(imb){
+        imb.style.display = 'inline-flex';
+        if(user.role === 'admin'){
+          imb.href = 'admin.html';
+          imb.innerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1-1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/></svg> 管理';
+        } else {
+          imb.href = 'account.html';
+          imb.innerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14 2 14 8 20 8"/><path d="M9 15l2 2 4-4"/></svg> 询价管理';
+        }
+      }
+      if(lo){
+        lo.style.display = 'inline-flex';
+        lo.addEventListener('click', function(e){ e.preventDefault(); doLogout(); });
+      }
+      if(lb) lb.style.display = 'none';
+    } else {
+      if(imb) imb.style.display = 'none';
+      if(lo) lo.style.display = 'none';
+    }
+  })();
   if (loginBtn) loginBtn.addEventListener('click', openLoginModal);
   if (loginModal) {
     loginModal.querySelectorAll('.auth-tab').forEach(function(tab) {
@@ -180,6 +228,17 @@
       if (!input) return;
       if (input.type === 'password') { input.type = 'text'; this.innerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>'; }
       else { input.type = 'password'; this.innerHTML = '<svg class="inline-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>'; }
+    });
+  });
+
+  document.querySelectorAll('.input-clear-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var targetId = this.getAttribute('data-target');
+      var input = targetId ? document.getElementById(targetId) : null;
+      if (input) input.value = '';
+      var pwInput = document.getElementById('loginPassword');
+      if (pwInput) pwInput.value = '';
+      if (input) input.focus();
     });
   });
 
@@ -207,12 +266,7 @@
       var password = $("#loginPassword") ? $("#loginPassword").value.trim() : "";
       if (!email) { if (loginErr) { loginErr.textContent = '请输入邮箱。'; loginErr.style.display = 'block'; } return; }
       if (!password) { if (loginErr) { loginErr.textContent = '请输入密码。'; loginErr.style.display = 'block'; } return; }
-      if (email === 'admin' && password === 'zsadmin414') {
-        localStorage.setItem('adminLoggedIn', 'true');
-        checkLoginStatus(); closeLoginModal();
-        if ($("#loginEmail")) $("#loginEmail").value = ''; if ($("#loginPassword")) $("#loginPassword").value = '';
-        return;
-      }
+      if (email === 'admin') email = 'admin@zhuoshi.com';
       fetch('/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
